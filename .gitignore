@@ -10,7 +10,7 @@ backend/backend.zip
 .gitignore
 # testing
 /coverage
-
+build
 # production
 /build
 
