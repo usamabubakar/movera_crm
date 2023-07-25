@@ -1,0 +1,240 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.singleagent {
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 3px;
+    border-bottom: 1px solid #d4d4d4;
+    cursor: pointer;
+}
+.singleagent:hover:not(.agentactive){
+    background-color:#cfd6e4;
+    border-radius: 10px;
+    color: black;
+}
+.agentactive{
+    background-color: #0c2556;
+    border-radius: 10px;
+    color: white;
+}
+.singleagentbox1 img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 3px;
+}
+
+.agentname span {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.agentname {
+    font-size: 12px;
+    line-height: 16px;
+}
+
+.onlinebox {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #00c853;
+    position: relative;
+    top: 13px;
+    left: -12px;
+}
+
+.singleagentbox2 {
+    font-size: 12px;
+    color: rgb(90, 89, 89);
+
+}
+
+.masgcount {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #0c2556;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.onlineagent {
+    padding: 5px;
+    background-color: #dce1ec;
+    min-height: 90vh;
+    border-radius: 10px;
+}
+
+.chatboxx {
+    width: 100%;
+    height: 580px;
+    background-color: #dce1ec;
+    border-radius: 10px;
+    padding: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatboxheader {
+    height: 60px;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+.chatwithsingleagent {
+    color: black;
+}
+
+.headericon {
+    font-size: 20px;
+    color: black;
+}
+
+.inputchatbox {
+    position: absolute;
+    bottom: 4px;
+    width: 98%;
+    background-color: #00c853;
+    height: 50px;
+    border-radius: 10px;
+
+
+}
+
+.inputchatbox input {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    outline: none;
+    border-radius: 10px;
+
+    border: none;
+    padding-left: 10px;
+}
+
+.papericon {
+    position: absolute;
+    right: 0px;
+    height: 50px;
+    border-radius: 10px;
+
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0c2556;
+    color: white;
+    font-size: 22px;
+}
+.papericon button{
+    background: none;
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    color: white;
+}
+
+.inputchatbox input::placeholder {
+    font-size: 13px;
+    color: gray;
+}
+.chatmsgarea{
+    margin-bottom: 45px;
+height: 93%;
+overflow-y: scroll;
+
+    }
+.messagearea {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.sendermessage {
+    min-width: 40px;
+    order: 1;
+    max-width: 400px;
+    background-color: #0c2556;
+    color: white;
+    min-height: 50px;
+    overflow-wrap: break-word;
+    padding: 10px;
+    border-radius: 10px;
+    align-self: flex-end;
+    margin: 3px;
+    margin-top: 10px;
+}
+
+.recievermessage {
+    min-width: 40px;
+    order: 2;
+    border-radius: 10px;
+    max-width: 400px;
+    background-color: #0c2556;
+    color: white;
+    min-height: 50px;
+    overflow-wrap: break-word;
+    padding: 10px;
+    margin: 3px;
+    margin-top: 10px;
+    align-self: flex-start;
+}
+
+.leftmsg {
+    position: relative;
+}
+.leftside{
+display: flex;
+flex-direction: column;
+align-items: end;
+}
+
+/* .rightside {
+    position: relative;
+}
+.rightside{
+display: flex;
+flex-direction: column;
+align-items: start;
+} */
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+ ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  /* Handle */
+    ::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+
+  .messages-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .message {
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 5px;
+  }
+

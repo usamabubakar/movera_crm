@@ -1,0 +1,221 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+:root{
+    --orange:#ff6400;
+    --skyblue:#f2f5f9;
+    --blue:#141025;
+    --black:rgb(0, 0, 0);
+    --white:#fff;
+    --bg:#f2f5f9;
+    --hover:rgba(255, 255, 255, 0.251);
+  }
+
+.sidebar{
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    z-index: 10;
+    height: 100%;
+    transition: all 300ms ease;
+    overflow: hidden;
+    background-color: var(--blue);
+}
+.image-area{
+    margin-top: 30px;
+    display: flex;
+    width: 16rem;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .image-area >img{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+  }
+  .adminname{
+    font-size: 18px;
+  }
+  .des{
+    font-size: 12px;
+  }
+  .menu{
+    display: flex;
+    padding-right: 5px;
+    flex-direction: column;
+    margin-top:3px;
+    width: 16rem;
+  }
+  .menuitems{
+    display: flex;
+    position: relative;
+    margin: 2px 1px 2px 1px;
+    gap: 1rem;
+    color: var(--white);
+    height: 3rem;
+    transition: all 300ms ease;
+    font-size: 14px;
+    margin-left: 10px;
+    border-radius: 10px;
+    padding-left: 10px;
+    cursor: pointer;
+  }
+  link{
+    color: black;
+    text-decoration: none;
+  }
+  .menuitems:hover{
+    background-color: #d3dbee;
+    color: black;
+    transition: all 300ms ease;
+  }
+  .menuitems:hover a{
+    color: black;
+    text-decoration: none;
+  }
+  .menuitems span{
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .menuicon{
+    font-size: 20px;
+    margin-right: 16px;
+  }
+  .active {
+    height: 3rem;
+    width: 16rem;
+    margin-left: -10px;
+    display: flex;
+    justify-content: flex-start; /* Align content to the left */
+    /* align-items: center; */
+    background-color: #d3dbee;
+    border-radius: 10px;
+    padding-left: 10px;
+
+    text-align: left;
+  }
+
+  .active .menuicon{
+    color: black;
+    text-align: left;
+    /* margin: 40px; */
+  }
+  .active span {
+    color: black;
+    text-align: left;
+  }
+.menuitems:last-child{
+  position: absolute;
+  bottom: 0rem;
+  width: 100%;
+  display: flex;
+  color: white;
+  height: auto;
+  margin: 0px;
+  margin-left: 0px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0px;
+  padding-top: 4px;
+  background:none;
+  margin-left: -5px;
+}
+
+.sidebar-footer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16rem;
+  margin-left: 0px;
+}
+.menuitems:last-child:hover{
+  background:none;
+}
+.sidebar-footer button{
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+
+}
+.sidebar-footer .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -2px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #fff transparent transparent transparent;
+}
+.sidebar-footer .tooltiptext1::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -2px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #fff transparent transparent transparent;
+}
+.sidebar-footer .tooltiptext {
+  visibility: hidden;
+  background-color: white;
+  text-align: center;
+  border-radius: 7px;
+  font-weight: bold;
+  padding: 5px 4px;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  font-size: 13px;
+  margin-left: -26px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.sidebar-footer .tooltiptext1 {
+  visibility: hidden;
+  background-color: white;
+  text-align: center;
+  border-radius: 7px;
+  font-weight: bold;
+  padding: 5px 4px;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 32%;
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.logout:hover .tooltiptext1 {
+  visibility: visible;
+  opacity: 1;
+  color: black;
+}
+.eventt:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  color: black;
+}
+.sidebar-footer button:hover{
+  background: rgba(255, 255, 255, 0.251);
+  color: white;
+}
+.anchortag{
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  list-style: none;
+  color: white;
+  text-decoration: none;
+}
+.anchortag :hover{
+  color: black;
+}

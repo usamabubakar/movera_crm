@@ -1,0 +1,272 @@
+*{
+    margin: 0;
+    padding: 0;
+
+}
+
+.agree_navbar{
+    height: 60px;
+    width: 100%;
+color: white;
+font-size: 20px;
+  background-color: #0c2556;
+}
+.agreement{
+margin-top: 50px;
+}
+.e-signature{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.agreebtn{
+    width: 100px;
+    height: 40px;
+    background-color: #0c2556;
+    border: none;
+    outline: none;
+    margin-bottom: 10px;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+.AccordionDetails{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+.inputdaat{
+
+    width: 100%;
+}
+.AccordionDetails input{
+    border: none;
+    border-bottom: 1px solid gray;
+    outline: none;
+    margin: 4px;
+    padding: 2px;
+    width: 90%;
+    margin-top: -3px;
+    margin-bottom: 10px;
+
+}
+.AccordionDetails label{
+    font-weight: bold;
+}
+.agreetable{
+    text-align: center;
+    width: 100%;
+}
+.agreetable th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.termandcon{
+font-size: 12px;
+font-weight: bold;
+color: rgb(82, 81, 81);
+}
+
+.agreement-done{
+    height: 400px;
+    width: 350px;
+    min-width: 300px;
+    background-color: #0c2556;
+    border-radius:20px;
+    display: flex;
+    justify-content: center;
+padding-top: 20px;
+flex-direction: column;
+color: white;
+padding: 10px;
+text-align: center;
+}
+.agreement-done p{
+    margin-top: 10px;
+    font-size: 13px;
+}
+.donecontainer{
+    height: 90%;
+}
+.agreeicon{
+    color: white;
+    font-size: 50px;
+    font-weight: bold;
+}
+.sigpadbtn{
+    padding: 5px 20px 5px 20px;
+    margin: 3px;
+    background-color: #0c2556;
+    color: white;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+}
+
+.pdf{
+    padding: 7px;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 10px;
+    background-color: white;
+    color:black;
+    border: none;
+    outline: none;
+}
+.e-sign{
+
+    background-color: #f6f6f7be;
+}
+.invpoiceheading{
+    width: 100%;
+    height: 40px;
+    letter-spacing: 10px;
+    font-size: 20px;
+    background-color: #1d1b31;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+.numberr{
+    width: 150px;
+    height: 40px;
+    background-color: #1d1b31;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+
+}
+.logoandnumber{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+.ordernumbr{
+    width: 100%;
+    height: 40px;
+    background-color: #1d1b31;
+    color: white;
+    display: flex;
+    padding-top: 8px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+.ordernumbr h6{
+    font-size: 14px;
+}
+.customeralex{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    margin-top: 10px;
+    padding: 0px 12px;
+    background-color: #1d1b31;
+    height: 50px;
+    width: 100%;
+    border-radius: 5px;
+}
+.customerinfo{
+    width: 45%;
+    border: 1px solid #c4c2c2;
+    min-height: 120px;
+    line-height: 30px;
+    padding: 10px;
+}
+
+.orderpayment{
+    width: 55%;
+    min-height: 120px;
+    border: 1px solid #c4c2c2;
+    padding: 10px;
+
+}
+.dialogbox1{
+    width: 45%;
+    min-height: 180px;
+    border: 1px solid #c4c2c2;
+    padding: 10px;
+
+}
+    .dialogbox2 {
+    width: 55%;
+    min-height: 180px;
+    border: 1px solid #c4c2c2;
+}
+.box2heading{
+    width: 100%;
+    height: 30px;
+    background-color: #1d1b31;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.shippmentdetails table{
+    width: 100%;
+    font-size: 14px;
+}
+.shippmentdetails td{
+    border: 1px solid #c4c2c2;
+    text-align: left;
+    padding: 8px;
+  }
+
+  .shippmentdetails table thead{
+    background-color: #1d1b31;
+    color: white;
+
+  }
+  .shippmentdetails table thead th{
+    padding: 8px;
+  }
+  .details{
+    width: 100%;
+    height: auto;
+    border: 1px solid #c4c2c2;
+  }
+  .detailbox{
+    width: 50%;
+    padding: 10px;
+  }
+  .detailbox p{
+    font-size: 13px;
+  }
+.logoo{
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.invalid{
+    width: 100%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.invlaid-text{
+    width: 300px;
+    /* height: 400px; */
+    background-color: #0c2556;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}

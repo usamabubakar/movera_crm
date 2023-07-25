@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.box .row {
+  border: 1px dotted grey;
+}
+
+.box .row.header {
+  flex: 0 1 auto;
+  /* The above is shorthand for:
+  flex-grow: 0,
+  flex-shrink: 1,
+  flex-basis: auto
+  */
+}
+
+.box .row.content {
+  flex: 1 1 auto;
+}
+
+.box .row.footer {
+  flex: 0 1 40px;
+}
+    </style>
+</head>
+<body >
+ 
+<div class="box">
+    <div class="row header">
+      <p><b>header</b>
+        <br />
+        <br />(sized to content)</p>
+    </div>
+    <div class="row content">
+      <p>
+        <b>content</b>
+        (fills remaining space)
+      </p>
+    </div>
+    <div class="row footer">
+      <p><b>footer</b> (fixed height)</p>
+    </div>
+  </div>
+</body>
+</html>

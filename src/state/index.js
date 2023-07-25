@@ -1,0 +1,1 @@
+export * as actionscreator from "./actions/authUser"

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Responsive Sidebar</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="sidebar">
+		<!-- <div style="background-color: black; color: white; width: 50%; margin: 0 auto; font-family: Arial, sans-serif;">
+			<div style="padding: 10px; margin: 10px; background-color: rgb(226, 225, 225); color: black;">
+				<h2>Sorry we missed you!</h2>
+				<p>Hi {name}, <br> <br> We tried to contact you today to follow up on your requested quote; sorry we
+					missed you! Your custom
+					quote is below. Please feel free to contact us with any questions!</p>
+			</div>
+			<hr>
+			<div style="  background-color: #202022;" >
+				<div class="details " style="background-color: #3c3c3d; margin: 10px;  font-size: 14px; padding:10px">
+					<h2>Details</h2>
+					<hr>
+					<table style="border-collapse: collapse; width: 100%; text-align: center; border: 1ps solid black;">
+						<thead>
+							<tr>
+							<th style="border: 1px solid #dddddd;">Origin</th>
+							<th style="border: 1px solid #dddddd;">Destination</th>
+							<th style="border: 1px solid #dddddd;">shipment date</th>
+							<th style="border: 1px solid #dddddd; padding: 10px;">Price</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr style="border: 1px solid #dddddd;">
+								<td style="border: 1px solid #dddddd;">
+									{origin},{origincity},{originstate},{originzipcode}
+								</td>
+								<td style="border: 1px solid #dddddd;">
+									{destinationcity},{destinationstate},{destinationzipcode}
+								</td>
+								<td style="border: 1px solid #dddddd;">{shipdate}</td>
+								<td style="border: 1px solid #dddddd;">200$</td>
+							</tr>
+						</tbody>
+					</table>
+					<h2>Vehicles</h2>
+					<hr>
+					<table style="border-collapse: collapse; width: 100%; text-align: center; border: 1ps solid black;">
+						<thead>
+							<tr>
+							<th style="border: 1px solid #dddddd;">Make</th>
+							<th style="border: 1px solid #dddddd;">Model</th>
+							<th style="border: 1px solid #dddddd;">Modelyear</th>
+							<th style="border: 1px solid #dddddd; padding: 10px;">Modeltype</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr style="border: 1px solid #dddddd;">
+								<td style="border: 1px solid #dddddd;">
+									{origin},{origincity},{originstate},{originzipcode}
+								</td>
+								<td style="border: 1px solid #dddddd;">
+									{destinationcity},{destinationstate},{destinationzipcode}
+								</td>
+								<td style="border: 1px solid #dddddd;">{shipdate}</td>
+								<td style="border: 1px solid #dddddd;">200$</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div style=" padding: 10px;">
+					<h3><b>Your Custom Quote</b></h3>
+					<p>Your custom price for your shipment from {origin} to {destination} is {price}. If you have any
+						questions or would like to book your shipment via phone, please feel free to call us at (516)
+						656-1474.</p>
+
+					<p>You may also book your shipment online via the button below:</p>
+					<div style="width: 100%; display: flex; justify-content: center; cursor: pointer;">
+						<button style="padding: 10px; background: rgb(18, 18, 85); color: white; border: none;">Book
+							Now</button>
+					</div>
+
+					<p>Please feel free to contact us with any questions.</p>
+
+					<p>Sincerely,</p>
+					<p>JK Autoshipping</p>
+					<p>{email}</p>
+					<p>(516) 656-1474</p>
+
+					<p>You are receiving this email because you requested a custom quote to ship your vehicle.</p>
+					<p>No longer interested? No problem, <a href="#">click here</a> and you won't hear from us again.
+					</p>
+				</div>
+			</div>
+		</div> -->
+	<div style=" display: flex; justify-content: center; flex-direction: column; font-family: Arial, sans-serif; align-items: center;">
+		<h1 style="width: 100%; text-align: center; display:block;">
+		H1, usama</h1>
+		<p style=" display: block; text-align: center;">Thank you for your interest in our company! Below you will find your auto transport quote details.</p>
+		<div style="width: 40%;;">
+			<hr>
+			<div style="display: flex; justify-content: space-between; margin-bottom: -10px; margin-top: -10px;">
+				<div>
+					<h3>Door to Door service</h3>
+				</div>
+				<div>
+					<h3>$10000</h3>
+				</div>
+			</div>
+			<hr>
+			<div style="display: flex; justify-content: space-between; margin-bottom: -10px; margin-top: -10px;">
+				<div>
+					<h3>Total</h3>
+				</div>
+				<div>
+					<h3>$10000</h3>
+				</div>
+
+			</div>
+			<hr>
+		</div>
+		<button style="border-radius: 5px; border: none; cursor: pointer; padding: 15px; margin-top: 10px; background-color: rgb(23, 23, 73); color: white; font-size: 16px;
+		">Get Started now!</button>
+		<div style="width: 53%;">
+			<h2>Quote details</h2>
+			<div>
+				origin: {originaddress},{origincity},{originstate},{originzipcode} <br>
+				destination: {destinationaddress}, {destinationcity} , {destinationstate}, {destinationzipcode} <br>
+				ship date: {shipdate} <br>
+				price: {price} <br> <br>
+				If you have any questions or would like us to match a competitor's rate please call me at (516) 656-1474.
+
+Regards, <br>
+<br>
+{companyname} <br>
+{companyemail} <br>
+{companyphone}
+			</div>
+		</div>
+	</div>
+	</div>
+</body>
+
+</html>
