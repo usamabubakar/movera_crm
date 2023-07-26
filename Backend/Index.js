@@ -59,15 +59,15 @@ app.use('/api/vendor', require('./routes/vendorlead'));
 app.use('/api/fetchuserdata', require('./routes/fetchuserdata'));
 app.use('/api/agreement', require('./routes/agreement'));
 app.use('api/sse/notify', require('./routes/soket'))
-// app.use('/api/chat', require('./routes/chat'));
+app.use('/api/chat', require('./routes/chat'));
 
 server.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
 
 app.use(express.static('../build'));
-app.get('*',(req,res)=>{
-res.sendFile(path.resolve(__dirname,'..','build','index.html'));
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'));
 })
 
 
@@ -76,55 +76,82 @@ res.sendFile(path.resolve(__dirname,'..','build','index.html'));
 
 var clients = [];
 
-io.on('connection', function(client) {
-  var userId = client.handshake.query.userId;
+// io.on('connection', function(client) {
+//   var userId = client.handshake.query.userId;
 
-  // Check if the user ID already exists in the client array
-  var existingClientIndex = clients.findIndex(function(c) {
-    return c.userId === userId;
-  });
+//   // Check if the user ID already exists in the client array
+//   var existingClientIndex = clients.findIndex(function(c) {
+//     return c.userId === userId;
+//   });
 
-  // If the user ID exists, remove the existing client object
-  if (existingClientIndex !== -1) {
-    clients.splice(existingClientIndex, 1);
-  }
+//   // If the user ID exists, remove the existing client object
+//   if (existingClientIndex !== -1) {
+//     clients.splice(existingClientIndex, 1);
+//   }
 
-  // Create a new client object with the user ID and push it to the array
-  clients.push({ userId: userId, client: client });
+//   // Create a new client object with the user ID and push it to the array
+//   clients.push({ userId: userId, client: client });
 
-  var clientIds = clients.map(client => client.userId);
-  console.log(clientIds);
+//   var clientIds = clients.map(client => client.userId);
+//   console.log(clientIds);
 
-  client.on('send_private_message', function(data) {
-    console.log('Received message:', data);
+//   client.on('send_private_message', function(data) {
+//     console.log('Received message:', data);
 
-    // Extract the recipient ID from the received data
-    var recipientId = data.recipientId;
+//     // Extract the recipient ID from the received data
+//     var recipientId = data.recipientId;
 
-    // Find the client object of the recipient in the clients array
-    var recipientClient = clients.find(function(c) {
-      return c.userId === recipientId;
-    });
+//     // Find the client object of the recipient in the clients array
+//     var recipientClient = clients.find(function(c) {
+//       return c.userId === recipientId;
+//     });
 
-    if (recipientClient) {
-      // Emit the message to the recipient
-      try {
-        recipientClient.client.emit('private_message', { message: data.message });
-        console.log("Message sent");
-      } catch (error) {
-        console.error("Error occurred while sending the message:", error);
-      }
-    } else {
-      console.log('Recipient not found in clients');
-      // Handle the case when the recipient is not in the clients array
-    }
-  });
+//     if (recipientClient) {
+//       // Emit the message to the recipient
+//       try {
+//         recipientClient.client.emit('private_message', { message: data.message });
+//         console.log("Message sent");
+//       } catch (error) {
+//         console.error("Error occurred while sending the message:", error);
+//       }
+//     } else {
+//       console.log('Recipient not found in clients');
+//       // Handle the case when the recipient is not in the clients array
+//     }
+//   });
 
-  client.on('disconnect', function() {
-    clients.splice(clients.findIndex(function(c) {
-      return c.client.id === client.id;
-    }), 1);
+//   client.on('disconnect', function() {
+//     clients.splice(clients.findIndex(function(c) {
+//       return c.client.id === client.id;
+//     }), 1);
+//   });
+// });
+
+let onlineuser = []
+io.on("connection", (socket) => {
+  // console.log(socket.id);
+
+  socket.on("addnewuser", (userid) => {
+    !onlineuser.some(user => user.userid === userid) &&
+      onlineuser.push({
+        userid,
+        socketid: socket.id
+      })
+  })
+  console.log(onlineuser)
+  io.emit("getonlineuser", onlineuser)
+
+  socket.on('logout', (userid) => {
+    // Remove the user from the onlineUsers array
+    onlineuser = onlineuser.filter((user) => user.userid !== userid);
+
+    // Emit the updated list of online users to all clients
+    io.emit('getonlineuser', onlineuser);
+
+    console.log('User logged out:', userid);
   });
 });
 
+
+// io.listen(5000);
 startSSEServer();

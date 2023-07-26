@@ -41,8 +41,6 @@ export default function Navbar(props) {
 
         }
     }
-
-
     return (
         <div className="container-fluid dashboard">
             <div className="row d-flex dashboard">

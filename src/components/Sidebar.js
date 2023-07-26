@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'
+
 import './Sidebar.css';
 import Adminimage from '../images/3.jpg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faDashboard, faUser, faUsers, faChartLine, faPowerOff,
-    faChat, faCalendarDays, faChartSimple ,faGear, faMessage ,faThumbTack ,faUserTie, faTrashAlt, faArchive, faListAlt, faBoxOpen
+    faChat, faCalendarDays, faChartSimple, faGear, faMessage, faThumbTack, faUserTie, faTrashAlt, faArchive, faListAlt, faBoxOpen
 } from "@fortawesome/free-solid-svg-icons";
 
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink , useLocation} from 'react-router-dom';
 import { logout_user } from '../state/actions/authUser';
 import { useDispatch } from 'react-redux';
+import io from 'socket.io-client';
+import Adminchat from './Adminchat';
+
 import { useSelector } from 'react-redux';
 
 const Sidebar = (props) => {
@@ -18,14 +21,39 @@ const Sidebar = (props) => {
     // const admin = useSelector(state => state.auth.isAdmin);
     // const agentt= useSelector(state => state.auth.isAgent);
     const image = `C:/Users/samiMehar/Desktop/mernstack/react app/CRMdesign/crmdesign/Backend/uploads/${userData?.img}`;
-  const imagg = `/uploads/${userData?.img}`;
-  console.log(imagg)
+    const imagg = `/uploads/${userData?.img}`;
+    //   console.log(imagg)
     const dispatch = useDispatch();
     const handleLogout = (e) => {
         e.preventDefault();
-        console.log("click logout");
+        console.log("click logout")
+
         dispatch(logout_user());
-      };
+        socket.emit('logout', userData.id);
+    };
+
+
+    const [socket, setsocket] = useState(null);
+    useEffect(() => {
+        const newsocket = io("http://localhost:5000"); // Connect to the server
+        console.log(newsocket);
+        setsocket(newsocket)
+        return () => {
+            newsocket.disconnect(); // Disconnect from the server when the component unmounts
+        };
+
+    }, []);
+    const [onlineuser, setonlineuser] = useState([])
+    console.log("onlineuser", onlineuser)
+    useEffect(() => {
+        if (socket === null) return
+        socket.emit("addnewuser", userData.id)
+        socket.on("getonlineuser", (res) => {
+            setonlineuser(res)
+        })
+
+    }, [socket]);
+
 
     return (
         <div className='sidebar' style={{ width: `${props.widthh}rem` }}>
@@ -128,7 +156,7 @@ const Sidebar = (props) => {
                 </div>
 
                 <div className="menuitems">
-                    <NavLink to="/chat" className='anchortag' activeClassName='active' style={{ textDecoration: 'none' }}>
+                    <NavLink to='/chat' className='anchortag' activeClassName='active' style={{ textDecoration: 'none' }}>
                         <div className="menuicon">
                             <FontAwesomeIcon icon={faMessage} />
                         </div>

@@ -16,7 +16,7 @@ import { emailchecker } from '../state/actions/signupAdmin';
 import { useEffect } from 'react';
 import { updateAgent } from '../state/actions/agentCrud';
 import Adminimage from '../images/3.jpg';
-// import PubNub from 'pubnub';
+import { useLocation } from 'react-router-dom';
 
 import './chat.css'
 // import { connectToChatServer, sendMessage } from '../state/actions/message';
@@ -44,19 +44,45 @@ function Adminchat(props) {
     const userData = useSelector(state => state.auth.user);
     const totalagent = useSelector(state => state.dashborddata.totalagent);
     const onlineagent = useSelector(state => state.dashborddata.onlineagent);
+    const [isAgentOnline, setIsAgentOnline] = useState([]); // Define isAgentOnline array
+const [agentIds, setAgentIds] = useState([]);
 
     const [agentmessages, setAgentmessages] = useState([]);
 
 
-    const socket = io("http://localhost:5000", {
-        query: { userId: userData.id }
-    })
+    // const socket = io("http://localhost:5000", {
+    //     query: { userId: userData.id }
+    // })
 
-    // const pubnub = new PubNub({
-    //     publishKey: 'pub-c-9372b520-3296-4ef9-a8ae-436123bc1925',
-    //     subscribeKey: 'sub-c-98acf5d2-c2fb-47c8-b815-db9b1b5d6e2c',
-    //     userId:userData.id
-    //   });
+    // const [socket, setSocket] = useState(null);
+    const [isSocketReady, setIsSocketReady] = useState(false);
+    //   const [onlineuser, setOnlineuser] = useState([]);
+
+
+    const [socket, setsocket] = useState(null);
+    useEffect(() => {
+        const newsocket = io("http://localhost:5000"); // Connect to the server
+        console.log(newsocket);
+        setsocket(newsocket)
+        return () => {
+            newsocket.disconnect(); // Disconnect from the server when the component unmounts
+        };
+
+    }, []);
+    const [onlineuser, setonlineuser] = useState([])
+    console.log("onlineuser", onlineuser)
+    useEffect(() => {
+        if (socket === null) return
+        // socket.emit("addnewuser", userData.id)
+        socket.on("getonlineuser", (res) => {
+            setonlineuser(res)
+        })
+
+    }, [socket]);
+
+    useEffect(() => {
+        console.log("online user same", onlineuser);
+    }, [onlineuser]);
 
 
     const [messageInput, setMessageInput] = useState('');
@@ -64,12 +90,12 @@ function Adminchat(props) {
     const [messages, setMessages] = useState([]);
 
 
-    useEffect(() => {
-        // Connect to the chat server when the component mounts
-        socket.emit('join_chat', { userId: userData.id, name: userData.name });
-        // Send a message to a specific recipient (agent)
-        socket.emit('send_message', { senderId: userData.id, message: "Hello Usama" });
-    }, []);
+    // useEffect(() => {
+    //     // Connect to the chat server when the component mounts
+    //     socket.emit('join_chat', { userId: userData.id, name: userData.name });
+    //     // Send a message to a specific recipient (agent)
+    //     socket.emit('send_message', { senderId: userData.id, message: "Hello Usama" });
+    // }, []);
 
 
 
@@ -90,14 +116,14 @@ function Adminchat(props) {
         }
     };
 
-    socket.on('private_message', (data) => {
-        const msgfromagent=data.message
-        console.log(msgfromagent)
-        setAgentmessages(prevMessages => [...prevMessages, msgfromagent]);
+    // socket.on('private_message', (data) => {
+    //     const msgfromagent=data.message
+    //     console.log(msgfromagent)
+    //     setAgentmessages(prevMessages => [...prevMessages, msgfromagent]);
 
-      // Handle the received message here
-      // You can update the UI or perform any other logic
-    });
+    //   // Handle the received message here
+    //   // You can update the UI or perform any other logic
+    // });
 
 
 
@@ -107,16 +133,15 @@ function Adminchat(props) {
                 <div className="row">
                     <div className="col-md-3">
                         <div className="onlineagent">
-
                             {
-                                onlineagent.map(agent => (
+                                agentdata.agentData.map(agent => (
                                     <div
                                         className={`singleagent d-flex align-items-center justify-content-between ${activeAgentId === agent.id ? 'agentactive' : ''}`}
                                         onClick={() => setActiveAgentId(agent.id)}
                                     >
                                         <div className="singleagentbox1 d-flex align-items-center">
                                             <img src={Adminimage} alt="" />
-                                            <div className="onlinebox"></div>
+                                            <div className={`onlinebox ${isAgentOnline[agentIds.indexOf(agent.id)] ? 'online' : ''}`}></div>
                                             <div className="agentname">
                                                 <span>{agent.name}</span>
                                                 <br />
@@ -130,9 +155,10 @@ function Adminchat(props) {
                                             </div>
                                         </div>
                                     </div>
-
                                 ))
                             }
+
+
 
 
 
@@ -162,7 +188,7 @@ function Adminchat(props) {
 
                                 <div className="messagearea">
                                     <div className="chatmsgarea">
-                                    <div className="messages-container">
+                                        <div className="messages-container">
                                             {messages.map((message, index) => (
                                                 <div className="message" key={index}>
                                                     <div className="sendermessage">{message}</div>

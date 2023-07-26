@@ -2,11 +2,9 @@
 
 # dependencies
 node_modules
+Backend/node_modules
 /.pnp
 .pnp.js
-front2.zip
-frontend.zip
-backend/backend.zip
 .gitignore
 # testing
 /coverage

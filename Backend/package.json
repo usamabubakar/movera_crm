@@ -26,7 +26,7 @@
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.22",
     "qrcode": "^1.5.1",
-    "socket.io": "^4.6.2",
+    "socket.io": "^4.7.1",
     "socket.io-client": "^4.6.2",
     "speakeasy": "^2.0.0",
     "ws": "^8.13.0"

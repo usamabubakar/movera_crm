@@ -66,9 +66,9 @@ export default function Dashborad() {
     }, []);
     const notiidel = (index) => {
         setNotificationnn((prevNotifications) =>
-          prevNotifications.filter((_, i) => i !== index)
+            prevNotifications.filter((_, i) => i !== index)
         );
-      };
+    };
 
 
     // useEffect(() => {
@@ -105,6 +105,27 @@ export default function Dashborad() {
     //         socket.close();
     //     };
     // }, []);
+    // const [socket, setsocket] = useState(null);
+    // useEffect(() => {
+    //     const newsocket = io("http://localhost:5000"); // Connect to the server
+    //     console.log(newsocket)
+    //     setsocket(newsocket)
+
+    //     return () => {
+    //         newsocket.disconnect(); // Disconnect from the server when the component unmounts
+    //     };
+
+    // }, []);
+    // const [onlineuser ,setonlineuser]=useState([])
+    // console.log("onlineuser", onlineuser)
+    // useEffect(() => {
+    //     if (socket === null) return
+    //     socket.emit("addnewuser", userData.id)
+    //     socket.on("getonlineuser",(res)=>{
+    //         setonlineuser(res)
+    //     })
+
+    // }, [socket]);
 
     useEffect(() => {
         const socket = io(); // Connect to the server
