@@ -9,7 +9,7 @@ export const sendEmail = (data) => async (dispatch) => {
 
   try {
     console.log("email action" + data)
-    const response = await axios.post(`${websiteLink}/api/sendemail/sendEmail`, data, config);
+    const response = await axios.post(`${localhost}/api/sendemail/sendEmail`, data, config);
     // Dispatch the success action
     dispatch({ type: EMAIL_SEND_SUCCESS,
        payload: true });

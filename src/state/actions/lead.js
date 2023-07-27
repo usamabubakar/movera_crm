@@ -20,7 +20,7 @@ export const fetchLead =(dataa)=>async(dispatch) => {
     console.log(dataa)
     // const id=data.id
     // console.log(id)
-    const response = await axios.get(`${websiteLink}/api/lead/fetchlead?page=${dataa.pagename}&id=${dataa.id}`);
+    const response = await axios.get(`${localhost}/api/lead/fetchlead?page=${dataa.pagename}&id=${dataa.id}`);
 
     const data = response.data
 console.log(data.onlineadmin);
@@ -37,7 +37,7 @@ console.log("error")
 export const fetchPendingLead =()=>async(dispatch) => {
   const config = getTokenConfig();
   try {
-  const response = await axios.get(`${websiteLink}/api/lead/pendinglead`, config);
+  const response = await axios.get(`${localhost}/api/lead/pendinglead`, config);
 
   const data = response.data
 console.log(data.data);
@@ -58,7 +58,7 @@ export const approveLeadFunction = (data) => async (dispatch) => {
 
   try {
     const response = await axios.put(
-      `${websiteLink}/api/lead/approvalstatus/${data.leadId}/status`,
+      `${localhost}/api/lead/approvalstatus/${data.leadId}/status`,
       { isApproved: data.status },
       config
     );
@@ -86,7 +86,7 @@ export const addLead = (data) =>async (dispatch) => {
   const config = getTokenConfig();
 
     try {
-        const response = await axios.post(`${websiteLink}/api/lead/addlead`, data, config);
+        const response = await axios.post(`${localhost}/api/lead/addlead`, data, config);
       const newlead=response.data.data
       if (response.status === 200) {
         sendNotificationToSSEServer(response.data);
@@ -131,7 +131,7 @@ export const addLead = (data) =>async (dispatch) => {
 
       try {
         const response = await axios.put(
-          `${websiteLink}/api/lead/updatelead/${leadId}`,
+          `${localhost}/api/lead/updatelead/${leadId}`,
           data,
           config
         );
@@ -150,7 +150,7 @@ export const addLead = (data) =>async (dispatch) => {
 console.log("del lead "+ data)
 const config = getTokenConfig();
       try {
-       const response= await axios.delete(`${websiteLink}/api/lead/deleteLead`
+       const response= await axios.delete(`${localhost}/api/lead/deleteLead`
        , {
         ...config, // Include the token in the request headers
         data: data, // Pass the data as the request payload
@@ -171,7 +171,7 @@ const config = getTokenConfig();
       // console.log(typeof data);
       const config = getTokenConfig();
       try {
-        const response = await axios.delete(`${websiteLink}/api/lead/deletependingLead`,data );
+        const response = await axios.delete(`${localhost}/api/lead/deletependingLead`,data );
 
         const leadid = response.data.leadid;
         console.log(leadid);
@@ -192,7 +192,7 @@ const config = getTokenConfig();
 
     export const assignLead=(data)=> async(dispatch)=>{
       try {
-       const response= await axios.post(`${websiteLink}/api/lead/assignlead/`,data);
+       const response= await axios.post(`${localhost}/api/lead/assignlead/`,data);
        dispatch({
 
        })
@@ -206,7 +206,7 @@ const config = getTokenConfig();
     export const updateStatus=(data)=> async(dispatch)=>{
 console.log(data)
       try {
-       const response= await axios.post(`${websiteLink}/api/lead/updatestatus`,data);
+       const response= await axios.post(`${localhost}/api/lead/updatestatus`,data);
        console.log(response.data)
        const dataa=response.data.data
        if(response.status==200)
@@ -227,7 +227,7 @@ console.log(data)
 const config = getTokenConfig();
 console.log(data)
       try {
-       const response= await axios.post(`${websiteLink}/api/lead/payment`, data , config);
+       const response= await axios.post(`${localhost}/api/lead/payment`, data , config);
        if(response.status==200)
        dispatch({
         type:STATUS_UPDATE_SUCCESS
@@ -243,7 +243,7 @@ console.log(data)
     export const fetchnotification=(data)=> async(dispatch)=>{
       console.log("notifactio fect")
       try {
-       const response= await axios.get(`${websiteLink}/api/lead/notification`);
+       const response= await axios.get(`${localhost}/api/lead/notification`);
        if(response.status==200)
        {
          dispatch({
@@ -263,7 +263,7 @@ console.log(data)
       console.log("del lead "+ leadId)
       const config = getTokenConfig();
             try {
-             const response= await axios.delete(`${websiteLink}/api/lead/deletenoti/${leadId}`,config);
+             const response= await axios.delete(`${localhost}/api/lead/deletenoti/${leadId}`,config);
               console.log(response.data.data)
               console.log("usama noti delte")
               dispatch({

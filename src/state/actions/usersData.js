@@ -9,7 +9,7 @@ import { websiteLink, localhost } from "../config/websitepath";
 export const fetchAgentData =()=>async(dispatch) => {
 
       try {
-        const response = await axios.get(`${websiteLink}/api/fetchuserdata/fetchagentdata`);
+        const response = await axios.get(`${localhost}/api/fetchuserdata/fetchagentdata`);
         const data = response.data
 
         dispatch({
@@ -29,7 +29,7 @@ export const fetchAgentData =()=>async(dispatch) => {
 export const fetchVendorData =()=>async(dispatch) => {
 
   try {
-    const response = await axios.get(`${websiteLink}/api/fetchuserdata/fetchvendordata`);
+    const response = await axios.get(`${localhost}/api/fetchuserdata/fetchvendordata`);
     const data = response.data
 // console.log(data)
     dispatch({

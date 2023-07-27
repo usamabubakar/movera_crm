@@ -6,7 +6,7 @@ export const agentactivity = (data) => async (dispatch) => {
     console.log(data)
     try {
 
-      const response = await axios.get(`${websiteLink}/api/lead/agentactivity`, { params: data });
+      const response = await axios.get(`${localhost}/api/lead/agentactivity`, { params: data });
       console.log(response.data.data)
       const dataa=response.data.data
       const totalleads=response.data.totalleads

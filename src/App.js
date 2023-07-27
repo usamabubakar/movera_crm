@@ -36,7 +36,7 @@ function App() {
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
   const isAdmin = useSelector(state => state.auth.isAdmin);
   const isAgent = useSelector(state => state.auth.isAgent);
-
+console.log("chekcing", isAuthenticated);
 
   const handleWidth = () => {
     setHideshow(hideshow === 16 ? 3.5 : 16);
@@ -76,42 +76,46 @@ function App() {
           ) : null
         }
         <div className="routediv">
-          <Routes>
-            {isAuthenticated ? (
-              <>
-                {isAdmin ? (
-                  <>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/lead" element={<Lead />} />
-                    <Route path="/agent" element={<Agent />} />
-                    <Route path="/vendor" element={<Vendor />} />
-                    <Route path="/pendingleads" element={<Isapprovel />} />
-                    <Route path="/trackagent" element={<TrackAgent />} />
-                    <Route path="/chat" element={<Adminchat />} />
-                    <Route path="/login" element={<Navigate to="/dashboard" />} />
-                  </>
-                ) : (
-                  <>
-                    <Route path="/leads" element={<Leadagent />} />
-                    <Route path="/followup" element={<Followup />} />
-                    <Route path="/quotes" element={<Quotes />} />
-                    <Route path="/orders" element={<Orders />} />
-                    <Route path="/agreements" element={<CustomerAgreement />} />
-                    <Route path="/dispatched" element={<Dispatched />} />
-                    <Route path="/potential" element={<Potential />} />
-                    <Route path="/cancelleads" element={<Cancellead />} />
-                    <Route path="/chat" element={<Chat />} />
-                    <Route path="/login" element={<Navigate to="/leads" />} />
-                  </>
-                )}
-              </>
-            ) : (
-              <>
-                <Route path="/login" element={<Login />} />
-              </>
-            )}
-            <Route path="/customeragreement" element={<Agreement />} />
-          </Routes>
+        <Routes>
+    {/* Specific routes for admins */}
+    {isAuthenticated && isAdmin && (
+      <>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/lead" element={<Lead />} />
+        <Route path="/agent" element={<Agent />} />
+        <Route path="/vendor" element={<Vendor />} />
+        <Route path="/pendingleads" element={<Isapprovel />} />
+        <Route path="/trackagent" element={<TrackAgent />} />
+        <Route path="/chat" element={<Adminchat />} />
+        <Route path="/login" element={<Navigate to="/dashboard" />} />
+      </>
+    )}
+
+    {/* Specific routes for agents */}
+    {isAuthenticated && isAgent && (
+      <>
+        <Route path="/leads" element={<Leadagent />} />
+        <Route path="/followup" element={<Followup />} />
+        <Route path="/quotes" element={<Quotes />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/agreements" element={<CustomerAgreement />} />
+        <Route path="/dispatched" element={<Dispatched />} />
+        <Route path="/potential" element={<Potential />} />
+        <Route path="/cancelleads" element={<Cancellead />} />
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/login" element={<Navigate to="/leads" />} />
+      </>
+    )}
+
+    {/* Catch-all route for login */}
+    <Route path="/login" element={<Login />} />
+
+    {/* Any other specific routes */}
+    <Route path="/customeragreement" element={<Agreement />} />
+
+    {/* Handle unknown routes */}
+    <Route path="*" element={<Navigate to="/login" />} />
+  </Routes>
         </div>
       </div>
     </Router>

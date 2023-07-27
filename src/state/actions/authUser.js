@@ -26,7 +26,7 @@ export const login_user = (details) => async (dispatch) => {
   // Request body to check the user details against the database
   const body_data_from_user = JSON.stringify(details);
   try {
-  const response = await axios.post(`${websiteLink}/api/auth/login`, body_data_from_user, config);
+  const response = await axios.post(`${localhost}/api/auth/login`, body_data_from_user, config);
     console.log("syau")
     const token = response.data.token;
     const user = response.data.userdata;
@@ -56,7 +56,7 @@ export const secretkey = (key) => async (dispatch) => {
   try {
     console.log(key)
 
-    const secret_key_response = await axios.post(`${websiteLink}/api/auth/secretadminkey`, { key })
+    const secret_key_response = await axios.post(`${localhost}/api/auth/secretadminkey`, { key })
     const results = secret_key_response;
     console.log(results.status);
     if (results.status==200) {
@@ -80,7 +80,7 @@ export const logout_user = () => (dispatch, getState) => {
   const config = getTokenConfig();
 
   try {
-    axios.post(`${websiteLink}/api/auth/logout`, {}, config).then(res => {
+    axios.post(`${localhost}/api/auth/logout`, {}, config).then(res => {
       dispatch({
         type: LOGOUT_SUCCESS
       })

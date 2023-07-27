@@ -9,7 +9,7 @@ import {
 
 
     try {
-      const response = await axios.get(`${websiteLink}/api/dashbord/dashborddata`);
+      const response = await axios.get(`${localhost}/api/dashbord/dashborddata`);
       const data = response.data.data;
       const onlineAgentNames = response.data.onlineagent;
       const payment= response.data.payment

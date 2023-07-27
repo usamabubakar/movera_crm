@@ -20,7 +20,7 @@ export const signup_Admin = (signupdata) => async (dispatch) => {
     formData.append('email', signupdata.email);
     formData.append('img', signupdata.img);
 
-    const response = await axios.post(`${websiteLink}/api/auth/adminsignup`, formData);
+    const response = await axios.post(`${localhost}/api/auth/adminsignup`, formData);
 
     const resData = response.data;
     console.log(resData);
@@ -50,7 +50,7 @@ export const signup_Admin = (signupdata) => async (dispatch) => {
 export const emailchecker = (email) => async (dispatch) => {
 
   try {
-    const response = await axios.post(`${websiteLink}/api/auth/emailexist` ,{ email });
+    const response = await axios.post(`${localhost}/api/auth/emailexist` ,{ email });
     const responseData = response.data;
     console.log(responseData);
     dispatch({

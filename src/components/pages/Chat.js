@@ -71,7 +71,7 @@ function Adminchat(props) {
 
     const [socket, setsocket] = useState(null);
     useEffect(() => {
-        const newSocket = io("http://localhost:5000"); // Connect to the server
+        const newSocket = io("http://localhost:4000"); // Connect to the server
         console.log(newSocket);
 
         // Set up a listener for the connection status change
@@ -94,20 +94,22 @@ function Adminchat(props) {
     const [newmsg, setnewmsg]=useState(null)
     const [msgrecieve, setmsgrecieve]=useState([]);
     useEffect(() => {
-        if (socket === null) return
-        socket.on("getmsg", (message) => {
-            console.log("Received message:", message);
+        if (socket === null) return;
+        socket.on("getmsg", (message, ackCallback) => {
+          console.log("Received message:", message);
 
-            // Handle the message or do any necessary processing
+          // Perform any actions you need to do with the received message
+          // ...
 
-            // Emit an acknowledgment event to the client
-            const ackMessage = "Message received successfully!";
-            socket.emit("acknowledgment", ackMessage);
-          });
-        return()=>{
-            socket.off('getmsg')
-        }
-    }, [socket]);
+          // Call the acknowledgment callback with a truthy value to indicate successful receipt
+          ackCallback(true);
+        });
+
+        return () => {
+          socket.off("getmsg");
+        };
+      }, [socket]);
+
 
 
     const handleSendMessage = () => {

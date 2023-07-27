@@ -64,7 +64,7 @@ function Adminchat(props) {
 
     const [socket, setsocket] = useState(null);
     useEffect(() => {
-        const newSocket = io("http://localhost:5000"); // Connect to the server
+        const newSocket = io("http://localhost:4000"); // Connect to the server
         console.log(newSocket);
 
         // Set up a listener for the connection status change

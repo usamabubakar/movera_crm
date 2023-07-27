@@ -5,14 +5,15 @@ const expressIp = require('express-ip');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { Server } = require("socket.io");
-const initSocket = require('../Backend/routes/soket');
+// const initSocket = require('../Backend/routes/soket');
 const http = require('http');
 const startSSEServer = require('./routes/soket');
 const server = http.createServer(app);
 const multer = require('multer');
 // // ...
+// const startSSEServer =require('../Backend/routes/soket')
 const path = require('path');
-
+const initSocket = require('./socket1');
 // const upload = require('./routes/multerconfig');
 
 // // ... other configurations and middleware ...
@@ -29,7 +30,8 @@ const io = new Server(server, {
     credentials: true
   },
   allowEIO3: true,
-  reconnection: false
+  reconnection: false,
+  /* other Socket.IO options you may want to include */
 });
 app.use(cors());
 connectDatabase();
@@ -38,7 +40,7 @@ const port = 5000;
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3001"],
+    origin: ["http://localhost:3000", "http://localhost:4000","http://localhost:3001"],
     credentials: true,
   })
 );
@@ -125,53 +127,16 @@ var clients = [];
 //   });
 // });
 
-let onlineuser = []
-io.on("connection", (socket) => {
-  // console.log(socket.id);
 
-  socket.on("addnewuser", (userid) => {
-    console.log("userid", userid)
-    !onlineuser.some(user => user.userid === userid) &&
-      onlineuser.push({
-        userid,
-        socketid: socket.id
-      })
-  })
-  console.log(onlineuser)
-  io.emit("getonlineuser", onlineuser)
-  socket.on('newmsg', (data) => {
-    const msg=data[0].message
-    const user = onlineuser.filter((user) => user.userid!== data.recipientId);
-    const socket_id= user[0].socketid
-    if(user){
-      io.to(socket_id).emit("getmsg", msg, (response) => {
-        // This callback will be executed when the client receives an acknowledgment from the server
-        if (response) {
-          console.log("Message sent successfully:", response);
-        } else {
-          console.log("Message delivery timed out.");
-        }
-      })
-
-    }
-  })
-
-
-  socket.on('logout', (userid) => {
-    // Remove the user from the onlineUsers array
-    onlineuser = onlineuser.filter((user) => user.userid !== userid);
-
-    // Emit the updated list of online users to all clients
-    io.emit('getonlineuser', onlineuser);
-
-    console.log('User logged out:', userid);
-  });
-
-});
 
 
 // io.listen(5000);
 // startSSEServer();
+io.listen(4000)
+initSocket(io);
+startSSEServer();
+
 server.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
+
