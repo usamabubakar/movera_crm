@@ -61,9 +61,7 @@ app.use('/api/agreement', require('./routes/agreement'));
 app.use('api/sse/notify', require('./routes/soket'))
 app.use('/api/chat', require('./routes/chat'));
 
-server.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+
 
 app.use(express.static('../build'));
 app.get('*', (req, res) => {
@@ -132,6 +130,7 @@ io.on("connection", (socket) => {
   // console.log(socket.id);
 
   socket.on("addnewuser", (userid) => {
+    console.log("userid", userid)
     !onlineuser.some(user => user.userid === userid) &&
       onlineuser.push({
         userid,
@@ -140,6 +139,23 @@ io.on("connection", (socket) => {
   })
   console.log(onlineuser)
   io.emit("getonlineuser", onlineuser)
+  socket.on('newmsg', (data) => {
+    const msg=data[0].message
+    const user = onlineuser.filter((user) => user.userid!== data.recipientId);
+    const socket_id= user[0].socketid
+    if(user){
+      io.to(socket_id).emit("getmsg", msg, (response) => {
+        // This callback will be executed when the client receives an acknowledgment from the server
+        if (response) {
+          console.log("Message sent successfully:", response);
+        } else {
+          console.log("Message delivery timed out.");
+        }
+      })
+
+    }
+  })
+
 
   socket.on('logout', (userid) => {
     // Remove the user from the onlineUsers array
@@ -150,8 +166,12 @@ io.on("connection", (socket) => {
 
     console.log('User logged out:', userid);
   });
+
 });
 
 
 // io.listen(5000);
-startSSEServer();
+// startSSEServer();
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});

@@ -44,8 +44,6 @@ function Adminchat(props) {
     const userData = useSelector(state => state.auth.user);
     const totalagent = useSelector(state => state.dashborddata.totalagent);
     const onlineagent = useSelector(state => state.dashborddata.onlineagent);
-    const [isAgentOnline, setIsAgentOnline] = useState([]); // Define isAgentOnline array
-const [agentIds, setAgentIds] = useState([]);
 
     const [agentmessages, setAgentmessages] = useState([]);
 
@@ -58,22 +56,40 @@ const [agentIds, setAgentIds] = useState([]);
     const [isSocketReady, setIsSocketReady] = useState(false);
     //   const [onlineuser, setOnlineuser] = useState([]);
 
+    const [messageInput, setMessageInput] = useState('');
+    const [activeAgentId, setActiveAgentId] = useState(null);
+    const [messages, setMessages] = useState([]);
+
+
 
     const [socket, setsocket] = useState(null);
     useEffect(() => {
-        const newsocket = io("http://localhost:5000"); // Connect to the server
-        console.log(newsocket);
-        setsocket(newsocket)
-        return () => {
-            newsocket.disconnect(); // Disconnect from the server when the component unmounts
-        };
+        const newSocket = io("http://localhost:5000"); // Connect to the server
+        console.log(newSocket);
 
-    }, []);
+        // Set up a listener for the connection status change
+        newSocket.on("connect", () => {
+          console.log("Socket connected.");
+        });
+
+        newSocket.on("disconnect", () => {
+          console.log("Socket disconnected.");
+        });
+
+        setsocket(newSocket);
+
+        // Clean up: Disconnect from the server when the component unmounts
+        return () => {
+          newSocket.disconnect();
+        };
+      }, []);
+
+
     const [onlineuser, setonlineuser] = useState([])
     console.log("onlineuser", onlineuser)
     useEffect(() => {
         if (socket === null) return
-        // socket.emit("addnewuser", userData.id)
+        socket.emit("addnewuser", userData.id)
         socket.on("getonlineuser", (res) => {
             setonlineuser(res)
         })
@@ -85,17 +101,12 @@ const [agentIds, setAgentIds] = useState([]);
     }, [onlineuser]);
 
 
-    const [messageInput, setMessageInput] = useState('');
-    const [activeAgentId, setActiveAgentId] = useState(null);
-    const [messages, setMessages] = useState([]);
-
-
-    // useEffect(() => {
-    //     // Connect to the chat server when the component mounts
-    //     socket.emit('join_chat', { userId: userData.id, name: userData.name });
-    //     // Send a message to a specific recipient (agent)
-    //     socket.emit('send_message', { senderId: userData.id, message: "Hello Usama" });
-    // }, []);
+const [newmsg, setnewmsg]=useState(null)
+    useEffect(() => {
+        console.log("newmasg",newmsg)
+        if (socket === null) return
+        socket.emit("newmsg",[newmsg]);
+    }, [newmsg]);
 
 
 
@@ -108,13 +119,27 @@ const [agentIds, setAgentIds] = useState([]);
                 recipientId: activeAgentId,
                 message: messageInput
             };
-            console.log("clcick")
-
-            socket.emit('send_private_message', data);
+            setnewmsg(data)
             setMessages(prevMessages => [...prevMessages, messageInput]);
             setMessageInput('');
         }
     };
+
+
+
+    useEffect(() => {
+        console.log("online user same", onlineuser);
+    }, [onlineuser]);
+
+
+    // useEffect(() => {
+    //     // Connect to the chat server when the component mounts
+    //     socket.emit('join_chat', { userId: userData.id, name: userData.name });
+    //     // Send a message to a specific recipient (agent)
+    //     socket.emit('send_message', { senderId: userData.id, message: "Hello Usama" });
+    // }, []);
+
+
 
     // socket.on('private_message', (data) => {
     //     const msgfromagent=data.message
@@ -124,8 +149,17 @@ const [agentIds, setAgentIds] = useState([]);
     //   // Handle the received message here
     //   // You can update the UI or perform any other logic
     // });
+    const [isOnline, setIsOnline] = useState(false);
 
-
+    const agentIds = agentdata.agentData.map(agent => agent.id);
+    const onlineUserIds = onlineuser.map(user => user.userid);
+    const isAgentOnline = agentIds.map(agentId => onlineUserIds.some(userId => userId === agentId));
+    const handleAgentClick = (agentId) => {
+        setActiveAgentId(agentId);
+        setIsOnline(onlineUserIds.includes(agentId));
+        // console.log(agentIndex)
+        console.log(isOnline)
+      };
 
     return (
         <>
@@ -133,15 +167,18 @@ const [agentIds, setAgentIds] = useState([]);
                 <div className="row">
                     <div className="col-md-3">
                         <div className="onlineagent">
-                            {
-                                agentdata.agentData.map(agent => (
+                            {agents.map((agent, index) => {
+                                const isOnlinee = isAgentOnline[index];
+                                return (
                                     <div
+                                        key={agent.id}
                                         className={`singleagent d-flex align-items-center justify-content-between ${activeAgentId === agent.id ? 'agentactive' : ''}`}
-                                        onClick={() => setActiveAgentId(agent.id)}
+                                        onClick={() => handleAgentClick(agent.id)
+                                        }
                                     >
                                         <div className="singleagentbox1 d-flex align-items-center">
                                             <img src={Adminimage} alt="" />
-                                            <div className={`onlinebox ${isAgentOnline[agentIds.indexOf(agent.id)] ? 'online' : ''}`}></div>
+                                            {isOnlinee ? <div className="onlinebox"></div> : <div className="offline"></div>}
                                             <div className="agentname">
                                                 <span>{agent.name}</span>
                                                 <br />
@@ -155,71 +192,69 @@ const [agentIds, setAgentIds] = useState([]);
                                             </div>
                                         </div>
                                     </div>
-                                ))
-                            }
-
-
-
-
-
+                                );
+                            })}
                         </div>
                     </div>
                     <div className="col-md-9">
 
-                        {activeAgentId ? (
-                            <div className="chatboxx">
-                                <div className="chatboxheader d-flex justify-content-between">
-                                    <div className="chatwithsingleagent d-flex align-items-center">
-                                        <div className="singleagentbox1 d-flex align-items-center">
-                                            <img src={Adminimage} alt="" />
-                                            <div className="onlinebox"></div>
+                        {activeAgentId ?
+
+                            (
+
+                                <div className="chatboxx">
+                                    <div className="chatboxheader d-flex justify-content-between">
+                                        <div className="chatwithsingleagent d-flex align-items-center">
+                                            <div className="singleagentbox1 d-flex align-items-center">
+                                                <img src={Adminimage} alt="" />
+                                                <div className={isOnline?'onlinebox':'offlinebox'}></div>
+                                            </div>
+                                            <div className="singleagentbox2">
+                                                <div className="agentname">
+                                                    <span>{agentdata.agentData.find(agent => agent.id === activeAgentId)?.name}</span>
+                                                   <div>{isOnline ? 'Online' : 'Offline'}</div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="singleagentbox2">
-                                            <div className="agentname">
-                                                <span>{onlineagent.find(agent => agent.id === activeAgentId)?.name}</span>
-                                                <div>Online</div>
+                                        <div className="headericon d-flex align-items-center">
+                                            <FontAwesomeIcon icon={faBars} className="mr-1" />
+                                        </div>
+                                    </div>
+
+                                    <div className="messagearea">
+                                        <div className="chatmsgarea">
+                                            <div className="messages-container">
+                                                {messages.map((message, index) => (
+                                                    <div className="message" key={index}>
+                                                        <div className="sendermessage">{message}</div>
+                                                        {index < agentmessages.length && (
+                                                            <div className="recievermessage">{agentmessages[index]}</div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                {agentmessages.slice(messages.length).map((agentmessage, index) => (
+                                                    <div className="message" key={index}>
+                                                        <div className="recievermessage">{agentmessage}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                        </div>
+                                        <div className="inputchatbox d-flex">
+                                            <input type="text" name="" id="" value={messageInput} onChange={(e) => setMessageInput(e.target.value)} placeholder="Write message here" />
+                                            <div className="papericon">
+                                                <button onClick={handleSendMessage}>
+                                                    <FontAwesomeIcon icon={faPaperPlane} className="mr-1" />
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="headericon d-flex align-items-center">
-                                        <FontAwesomeIcon icon={faBars} className="mr-1" />
-                                    </div>
                                 </div>
-
-                                <div className="messagearea">
-                                    <div className="chatmsgarea">
-                                        <div className="messages-container">
-                                            {messages.map((message, index) => (
-                                                <div className="message" key={index}>
-                                                    <div className="sendermessage">{message}</div>
-                                                    {index < agentmessages.length && (
-                                                        <div className="recievermessage">{agentmessages[index]}</div>
-                                                    )}
-                                                </div>
-                                            ))}
-                                            {agentmessages.slice(messages.length).map((agentmessage, index) => (
-                                                <div className="message" key={index}>
-                                                    <div className="recievermessage">{agentmessage}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                    </div>
-                                    <div className="inputchatbox d-flex">
-                                        <input type="text" name="" id="" value={messageInput} onChange={(e) => setMessageInput(e.target.value)} placeholder="Write message here" />
-                                        <div className="papericon">
-                                            <button onClick={handleSendMessage}>
-                                                <FontAwesomeIcon icon={faPaperPlane} className="mr-1" />
-                                            </button>
-                                        </div>
-                                    </div>
+                            ) : (
+                                <div className="chatboxx d-flex justify-content-center align-items-center">
+                                    <b>Select any person to start the chat</b>
                                 </div>
-                            </div>
-                        ) : (
-                            <div className="chatboxx d-flex justify-content-center align-items-center">
-                                <b>Select any person to start the chat</b>
-                            </div>
-                        )}
+                            )}
 
 
 

@@ -49,9 +49,9 @@ function Adminchat(props) {
     const [messages, setMessages] = useState([]);
 
 
-    const socket = io("http://localhost:5000", {
-        query: { userId: userData.id }
-    })
+    // const socket = io("http://localhost:5000", {
+    //     query: { userId: userData.id }
+    // })
 
     // const pubnub = new PubNub({
     //     publishKey: 'pub-c-9372b520-3296-4ef9-a8ae-436123bc1925',
@@ -62,12 +62,52 @@ function Adminchat(props) {
 
     const [messageInput, setMessageInput] = useState('');
 
+    // useEffect(() => {
+    //     // Connect to the chat server when the component mounts
+    //     socket.emit('join_chat', { userId: userData.id, name: userData.name });
+    //     // Send a message to a specific recipient (agent)
+    //     socket.emit('send_message', { senderId: userData.id, message: "Hello Usama" });
+    // }, []);
+
+    const [socket, setsocket] = useState(null);
     useEffect(() => {
-        // Connect to the chat server when the component mounts
-        socket.emit('join_chat', { userId: userData.id, name: userData.name });
-        // Send a message to a specific recipient (agent)
-        socket.emit('send_message', { senderId: userData.id, message: "Hello Usama" });
-    }, []);
+        const newSocket = io("http://localhost:5000"); // Connect to the server
+        console.log(newSocket);
+
+        // Set up a listener for the connection status change
+        newSocket.on("connect", () => {
+          console.log("Socket connected.");
+        });
+
+        newSocket.on("disconnect", () => {
+          console.log("Socket disconnected.");
+        });
+
+        setsocket(newSocket);
+
+        // Clean up: Disconnect from the server when the component unmounts
+        return () => {
+          newSocket.disconnect();
+        };
+      }, []);
+
+    const [newmsg, setnewmsg]=useState(null)
+    const [msgrecieve, setmsgrecieve]=useState([]);
+    useEffect(() => {
+        if (socket === null) return
+        socket.on("getmsg", (message) => {
+            console.log("Received message:", message);
+
+            // Handle the message or do any necessary processing
+
+            // Emit an acknowledgment event to the client
+            const ackMessage = "Message received successfully!";
+            socket.emit("acknowledgment", ackMessage);
+          });
+        return()=>{
+            socket.off('getmsg')
+        }
+    }, [socket]);
 
 
     const handleSendMessage = () => {
@@ -88,19 +128,19 @@ function Adminchat(props) {
     };
 
 
-    socket.on('private_message', (data) => {
-        const msgfromadmin = data.message
-        console.log(msgfromadmin)
-        setAdminmessages(prevMessages => [...prevMessages, msgfromadmin]);
+    // socket.on('private_message', (data) => {
+    //     const msgfromadmin = data.message
+    //     console.log(msgfromadmin)
+    //     setAdminmessages(prevMessages => [...prevMessages, msgfromadmin]);
 
-        // Handle the received message here
-        // You can update the UI or perform any other logic
-    });
+    //     // Handle the received message here
+    //     // You can update the UI or perform any other logic
+    // });
 
-    window.addEventListener('beforeunload', () => {
-        const socket = io(); // Create a new socket connection
-        socket.emit('disconnect'); // Emit the disconnect event
-    });
+    // window.addEventListener('beforeunload', () => {
+    //     const socket = io(); // Create a new socket connection
+    //     socket.emit('disconnect'); // Emit the disconnect event
+    // });
 
 
     return (

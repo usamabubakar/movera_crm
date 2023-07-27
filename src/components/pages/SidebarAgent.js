@@ -1,4 +1,4 @@
-import React from 'react';
+
 import '../Sidebar.css';
 import Adminimage from './3.jpg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,7 +6,10 @@ import { faDashboard, faUser, faUsers, faChartLine, faPowerOff, faCalendarDays, 
 , faQuoteRight, faTruck, faFileArchive, faCloud, faHandshake, faDiamondTurnRight,
  faTrashAlt, faArchive, faListAlt, faBoxOpen,faMessage
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from 'react';
+import io from 'socket.io-client';
+
+import React, { useState, useEffect } from 'react';
+
 import { NavLink } from 'react-router-dom';
 import { logout_user } from '../../state/actions/authUser';
 import { useDispatch } from 'react-redux';
@@ -20,7 +23,31 @@ const SidebarAgent = (props) => {
         e.preventDefault();
         console.log("click logout")
         dispatch(logout_user())
+        socket.emit('logout', userData.id);
+
     }
+
+    const [socket, setsocket] = useState(null);
+    useEffect(() => {
+        const newsocket = io("http://localhost:5000"); // Connect to the server
+        console.log(newsocket);
+        setsocket(newsocket)
+        return () => {
+            newsocket.disconnect(); // Disconnect from the server when the component unmounts
+        };
+
+    }, []);
+
+    const [onlineuser, setonlineuser] = useState([])
+    console.log("onlineuser agent ", onlineuser)
+    useEffect(() => {
+        if (socket === null) return
+        socket.emit("addnewuser", userData.id)
+        socket.on("getonlineuser", (res) => {
+            setonlineuser(res)
+        })
+
+    }, [socket]);
 
     return (
         <div className='sidebar' style={{ width: `${props.widthh}rem` }}>
@@ -43,7 +70,7 @@ const SidebarAgent = (props) => {
                         </span>
                     </NavLink>
                 </div>
-                <div className="menuitems">
+                {/* <div className="menuitems">
                     <NavLink to="/followup" className='anchortag' activeClassName='active' style={{ textDecoration: 'none' }}>
                         <div className="menuicon">
                             <FontAwesomeIcon icon={faDiamondTurnRight} />
@@ -92,7 +119,7 @@ const SidebarAgent = (props) => {
                             Dispatched
                         </span>
                     </NavLink>
-                </div>
+                </div> */}
 
                 <div className="menuitems">
                     <NavLink to="/potential" className='anchortag' style={{ textDecoration: 'none' }}>

@@ -46,6 +46,14 @@
     top: 13px;
     left: -12px;
 }
+.offlinebox {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: relative;
+    top: 13px;
+    left: -12px;
+}
 
 .singleagentbox2 {
     font-size: 12px;

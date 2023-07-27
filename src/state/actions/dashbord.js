@@ -3,12 +3,13 @@ import {
   } from './types';
   import axios from "axios";
 
+  import { websiteLink, localhost } from "../config/websitepath";
 
   export const Dashboard = () => async (dispatch) => {
 
 
     try {
-      const response = await axios.get('http://localhost:5000/api/dashbord/dashborddata');
+      const response = await axios.get(`${websiteLink}/api/dashbord/dashborddata`);
       const data = response.data.data;
       const onlineAgentNames = response.data.onlineagent;
       const payment= response.data.payment

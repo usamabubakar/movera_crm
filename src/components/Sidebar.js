@@ -35,14 +35,25 @@ const Sidebar = (props) => {
 
     const [socket, setsocket] = useState(null);
     useEffect(() => {
-        const newsocket = io("http://localhost:5000"); // Connect to the server
-        console.log(newsocket);
-        setsocket(newsocket)
-        return () => {
-            newsocket.disconnect(); // Disconnect from the server when the component unmounts
-        };
+        const newSocket = io("http://localhost:5000"); // Connect to the server
+        console.log(newSocket);
 
-    }, []);
+        // Set up a listener for the connection status change
+        newSocket.on("connect", () => {
+          console.log("Socket connected.");
+        });
+
+        newSocket.on("disconnect", () => {
+          console.log("Socket disconnected.");
+        });
+
+        setsocket(newSocket);
+        // Clean up: Disconnect from the server when the component unmounts
+        return () => {
+          newSocket.disconnect();
+        };
+      }, []);
+
     const [onlineuser, setonlineuser] = useState([])
     console.log("onlineuser", onlineuser)
     useEffect(() => {
@@ -52,7 +63,7 @@ const Sidebar = (props) => {
             setonlineuser(res)
         })
 
-    }, [socket]);
+    }, []);
 
 
     return (
@@ -123,7 +134,7 @@ const Sidebar = (props) => {
                     </NavLink>
                 </div>
 
-
+{/*
                 <div className="menuitems">
                     <NavLink to="/vendor" className='anchortag' activeClassName='active' style={{ textDecoration: 'none' }}>
                         <div className="menuicon">
@@ -153,7 +164,7 @@ const Sidebar = (props) => {
                             Pending Leads
                         </span>
                     </NavLink>
-                </div>
+                </div> */}
 
                 <div className="menuitems">
                     <NavLink to='/chat' className='anchortag' activeClassName='active' style={{ textDecoration: 'none' }}>
