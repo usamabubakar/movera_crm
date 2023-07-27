@@ -8,6 +8,7 @@ export const  ADMIN_SIGUP_ERROR= 'ADMIN_SIGUP_ERROR';
 export const  EMAIL_EXIST= 'EMAIL_EXIST';
 export const  SUCCESS= 'SUCCESS';
 export const  GET_ERRORS = 'GET_ERRORS';
+export const  USER_LOADED = 'USER_LOADED';
 
 export const  TOKEN_VERIFICATION_FAIL = 'TOKEN_VERIFICATION_FAIL';
 

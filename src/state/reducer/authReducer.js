@@ -1,6 +1,7 @@
 import {
     LOGIN_SUCCESS,
     LOGIN_FAIL,
+    USER_LOADED,
     LOGOUT_SUCCESS,
     SECRET_KEY_SUCCESS,
     TOKEN_VERIFICATION_FAIL,
@@ -55,7 +56,22 @@ const authReducer = (state = initialState, action) => {
                 isAgent: isAgentt,
                 token: token
             };
+        case USER_LOADED:
+            return {
+                ...state,
+                isAuthenticated: true,
+                isLoading: false,
+                // user: action.payload
+                user : {
+                    id  : action.payload.id,
+                    name: action.payload.name,
+                    email: action.payload.email,
+                    img: action.payload.img
+                },
+                isAdmin: action.payload.isAdmin,
+                isAgent: action.payload.isAgentt
 
+            };
         case LOGOUT_SUCCESS:
             localStorage.removeItem("token");
             localStorage.removeItem("userData");
@@ -88,6 +104,7 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 errorMessage: action.payload.message
             }
+        
         case TOKEN_VERIFICATION_FAIL:
             return {
                 ...state,

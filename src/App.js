@@ -28,6 +28,7 @@ import { faCircleArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import './App.css';
 
 import store from './state/store';
+import { loadUser } from './state/actions/authUser';
 
 
 
@@ -47,6 +48,16 @@ console.log("chekcing", isAuthenticated);
       window.location.href = '/login';
     }
   }, [isAuthenticated]);
+
+useEffect(() => {
+    const load = async () =>{
+      await store.dispatch(loadUser());
+      
+    }
+
+    load();
+    
+}, []);
 
 
   return (
