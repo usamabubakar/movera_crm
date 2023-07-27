@@ -35,14 +35,25 @@ const Sidebar = (props) => {
 
     const [socket, setsocket] = useState(null);
     useEffect(() => {
-        const newsocket = io("http://localhost:5000"); // Connect to the server
-        console.log(newsocket);
-        setsocket(newsocket)
-        return () => {
-            newsocket.disconnect(); // Disconnect from the server when the component unmounts
-        };
+        const newSocket = io("http://localhost:4000"); // Connect to the server
+        console.log(newSocket);
 
-    }, []);
+        // Set up a listener for the connection status change
+        newSocket.on("connect", () => {
+          console.log("Socket connected.");
+        });
+
+        newSocket.on("disconnect", () => {
+          console.log("Socket disconnected.");
+        });
+
+        setsocket(newSocket);
+        // Clean up: Disconnect from the server when the component unmounts
+        return () => {
+          newSocket.disconnect();
+        };
+      }, []);
+
     const [onlineuser, setonlineuser] = useState([])
     console.log("onlineuser", onlineuser)
     useEffect(() => {
@@ -52,14 +63,14 @@ const Sidebar = (props) => {
             setonlineuser(res)
         })
 
-    }, [socket]);
+    }, []);
 
 
     return (
         <div className='sidebar' style={{ width: `${props.widthh}rem` }}>
             <div style={{ color: 'white' }}></div>
             <div className="image-area">
-                <img src={imagg} alt="" />
+                <img src={Adminimage} alt="" />
 
                 <h5 className="pt-2 adminname">{userData?.name}</h5>
                 <p className="mt-n2 des">Admin Dashboard</p>

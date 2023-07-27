@@ -7,6 +7,7 @@ import {
   TOKEN_VERIFICATION_FAIL
 } from '../actions/types'
 import axios from "axios";
+import { websiteLink, localhost } from "../config/websitepath";
 
 import { notification } from './notification';
 import getTokenConfig from './tokenConfig';
@@ -28,7 +29,7 @@ export const fetchAgentData = () => async (dispatch) => {
       config.headers.Authorization = `Bearer ${token}`; // Include the token in the request headers
     }
 
-    const response = await axios.get('http://localhost:5000/api/agentcurd/', config);
+    const response = await axios.get(`${localhost}/api/agentcurd/`, config);
 
     const data = response.data
       dispatch({
@@ -61,7 +62,7 @@ export const addAgent = (data) => async (dispatch) => {
   };
 
   try {
-    const response = await axios.post('http://localhost:5000/api/agentcurd/addagent', data, config);
+    const response = await axios.post(`${localhost}/api/agentcurd/addagent`, data, config);
     const agent = response.data.user
     console.log(agent.id)
     dispatch({
@@ -88,7 +89,7 @@ export const deleteAgent = (agentId) => async (dispatch) => {
   const config = getTokenConfig();
 
   try {
-    const response = await axios.delete(`http://localhost:5000/api/agentcurd/deleteAgent/${agentId}`,config);
+    const response = await axios.delete(`${localhost}/api/agentcurd/deleteAgent/${agentId}`,config);
     const agentid = response.data.data
     dispatch({
       type: AGENT_DELETE_SUCCESS,
@@ -110,7 +111,7 @@ export const updateAgent = (data) => async (dispatch) => {
     }
   };
   try {
-    const response = await axios.post('http://localhost:5000/api/agentcurd/updateagent', data, config);
+    const response = await axios.post(`${localhost}/api/agentcurd/updateagent`, data, config);
     console.log("action update")
     const agentdata = response.data.data
     console.log(agentdata._id)

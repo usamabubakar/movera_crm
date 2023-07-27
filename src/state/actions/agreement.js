@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { AGREEMENT_DATA_FETCH } from './types';
+import { websiteLink, localhost } from "../config/websitepath";
 
 export const fetchagreemetndata = (hashId) => async (dispatch) => {
   try {
     console.log(hashId);
-    const response = await axios.get(`http://localhost:5000/api/agreement/fetchagreementleaddata?hash_id=${hashId}`);
+    const response = await axios.get(`${localhost}/api/agreement/fetchagreementleaddata?hash_id=${hashId}`);
 
     dispatch({ type: AGREEMENT_DATA_FETCH, payload: response.data.data });
   } catch (error) {
@@ -18,7 +19,7 @@ export const addagreement = (data) => async (dispatch) => {
     try {
         console.log("Action")
       console.log(data);
-      const response = await axios.post(`http://localhost:5000/api/agreement/saveagreement`, data);
+      const response = await axios.post(`${localhost}/api/agreement/saveagreement`, data);
 
     //   dispatch({ type: AGREEMENT_DATA_FETCH, payload: response.data.data });
     } catch (error) {

@@ -4,11 +4,12 @@ import {
   GET_ERRORS
 } from './types';
 import axios from "axios";
+import { websiteLink, localhost } from "../config/websitepath";
 
 export const fetchAgentData =()=>async(dispatch) => {
 
       try {
-        const response = await axios.get('http://localhost:5000/api/fetchuserdata/fetchagentdata');
+        const response = await axios.get(`${localhost}/api/fetchuserdata/fetchagentdata`);
         const data = response.data
 
         dispatch({
@@ -28,7 +29,7 @@ export const fetchAgentData =()=>async(dispatch) => {
 export const fetchVendorData =()=>async(dispatch) => {
 
   try {
-    const response = await axios.get('http://localhost:5000/api/fetchuserdata/fetchvendordata');
+    const response = await axios.get(`${localhost}/api/fetchuserdata/fetchvendordata`);
     const data = response.data
 // console.log(data)
     dispatch({

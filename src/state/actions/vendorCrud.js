@@ -6,13 +6,14 @@ import {
   GET_ERRORS
 } from '../actions/types'
 import axios from "axios";
+import { websiteLink, localhost } from "../config/websitepath";
 
 
 
 export const fetchVendorData =()=>async(dispatch) => {
 
   try {
-    const response = await axios.get('http://localhost:5000/api/fetchuserdata/fetchvendordata');
+    const response = await axios.get(`${localhost}/api/fetchuserdata/fetchvendordata`);
     const data = response.data
     dispatch({
         type:VENDOR_FETCHING_SUCCESS,
@@ -36,7 +37,7 @@ export const addVendor = (data) => async (dispatch) => {
     }
   };
   try {
-    const response = await axios.post('http://localhost:5000/api/vendorcrud/addvendor', data, config);
+    const response = await axios.post(`${localhost}/api/vendorcrud/addvendor`, data, config);
     const vendor=response.data.user
     dispatch({
       type: VENDOR_ADD_SUCCESS,
@@ -59,7 +60,7 @@ export const addVendor = (data) => async (dispatch) => {
 export const deleteVendor = (agentId) => async (dispatch) => {
 
   try {
-   const response= await axios.delete(`http://localhost:5000/api/vendorcrud/deletevendor/${agentId}`);
+   const response= await axios.delete(`${localhost}/api/vendorcrud/deletevendor/${agentId}`);
 const vendorid=response.data.vendorid
     dispatch({
       type: VENDOR_DELETE_SUCCESS,
@@ -81,7 +82,7 @@ export const updateVendor = (data) => async (dispatch) => {
     }
   };
   try {
-    const response = await axios.post('http://localhost:5000/api/vendorcrud/updatevendor', data, config);
+    const response = await axios.post(`${localhost}/api/vendorcrud/updatevendor`, data, config);
     console.log(response);
     dispatch({
       type: VENDOR_UPDATE_SUCCESS,

@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { AGENT_ACTIVITY_FAILURE, AGENT_ACTIVITY_SUCCESS} from './types';
+import { websiteLink, localhost } from "../config/websitepath";
 
 export const agentactivity = (data) => async (dispatch) => {
     console.log(data)
     try {
-      const response = await axios.get('http://localhost:5000/api/lead/agentactivity', { params: data });
+
+      const response = await axios.get(`${localhost}/api/lead/agentactivity`, { params: data });
       console.log(response.data.data)
       const dataa=response.data.data
       const totalleads=response.data.totalleads

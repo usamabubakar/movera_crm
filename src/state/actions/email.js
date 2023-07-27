@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { EMAIL_SEND_SUCCESS, EMAIL_SEND_FAILURE } from './types';
 import getTokenConfig from './tokenConfig';
+import { websiteLink, localhost } from "../config/websitepath";
 
 
 export const sendEmail = (data) => async (dispatch) => {
@@ -8,7 +9,7 @@ export const sendEmail = (data) => async (dispatch) => {
 
   try {
     console.log("email action" + data)
-    const response = await axios.post('http://localhost:5000/api/sendemail/sendEmail', data, config);
+    const response = await axios.post(`${localhost}/api/sendemail/sendEmail`, data, config);
     // Dispatch the success action
     dispatch({ type: EMAIL_SEND_SUCCESS,
        payload: true });
