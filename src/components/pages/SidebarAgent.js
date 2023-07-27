@@ -70,7 +70,7 @@ const SidebarAgent = (props) => {
                         </span>
                     </NavLink>
                 </div>
-                {/* <div className="menuitems">
+                <div className="menuitems">
                     <NavLink to="/followup" className='anchortag' activeClassName='active' style={{ textDecoration: 'none' }}>
                         <div className="menuicon">
                             <FontAwesomeIcon icon={faDiamondTurnRight} />
@@ -119,7 +119,7 @@ const SidebarAgent = (props) => {
                             Dispatched
                         </span>
                     </NavLink>
-                </div> */}
+                </div>
 
                 <div className="menuitems">
                     <NavLink to="/potential" className='anchortag' style={{ textDecoration: 'none' }}>
