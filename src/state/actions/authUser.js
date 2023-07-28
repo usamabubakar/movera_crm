@@ -16,6 +16,26 @@ import { websiteLink, localhost } from "../config/websitepath";
 
 
 
+
+
+// Loading user
+export const loadUser = () => (dispatch, getState) => {
+ 
+  console.log("loadUser Called");
+  const config = getTokenConfig();
+  axios.get(`${localhost}/api/auth/getuser`, config )
+      .then(res => dispatch({
+          type: USER_LOADED,
+          payload: res.data
+      }))
+      .catch(err => {
+          console.log(err)
+      });
+}
+
+
+
+
 export const login_user = (details) => async (dispatch) => {
   console.log("login action working")
   const config = {

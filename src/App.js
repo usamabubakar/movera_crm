@@ -28,6 +28,7 @@ import { faCircleArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import './App.css';
 
 import store from './state/store';
+import { loadUser } from './state/actions/authUser';
 
 
 
@@ -42,11 +43,25 @@ console.log("chekcing", isAuthenticated);
     setHideshow(hideshow === 16 ? 3.5 : 16);
   };
 
-  useEffect(() => {
-    if (!isAuthenticated && window.location.pathname !== '/login') {
-      window.location.href = '/login';
+  const load = async () =>{
+          await store.dispatch(loadUser()); 
+        }
+    
+    useEffect(() => {
+          load();
+      
+    if (!isAuthenticated    ) {
+      if(window.location.pathname !== '/login' && window.location.pathname !== '/customeragreement' ){
+
+        window.location.href = '/login';
+
+      }
+
+
     }
   }, [isAuthenticated]);
+
+
 
 
   return (
@@ -77,6 +92,8 @@ console.log("chekcing", isAuthenticated);
         }
         <div className="routediv">
         <Routes>
+
+
     {/* Specific routes for admins */}
     {isAuthenticated && isAdmin && (
       <>
@@ -92,7 +109,7 @@ console.log("chekcing", isAuthenticated);
     )}
 
     {/* Specific routes for agents */}
-    {isAuthenticated && isAgent && (
+    {isAuthenticated && isAgent ? (
       <>
         <Route path="/leads" element={<Leadagent />} />
         <Route path="/followup" element={<Followup />} />
@@ -105,16 +122,19 @@ console.log("chekcing", isAuthenticated);
         <Route path="/chat" element={<Chat />} />
         <Route path="/login" element={<Navigate to="/leads" />} />
       </>
-    )}
+    )
+    :
+    (<Route path="/customeragreement" element={<Agreement />} />)
+
+    }
 
     {/* Catch-all route for login */}
     <Route path="/login" element={<Login />} />
 
     {/* Any other specific routes */}
-    <Route path="/customeragreement" element={<Agreement />} />
 
-    {/* Handle unknown routes */}
-    <Route path="*" element={<Navigate to="/login" />} />
+    {/* Handle unknown routes  -->"But creats Problem on reloading page"  */}
+    {/* <Route path="*" element={<Navigate to="/login" />} />   */}
   </Routes>
         </div>
       </div>

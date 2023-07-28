@@ -292,17 +292,28 @@ console.log("Current Time (Minutes):", currentTimeMinutes);
 
 
 // getuser informaiont using toke
-router.post('/getuser', fetchuser, async (req, res) => {
+router.get('/getuser', fetchuser, async (req, res) => {
+  console.log("bhai get user me ho")
   try {
-    userId = req.user_login.id;
-    console.log(userId)
+    const userId = req.user_login.id;
+    console.log(userId, "id")
     const user = await User.findOne({ _id: userId }).select('-password');
-    console.log(user);
+    console.log(user, "i am user");
     res.send(user)
   } catch (error) {
+    
+    console.log("bhai error a gya get user me ")
+    console.log(error)
     res.send("internal error")
   }
 })
+
+// router.get('/user', fetchuser, (req, res) => {
+
+//   User.findById(req.user.id)
+//       .select('-password')
+//       .then(user => res.json(user))
+// });
 
 // logout user
 router.post('/logout', fetchuser, async (req, res) => {
@@ -326,9 +337,6 @@ router.post('/logout', fetchuser, async (req, res) => {
 
 
 });
-
-
-
 
 
 

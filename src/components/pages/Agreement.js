@@ -11,10 +11,12 @@ import { addagreement } from '../../state/actions/agreement';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import logoimg from "../../images/logo.png";
+import axios from 'axios';
 
 
 
 function Agreement() {
+
 
     const dispatch = useDispatch();
 
@@ -25,6 +27,17 @@ function Agreement() {
     console.log(agreementtdata + "sua")
     const [leadid, setleadid] = useState()
     const [signature, setsignature] = useState()
+
+//  get ip function
+    const [ip, setIp] = useState();
+    const  getIp = async () => {
+        const res = await axios.get('https://geolocation-db.com/json/https://geolocation-db.com/json/a9e48c70-8b22-11ed-8d13-bd165d1291e3')
+        console.log(res.data.IPv4);
+        setIp(res.data.IPv4)
+        // console.log('ip = ', this.state.ip.IPv4);
+    }
+
+
 
     const downloadPDF = () => {
         const input = document.getElementById('invoicee');
@@ -71,11 +84,11 @@ function Agreement() {
 
 
     useEffect(() => {
+        getIp();
         const urlParams = new URLSearchParams(window.location.search);
         const leadId = urlParams.get('hash_id');
         setleadid(leadId)
         dispatch(fetchagreemetndata(leadId))
-
     }, []);
 
     const [inputValue, setInputValue] = useState('');
@@ -112,7 +125,8 @@ function Agreement() {
             destinationzipcode: destinationzipcode,
             destinationstate: destinationstate,
             signature: esign,
-            id: leadid
+            id: leadid,
+            ipaddress: ip
         }
         dispatch(addagreement(data))
 
@@ -120,8 +134,8 @@ function Agreement() {
 
 
     };
-
-
+    
+   
     return (
         <>
 

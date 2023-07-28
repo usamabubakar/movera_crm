@@ -6,6 +6,7 @@ const getTokenConfig = () => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
+      
     }
   };
 
