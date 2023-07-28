@@ -15,8 +15,9 @@ import { sendEmail } from '../../state/actions/email';
 import { updateStatus } from '../../state/actions/lead';
 import template from '../SendmailTemplate';
 import { updateLead } from '../../state/actions/lead';
-import { company1,company2 } from '../companydetails';
+import { company1, company2 } from '../companydetails';
 import parse from 'html-react-parser'
+import Car from './unnamed.png'
 
 import { io } from 'socket.io-client';
 
@@ -26,6 +27,8 @@ import '../style.css';
 function Leadagent(props) {
     const dispatch = useDispatch();
     const Lead_Add = useSelector(state => state.lead.leads);
+    const showtost = useSelector(state => state.lead.showToast);
+
     const Lead_Data = useSelector(state => state.leadsData.leadsData);
     const leaddelete = useSelector(state => state.lead.leadDelete);
     const [rowidValue, setrowIdValue] = useState()
@@ -51,29 +54,29 @@ function Leadagent(props) {
 
 
 
-//     useEffect(() => {
-//         const eventSource = new EventSource('http://localhost:5001/sse');
+    //     useEffect(() => {
+    //         const eventSource = new EventSource('http://localhost:5001/sse');
 
-//         const sound = new Audio('../sound.mp3');
-// console.log(sound)
-//         eventSource.onmessage = (event) => {
-//             console.log(event.data)
-//           const eventData = JSON.parse(event.data);
-//           const eventMessage = eventData.message;
-//           console.log('Received SSE event:', eventData);
-//           sound.play();
+    //         const sound = new Audio('../sound.mp3');
+    // console.log(sound)
+    //         eventSource.onmessage = (event) => {
+    //             console.log(event.data)
+    //           const eventData = JSON.parse(event.data);
+    //           const eventMessage = eventData.message;
+    //           console.log('Received SSE event:', eventData);
+    //           sound.play();
 
-//         };
+    //         };
 
-//         eventSource.onerror = (error) => {
-//           console.error('Error in SSE connection:', error);
-//         };
+    //         eventSource.onerror = (error) => {
+    //           console.error('Error in SSE connection:', error);
+    //         };
 
-//         // Clean up the EventSource when the component unmounts
-//         return () => {
-//           eventSource.close();
-//         };
-//       }, []);
+    //         // Clean up the EventSource when the component unmounts
+    //         return () => {
+    //           eventSource.close();
+    //         };
+    //       }, []);
 
 
 
@@ -204,6 +207,36 @@ function Leadagent(props) {
             minWidth: '150px'
         },
         {
+            name: 'Price',
+            selector: row => row.price,
+            minWidth: '70px'
+        },
+        {
+            name: 'Initial deposite',
+            selector: row => row.intialdeposit,
+            minWidth: '70px'
+        },
+        {
+            name: 'Pickup person name',
+            selector: row => row.opickup,
+            minWidth: '200px'
+        },
+        {
+            name: 'Pickup person no',
+            selector: row => row.ophonono,
+            minWidth: '200px'
+        },
+        {
+            name: 'Dropoff person name',
+            selector: row => row.dpickup,
+            minWidth: '200px'
+        },
+        {
+            name: 'Dropoff person no',
+            selector: row => row.dphonono,
+            minWidth: '200px'
+        },
+        {
             name: 'Total Vehicles',
             cell: (row) => (
                 <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
@@ -221,12 +254,24 @@ function Leadagent(props) {
                 <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
                     <button className='agent-edit-delete-btn d-flex align-items-center '
                         disabled={row.approvalStatus === 'Not Approved' || row.approvalStatus === 'Pending'}
-                        data-toggle="modal" onClick={() => handleEdit(row.leadId)} data-target="#vendoremail">
+                        data-toggle="modal" onClick={() => handleEdit(row.leadId)}
+                        data-target={
+                            row.price == 0
+                                ? "#priceerror" : "#vendoremail"
+                        }
+                    >
                         <div className='mailcount'>{row.mailcount}</div>
                         Send Email</button>
                     <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal" data-target="#updatelead">Update</button>
-                    <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal" data-target="#updatestatus">Update Status</button>
-
+                    <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal"
+                        data-target={
+                            row.price == 0
+                                ? "#priceerror"
+                                : row.mailcount == 0
+                                    ? "#oneemail"
+                                    : "#updatestatus"
+                        }
+                    >Update Status</button>
                 </div>
             ),
             minWidth: '400px',
@@ -244,6 +289,7 @@ function Leadagent(props) {
     }
 
     const handleEdit = (id) => {
+        console.log("edit")
         const foundlead = leads.find((lead) => lead.id === id);
         console.log(foundlead);
         if (Array.isArray(foundlead.vehicle)) {
@@ -266,31 +312,44 @@ function Leadagent(props) {
             foundlead.destinationzipcode,
             foundlead.shipdate,
             foundlead.howmany,
-            foundlead.vehicle
+            foundlead.vehicle,
+            foundlead.price,
+            foundlead.intialdeposite
 
         ]);
+        console.log(editData)
 
     };
+    const [subject, setsubject]=useState('')
 
-    const sendEmailfunction = (data, e) => {
+    const sendEmailfunction = async (data, e) => {
         e.preventDefault()
-
+        console.log("emial sent agent")
         const text = emailDivRef.current.innerHTML;
-
         const dataa = {
             leadid: data[0],
             customeremail: data[2],
             text: text,
             agentemail: userData.email,
-            agentid: userData.id
+            agentid: userData.id,
+            subject:subject
         }
-        console.log(dataa)
-        dispatch(sendEmail(dataa))
-            .then((response) => {
-                if (emailsent) {
-                    toast.success(`Email Sent Successfully...!`);
-                }
-            })
+
+        try {
+            console.log("emial sent agent")
+            const isEmailSent = await dispatch(sendEmail(dataa));
+            if (isEmailSent) {
+                console.log("send")
+                toast.success("Email Sent Successfully...!");
+            } else {
+                console.log("not send")
+
+                toast.error("Email Not Sent Successfully...!");
+            }
+        } catch (error) {
+            console.log("Error in sendEmailFunction:", error.message);
+            toast.error("Email Not Sent Successfully...!");
+        }
 
     };
 
@@ -343,7 +402,13 @@ function Leadagent(props) {
                     shipdate: lead.shipdate,
                     vehicle: vehicles,
                     mailcount: lead.mailcount,
+                    price: lead.price,
                     approvalStatus: lead.approvelStatus,
+                    intialdeposit:lead.intialdeposite,
+                    opickup:lead.Opickup,
+                    ophonono:lead.Ophonono,
+                    dpickup:lead.Dpickup,
+                    dphonono:lead.Dphonono,
                     rowClass: lead.isAssigned ? 'assigned-row' : ''
                 };
             });
@@ -416,13 +481,13 @@ function Leadagent(props) {
             cars: cars
         }
 
-        dispatch(addLead(data));
-        if (!Lead_Add) {
-            toast.success('Lead Add Successfully...!');
-        }
-        else if (Lead_Add) {
-            toast.error('Lead Not Added Successfully...!');
-        }
+        dispatch(addLead(data))
+            .then(() => {
+                toast.success('Lead Added Successfully...!');
+            })
+            .catch(() => {
+                toast.error('Lead Not Added Successfully...!');
+            });
     }
 
 
@@ -434,15 +499,15 @@ function Leadagent(props) {
     const getRowidValue = (id) => {
         setrowIdValue(id);
     }
-    const [company ,setcompany]= useState("");
-    const [companydetails ,setcompanydetails]= useState(null);
+    const [company, setcompany] = useState("");
+    const [companydetails, setcompanydetails] = useState(null);
 
-    const companyselection=(data)=>{
+    const companyselection = (data) => {
         console.log(data)
-        if(data==='1'){
-           setcompanydetails(company1)
+        if (data === '1') {
+            setcompanydetails(company1)
         }
-        if(data==='2'){
+        if (data === '2') {
             setcompanydetails(company2)
         }
 
@@ -450,21 +515,23 @@ function Leadagent(props) {
     }
 
 
-    const defaulttext='Select any template'
+    const defaulttext = 'Select any template'
     const [Templatetext, setTemplatetext] = useState(defaulttext)
+
 
     const templateSeclection = (leadData, e) => {
         e.preventDefault();
-        console.log(leadData[14])
+        console.log(companydetails)
         const templateno = e.target.value;
         console.log(templateno + "temolat ni")
         const matchedTemplate = template.find((tpl) => tpl.id === parseInt(templateno));
-
+        setsubject(matchedTemplate.subject)
+        console.log(subject)
         if (matchedTemplate) {
             const templateData = (matchedTemplate) => {
                 let replacedText = matchedTemplate.text
                     .replace('{name}', leadData[1])
-                    .replace('{price}', '200$')
+                    .replace('{price}', leadData[15])
                     .replace('{origin}', leadData[3])
                     .replace('{origincity}', leadData[5])
                     .replace('{originstate}', leadData[6])
@@ -474,9 +541,11 @@ function Leadagent(props) {
                     .replace('{destinationzipcode}', leadData[11])
                     .replace('{shipdate}', leadData[12])
                     .replace('{leadid}', leadData[0])
-                    .replace('{companyname}',companydetails?.name )
+                    .replace('{companyname}', companydetails?.name)
                     .replace('{companyemail}', companydetails?.email)
                     .replace('{companyphonono}', companydetails?.phone)
+                    .replace('{img}', Car)
+                    .replace('{deposit}', leadData[16])
 
                 const carRows = leadData[14].map((car, index) => {
                     return `
@@ -487,9 +556,9 @@ function Leadagent(props) {
                         <td style="border: 1px solid #dddddd;">${car.vehicletype}</td>
                       </tr>
                     `;
-                  });
+                });
 
-                  replacedText = replacedText.replace('{carrows}', carRows.join(''));
+                replacedText = replacedText.replace('{carrows}', carRows.join(''));
                 const Templatetext1 = replacedText.toString();
                 // console.log(typeof(Templatetext1))
                 setTemplatetext(Templatetext1); // Set the updated value of setTemplatetext
@@ -499,7 +568,7 @@ function Leadagent(props) {
         }
 
     }
-    const updatelead = (e) => {
+    const updatelead = async (e) => {
         e.preventDefault();
         console.log("add lead click");
         const name = e.target.name.value;
@@ -515,6 +584,8 @@ function Leadagent(props) {
         const destinationzipcode = e.target.deszipcode.value;
         const shipdate = e.target.shipdate.value;
         const howmany = e.target.howmany.value;
+        const price = e.target.price.value
+        const inprice=e.target.inprice.value
         const data = {
             leadid: editData[0],
             name: name,
@@ -530,16 +601,26 @@ function Leadagent(props) {
             destinationzipcode: destinationzipcode,
             shipdate: shipdate,
             howmany: howmany,
-            cars: cars
+            cars: cars,
+            price: price,
+            inprice:inprice
         }
         console.log(data)
-        dispatch(updateLead(data));
-        seteditData('')
-        if (!Lead_Add) {
-            toast.success('Lead update Successfully...!');
-        }
-        else if (Lead_Add) {
+        ;
+        try {
+            console.log("emial sent agent")
+            const isupdate = await dispatch(updateLead(data));
+            if (isupdate) {
+
+                toast.success('Lead update Successfully...!');
+            } else {
+                toast.error('Lead Not update Successfully...!');
+
+            }
+        } catch (error) {
             toast.error('Lead Not update Successfully...!');
+
+        seteditData('')
         }
     }
 
@@ -562,6 +643,47 @@ function Leadagent(props) {
                     theme="light"
                 />
             </div>
+
+            {/*send at eat one emial*/}
+            <div className="modal fade" id="oneemail" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">First email required</h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            Please send the first email
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Price eeroor */}
+            <div className="modal fade" id="priceerror" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">Prie updation required</h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            Please update the price First
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* veiw car  */}
             <div className="modal fade" id="viewcars" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog" role="document">
@@ -619,44 +741,44 @@ function Leadagent(props) {
                                     <div className="form-group">
                                         <label htmlFor="token"> <b>Select company</b> </label>
                                         <select name="emailtext" id="emailtext" onChange={(e) => companyselection(e.target.value)} className='assignlead'>
-                                        <option value="0">Select any company</option>
+                                            <option value="0">Select any company</option>
                                             <option value="1" >HS logistic</option>
                                             <option value="2">SM transport</option>
                                         </select>
 
                                     </div>
                                     {
-                                        company=== '1' && (
+                                        company === '1' && (
                                             <div className="form-group">
-                                            <label htmlFor="token"> <b>Select Template for HS logistic</b> </label>
-                                            <select name="emailtext" id="emailtext" onChange={(e) => templateSeclection(editData, e)} className='assignlead'>
-                                                <option value="" >Select any template</option>
-                                                <option value="1">Follow up</option>
-                                                <option value="2">New Quotes</option>
-                                                <option value="3">Dispatched</option>
-                                                <option value="4">Order Confirmation</option>
-                                                <option value="5">Payment Recieved</option>
-                                                <option value="6">Agreement</option>
-                                                <option value="7">Second Follow Up</option>
-                                            </select>
-                                        </div>
+                                                <label htmlFor="token"> <b>Select Template for HS logistic</b> </label>
+                                                <select name="emailtext" id="emailtext" onChange={(e) => templateSeclection(editData, e)} className='assignlead'>
+                                                    <option value="" >Select any template</option>
+                                                    <option value="1">Follow up</option>
+                                                    <option value="2">New Quotes</option>
+                                                    <option value="3">Order Confirmation</option>
+                                                    <option value="4">Agreement</option>
+                                                    <option value="5">Dispatched</option>
+                                                    <option value="6">Payment Recieved</option>
+                                                    <option value="7">Second Follow Up</option>
+                                                </select>
+                                            </div>
                                         )
                                     }
                                     {
-                                        company==="2" && (
+                                        company === "2" && (
                                             <div className="form-group">
-                                        <label htmlFor="token"> <b>Select Template fo SM transport</b> </label>
-                                        <select name="emailtext" id="emailtext" onChange={(e) => templateSeclection(editData, e)} className='assignlead'>
-                                            <option value="" disabled >Select any template</option>
-                                            <option value="1">Follow up</option>
-                                                <option value="2">New Quotes</option>
-                                            <option value="3">Dispatched</option>
-                                            <option value="4">Order Confirmation</option>
-                                            <option value="5">Payment Recieved</option>
-                                            <option value="6">Agreement</option>
-                                            <option value="7">Second Follow Up</option>
-                                        </select>
-                                    </div>
+                                                <label htmlFor="token"> <b>Select Template fo SM transport</b> </label>
+                                                <select name="emailtext" id="emailtext" onChange={(e) => templateSeclection(editData, e)} className='assignlead'>
+                                                    <option value="" disabled >Select any template</option>
+                                                    <option value="1">Follow up</option>
+                                                    <option value="2">New Quotes</option>
+                                                    <option value="3">Dispatched</option>
+                                                    <option value="4">Order Confirmation</option>
+                                                    <option value="5">Payment Recieved</option>
+                                                    <option value="6">Agreement</option>
+                                                    <option value="7">Second Follow Up</option>
+                                                </select>
+                                            </div>
                                         )
                                     }
 
@@ -980,8 +1102,21 @@ function Leadagent(props) {
                                         onChange={(e) => handleInputChange(3, e.target.value)} required
                                         value={editData[3]} placeholder="Phoneno" />
                                 </div>
-                                <hr />
 
+                                <hr />
+                                <div className="form-group">
+                                    <label for="password1">Pay to Carrier</label>
+                                    <input type="number" className="form-control" id="password" name='price'
+                                        required
+                                        placeholder="Price" value={editData[15]}  onChange={(e) => handleInputChange(15, e.target.value)} />
+                                </div>
+                                <div className="form-group">
+                                    <label for="password1">Initial deposite</label>
+                                    <input type="number" className="form-control" id="inprice" name='inprice'
+                                        required
+                                        placeholder="Price" value={editData[16]}  onChange={(e) => handleInputChange(16, e.target.value)} />
+                                </div>
+                                <hr />
                                 <h4>Origin</h4>
                                 <div className='d-flex justify-content-between'>
                                     <div className="form-group mr-1">

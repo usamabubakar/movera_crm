@@ -269,28 +269,40 @@ function Agentt(props) {
             return newData;
         });
     };
-    const sendEmailfuntion = (data) => {
+    const sendEmailfuntion =async (data) => {
+        console.log("email function");
         const { email, password, starttime, endtime } = data;
         const dataa = {
-            id:data[0],
-            email: data[2],
-            password:data[3],
-            starttime:data[4],
-            endtime:data[5]
-        }
-        dispatch(sendEmail(dataa))
-            .then((response) => {
-                if (emailsent) {
-                    toast.success(`Email Sent Successfully...!`);
-                }
-            })
+          id: data[0],
+          email: data[2],
+          password: data[3],
+          starttime: data[4],
+          endtime: data[5],
+        };
+
+        try {
+            const isEmailSent = await dispatch(sendEmail(dataa));
+            if (isEmailSent) {
+
+              toast.success("Email Sent Successfully...!");
+            } else {
+              toast.error("Email Not Sent Successfully...!");
+            }
+          } catch (error) {
+            console.log("Error in sendEmailFunction:", error.message);
+            toast.error("Email Not Sent Successfully...!");
+          }
 
     };
+
+
+
+
 
     return (
 
         <>
-            {signUP_success &&
+
                 <div >
                     <ToastContainer
                         position="top-center"
@@ -305,7 +317,7 @@ function Agentt(props) {
                         theme="light"
                     />
                 </div>
-            }
+
 
 
 {/* email  */}

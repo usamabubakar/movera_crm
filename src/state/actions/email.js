@@ -8,13 +8,13 @@ export const sendEmail = (data) => async (dispatch) => {
   const config = getTokenConfig();
 
   try {
-    console.log("email action" + data)
     const response = await axios.post(`${localhost}/api/sendemail/sendEmail`, data, config);
     // Dispatch the success action
-    dispatch({ type: EMAIL_SEND_SUCCESS,
-       payload: true });
+    dispatch({ type: EMAIL_SEND_SUCCESS });
+    return true;
   } catch (error) {
-    // Dispatch the failure action
+    console.log("error in email:", error.message);
     dispatch({ type: EMAIL_SEND_FAILURE, payload: error.message });
+    return false;
   }
 };

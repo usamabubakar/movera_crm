@@ -35,6 +35,7 @@ const startSSEServer = () => {
     const notificationData = req.body;
     const username=req.user_login.name
     const isAdmin = req.user_login.isadmin;
+
     sendSSENotification(notificationData, username, isAdmin);
 
     res.status(200).json({ message: 'Notification sent' });

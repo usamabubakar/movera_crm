@@ -187,6 +187,11 @@ function Followup(props) {
             minWidth: '150px'
         },
         {
+            name: 'Price',
+            selector: row => row.price,
+            minWidth: '150px'
+        },
+        {
             name: 'Total Vehicles',
             cell: (row) => (
                 <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
@@ -297,6 +302,7 @@ function Followup(props) {
                     vehicle: vehicles,
                     mailcount: lead.mailcount,
                     approvalStatus: lead.approvelStatus,
+                    price:lead.price,
                     rowClass: lead.isAssigned ? 'assigned-row' : ''
                 };
             });
@@ -350,6 +356,10 @@ function Followup(props) {
         const destinationzipcode = e.target.deszipcode.value;
         const shipdate = e.target.shipdate.value;
         const howmany = e.target.howmany.value;
+        const pickupname=e.target.pickupname.value;
+        const pickupno=e.target.pickupno.value;
+        const dropoffname=e.target.dropoffname.value;
+        const dropoffno=e.target.dropoffno.value
         const data = {
             leadid: editData[0],
             name: name,
@@ -365,7 +375,11 @@ function Followup(props) {
             destinationzipcode: destinationzipcode,
             shipdate: shipdate,
             howmany: howmany,
-            cars: cars
+            cars: cars,
+            pickupname:pickupname,
+            pickupno:pickupno,
+            dropoffname:dropoffname,
+            dropoffno:dropoffno
         }
         console.log(data)
         dispatch(updateLead(data));
@@ -727,7 +741,6 @@ function Followup(props) {
 
                                 </div>
                                 <div className="form-group">
-
                                     <label htmlFor="email">Email</label>
                                     <div className="loadingimginput">
                                         <input type="email" className="form-control" id="vemail" name="email" value={editData[2]}
@@ -735,7 +748,6 @@ function Followup(props) {
                                             aria-describedby="emailHelp" placeholder="Enter Email"
 
                                         />
-
                                     </div>
 
 
@@ -766,6 +778,7 @@ function Followup(props) {
 
                                     </div>
                                 </div>
+
                                 <div className='d-flex justify-content-between'>
                                     <div className="form-group mr-1">
                                         <label for="email1">Origin state</label>
@@ -779,6 +792,22 @@ function Followup(props) {
                                         <input type="text" className="form-control" id="zipcode" name='originzipcode' aria-describedby="emailHelp" value={editData[7]}
                                             onChange={(e) => handleInputChange(7, e.target.value)} required
                                             placeholder="Zip code" />
+
+                                    </div>
+                                </div>
+                                <div className='d-flex justify-content-between'>
+                                    <div className="form-group mr-1">
+                                        <label for="email1">Pickup person name</label>
+                                        <input type="text" className="form-control" id="pickupname" value={editData[4]}
+                                            onChange={(e) => handleInputChange(4, e.target.value)} required
+                                            name='pickupname' aria-describedby="emailHelp" placeholder="origin address" />
+
+                                    </div>
+                                    <div className="form-group ml-1">
+                                        <label for="email1">Pickup phono no</label>
+                                        <input type="text" className="form-control" id="pickupno" name='pickupno' aria-describedby="emailHelp"
+                                            onChange={(e) => handleInputChange(5, e.target.value)} required
+                                            value={editData[5]} placeholder="Origin city" />
 
                                     </div>
                                 </div>
@@ -813,6 +842,22 @@ function Followup(props) {
                                         <input type="text" className="form-control" id="deszipcode" name='deszipcode' aria-describedby="emailHelp" value={editData[11]}
                                             onChange={(e) => handleInputChange(11, e.target.value)} required
                                             placeholder="Destination zip code" />
+
+                                    </div>
+                                </div>
+                                <div className='d-flex justify-content-between'>
+                                    <div className="form-group mr-1">
+                                        <label for="email1">Drop Off person name</label>
+                                        <input type="text" className="form-control" id="dropoffname" name='dropoffname' value={editData[8]}
+                                            onChange={(e) => handleInputChange(8, e.target.value)} required
+                                            aria-describedby="emailHelp" placeholder="Destination address" />
+
+                                    </div>
+                                    <div className="form-group ml-1">
+                                        <label for="email1">Drop Off person phoneno</label>
+                                        <input type="text" className="form-control" id="dropoffno" name='dropoffno' aria-describedby="emailHelp" value={editData[9]}
+                                            onChange={(e) => handleInputChange(9, e.target.value)} required
+                                            placeholder="Destination city" />
 
                                     </div>
                                 </div>

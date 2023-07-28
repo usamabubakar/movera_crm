@@ -194,7 +194,12 @@ router.get('/fetchlead', async (req, res) => {
         addBy: lead.addBy,
         approvelStatus: lead.approvelStatus,
         paymentstatus:lead.paymentstatus,
-        price:lead.price
+        price:lead.price,
+        intialdeposite:lead.intialdeposite,
+        Dphonono:lead.Dphonono,
+        Dpickup:lead.Dpickup,
+        Ophonono:lead.Ophonono,
+        Opickup:lead.Opickup
       }));
     }
 
@@ -270,6 +275,7 @@ router.get('/pendinglead', fetchuser, async (req, res) => {
       const leadId = req.params.leadId;
       const data = req.body;
       const { cars } = req.body;
+      console.log(data)
 
       const user = await User.findById(req.user_login.id);
       if (!user) {
@@ -294,7 +300,28 @@ router.get('/pendinglead', fetchuser, async (req, res) => {
       lead.destinationzipcode = data.destinationzipcode;
       lead.shipdate = data.shipdate;
       lead.howmany = data.howmany;
-      lead.price=data.price
+      if ('price' in data) {
+        lead.price = data.price;
+      }
+      if ('inprice' in data) {
+        lead.intialdeposite = data.inprice;
+      }
+      if ('pickupname' in data) {
+        lead.Opickup = data.pickupname;
+      }
+      if ('pickupno' in data) {
+        lead.Ophonono = data.pickupno;
+      }
+      if ('dropoffname' in data) {
+        lead.Dpickup = data.dropoffname;
+      }
+      if ('dropoffno' in data) {
+        lead.Dphonono = data.dropoffno;
+      }
+      if ('price' in data) {
+        lead.price = data.price;
+      }
+      // lead.intialdeposite=data.
 
       // Update existing cars
       if (cars && Array.isArray(cars)) {

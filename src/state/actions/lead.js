@@ -95,12 +95,14 @@ export const addLead = (data) =>async (dispatch) => {
         type:ADD_LEAD,
         payload:newlead
       })
+      return Promise.resolve();
     } catch (err) {
       dispatch({
         type: GET_ERRORS,
         payload: err.message,
       });
       };
+      return Promise.reject();
 
     }
     const sendNotificationToSSEServer = (leadData) => {
@@ -124,9 +126,6 @@ export const addLead = (data) =>async (dispatch) => {
     export const updateLead = ( data) => async (dispatch) => {
       console.log("update lead usama config");
       const config = getTokenConfig();
-
-      console.log(config);
-      console.log(data);
       const leadId=data.leadid
 
       try {
@@ -140,8 +139,15 @@ export const addLead = (data) =>async (dispatch) => {
           type: UPDATE_LEAD,
           payload: updatedLead,
         });
+      return true;
+
       } catch (err) {
-        // Handle error here
+          dispatch({
+            type: GET_ERRORS,
+            payload: err.message,
+          });
+      return false;
+
       }
     };
 

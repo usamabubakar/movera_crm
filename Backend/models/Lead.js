@@ -151,7 +151,28 @@ const LeadSchema = new Schema({
     signaturedate:{
         type:String,
         defult:'No date'
+    },
+    Opickup:{
+        type:String,
+        default:'not updated'
+    },
+    Ophonono:{
+        type:String,
+        default:'not updated'
+    },
+    Dpickup:{
+        type:String,
+        default:'not updated'
+    },
+    Dphonono:{
+        type:String,
+        default:'not updated'
+    },
+    intialdeposite:{
+        type:String,
+        default:'0'
     }
+
 
 
 });

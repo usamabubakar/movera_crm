@@ -15,6 +15,7 @@ import { combineReducers } from "redux";
 const initialState = {
   leadsData: [],
   leads: false,
+  showToast: false,
   leadDelete: false,
   onlineadmin:[],
   error: null,
@@ -36,8 +37,7 @@ const leadReducer = (state = initialState, action) => {
       return {
         ...state,
         leadsData: [...state.leadsData, newLead],
-        error: null,
-        leads:true
+        error: null
       };
 
     case DELETE_LEAD:
@@ -56,13 +56,11 @@ const leadReducer = (state = initialState, action) => {
 
         const updatedata = state.leadsData.map((lead) => {
           if (lead.id === updateleadtid) {
-            console.log("id matched" + lead.id);
             return {
               ...lead,
               // Update the desired properties of the lead
               fullname: action.payload.fullname,
               email: action.payload.email,
-              password: action.payload.password,
               phoneno: action.payload.phoneno,
               originaddress: action.payload.originaddress,
               origincity: action.payload.origincity,
@@ -83,7 +81,13 @@ const leadReducer = (state = initialState, action) => {
               recieveddate: action.payload.recieveddate,
               agreement: action.payload.agreement,
               vehicle: action.payload.vehicle,
-              price:action.payload.price
+              price:action.payload.price,
+              intialdeposite:action.payload.intialdeposite,
+              opickup:action.payload.Opickup,
+              ophonono:action.payload.Ophonono,
+              dpickup:action.payload.Dpickup,
+              dphonono:action.payload.Dphonono
+
             };
           }
           return lead;

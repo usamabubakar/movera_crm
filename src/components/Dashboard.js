@@ -14,7 +14,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faBell } from '@fortawesome/free-solid-svg-icons';
 import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
-import { faTimes, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faPaperPlane, faFaceSurprise } from '@fortawesome/free-solid-svg-icons';
 import { Doughnut } from 'react-chartjs-2';
 import Chart from "react-apexcharts";
 import './style.css'
@@ -59,11 +59,11 @@ export default function Dashborad() {
     const [notificationnn, setNotificationnn] = useState([]);
 
     useEffect(() => {
-        console.log("get notif")
         const recievenotification = getNotifications();
         setNotificationnn(recievenotification);
-        console.log(recievenotification)
     }, []);
+
+
     const notiidel = (index) => {
         setNotificationnn((prevNotifications) =>
             prevNotifications.filter((_, i) => i !== index)
@@ -131,9 +131,7 @@ export default function Dashborad() {
         const socket = io(); // Connect to the server
 
         socket.on('newLeadNotification', (notification) => {
-            // Handle the received notification
             console.log(notification);
-            // Update your UI or show a notification to the admin
         });
 
         return () => {
@@ -150,27 +148,7 @@ export default function Dashborad() {
     }, [dispatch]);
 
 
-    const [state, setState] = useState({
-        options: {
-            chart: {
-                id: "basic-bar",
-                height: 350,
-                width: '100%'
-            },
-            xaxis: {
-                categories: ['Mon', 'Tus', 'Thus', 'Wed', 'Fri', 'Sat', 'Sun']
-            }
-        },
-        series: [
-            {
-                name: "series-1",
-                data: [30, 40, 45, 50, 49, 60, 91]
-            }
-        ],
-        fill: {
-            colors: ['#f00']
-        },
-    })
+
 
 
 
@@ -385,22 +363,32 @@ export default function Dashborad() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {payments?.slice(-5).map((lead) => {
-                                    const deliver = lead.deliverstatus;
+                                {
+                                payments?.length>0?(
+                                    payments?.slice(-5).map((lead) => {
+                                        const deliver = lead.deliverstatus;
 
-                                    return (
-                                        <tr key={lead.id}>
-                                            <td>{lead.fullname}</td>
-                                            <td>{lead.price} $</td>
-                                            <td>{lead.paymentstatus}</td>
-                                            <td>
-                                                <div className={deliver === 'Deliver' ? 'deliver' : deliver === 'Progress' ? 'progress' : ''}>
-                                                    {lead.deliverstatus}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
+                                        return (
+                                            <tr key={lead.id}>
+                                                <td>{lead.fullname}</td>
+                                                <td>{lead.price} $</td>
+                                                <td>{lead.paymentstatus}</td>
+                                                <td>
+                                                    <div className={deliver === 'Deliver' ? 'deliver' : deliver === 'Progress' ? 'progress' : ''}>
+                                                        {lead.deliverstatus}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
+                                ):(
+                                <tr >
+                                    <div className='d-flex justify-content-center align-items-center '>
+                                    No Data available
+                                </div>
+                                </tr>
+                                )
+                                }
 
 
                             </tbody>
@@ -413,23 +401,31 @@ export default function Dashborad() {
                             <h4><b>Active Agents</b></h4>
                         </div>
                         {
-                            onlineagent.map(agent => (
-                                <div className="onlineagents mt-2 d-flex justify-content-between align-items-center" key={agent.id}>
-                                    <div className="agentonlinebox d-flex align-items-center">
-                                        <div className="imageareaagent d-flex">
-                                            <img src={Adminimage} alt="" />
-                                            <div className='onlineicon'></div>
+                            onlineagent.length > 0 ? (
+                                onlineagent.map((agent) => (
+                                    <div className="onlineagents mt-2 d-flex justify-content-between align-items-center" key={agent.id}>
+                                        <div className="agentonlinebox d-flex align-items-center">
+                                            <div className="imageareaagent d-flex">
+                                                <img src={Adminimage} alt="" />
+                                                <div className='onlineicon'></div>
+                                            </div>
+                                            <div className="nameareaagent ml-2">
+                                                <b>{agent.name}</b> {/* Assuming the agent object has a 'name' property */}
+                                            </div>
                                         </div>
-                                        <div className="nameareaagent ml-2">
-                                            <b>{agent.name}</b> {/* Assuming the agent object has a 'name' property */}
-                                        </div>
-                                    </div>
-                                    <div className="agentonlinebox">
+                                        <div className="agentonlinebox">
 
+                                        </div>
                                     </div>
-                                </div>
-                            ))
+                                ))
+                            ) : (
+
+                                <div className='h-75 d-flex flex-column justify-content-center align-items-center'>
+                                    <FontAwesomeIcon icon={faFaceSurprise} style={{fontSize:'30px', marginBottom:'5px'}}/>
+                                    <b>No agents Online</b></div>
+                            )
                         }
+
 
 
 

@@ -11,7 +11,8 @@ const User = require('../models/User');
 
 // Define your route for sending the email
 router.post('/sendEmail', fetchuser,async(req, res) => {
-  const {agentid, id, leadid, customeremail, email, password ,text ,starttime,endtime  } = req.body;
+  try{
+  const {agentid, id, leadid, customeremail, email, password ,text ,starttime,endtime, subject  } = req.body;
 console.log(req.body)
   const user= await User.findById(req.user_login.id);
   const lead = await Lead.findOne({_id:leadid});
@@ -137,17 +138,18 @@ console.log("vendore meeil")
 const mailOptions = {
     from: 'moveralogistic@gmail.com',
     to: customeremail,
-    subject: "Movera Vehicle logistic and transportation",
+    subject: subject,
     text:'sm transport',
     html:text
   };
-  lead.mailcount += 1;
-  await lead.save();
+
   transporter.sendMail(mailOptions,async (error, info) => {
     if (error) {
       console.error(error);
       res.status(500).json({ success: false, error: 'Failed to send email' });
     } else {
+      lead.mailcount += 1;
+      await lead.save();
       console.log('Email sent: ' + info.response);
       res.status(200).json({ success: true, message: 'Email sent successfully'});
     }
@@ -157,7 +159,11 @@ const mailOptions = {
 
     }
   // Send the email
-
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: 'Failed to send email' });
+  }
 });
 
 module.exports = router;

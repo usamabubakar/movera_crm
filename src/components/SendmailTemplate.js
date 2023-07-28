@@ -19,8 +19,8 @@
 const template = [
     {
         id: 1,
-        subject: 'this is follow up template',
-        text: ` <div style="background-color: black; color: white; width:80%  font-family: Arial, sans-serif;">
+        subject: ' Follow-up Email ',
+        text: ` <div style="background-color: black; color: white; width:80%  font-family:Arial, sans-serif;">
         <div style="padding: 10px; margin: 10px; background-color: rgb(226, 225, 225); color: black;">
             <h2>Sorry we missed you!</h2>
             <p>Hi {name}, <br> <br> We tried to contact you today to follow up on your requested quote; sorry we
@@ -31,31 +31,15 @@ const template = [
         <div class="details " style="background-color: #3c3c3d; font-size: 14px; padding:10px">
         <h2>Details</h2>
         <hr>
-        <table style="border-collapse: collapse; margin-top:5px width: 100%; text-align: center; border: 1ps solid black;">
-            <thead>
-                <tr>
-                <th style="border: 1px solid #dddddd;">Origin</th>
-                <th style="border: 1px solid #dddddd;">Destination</th>
-                <th style="border: 1px solid #dddddd;">shipment date</th>
-                <th style="border: 1px solid #dddddd; ">Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr style="border: 1px solid #dddddd;">
-                    <td style="border: 1px solid #dddddd;">
-                        {origin},{origincity},{originstate},{originzipcode}
-                    </td>
-                    <td style="border: 1px solid #dddddd;">
-                        {destinationcity},{destinationstate},{destinationzipcode}
-                    </td>
-                    <td style="border: 1px solid #dddddd;">{shipdate}</td>
-                    <td style="border: 1px solid #dddddd;">200$</td>
-                </tr>
-            </tbody>
-        </table>
-        <h2>Vehicles</h2>
+        <b>Origin:</b> {origincity},{originstate},{originzipcode} <br>
+        <b>Destination:</b> {destinationcity} , {destinationstate}, {destinationzipcode} <br>
+        <b>Ship date:</b> {shipdate} <br>
+        <b>Total price:</b> {price} <br>
+        <b>Deposite:</b> {deposit} <br> <br>
+        <h2 style="color:white">Vehicles</h2>
         <hr>
-        <table style="border-collapse:collapse;  margin-top:5px width: 100%; text-align: center; border: 1ps solid black;">
+        <div style="width:!00%">
+        <table style="border-collapse:collapse; color:white; margin-top:5px width: 100%; text-align: center; border: 1ps solid black;">
             <thead>
                 <tr>
                 <th style="border: 1px solid #dddddd;">Make</th>
@@ -68,11 +52,12 @@ const template = [
                {carrows}
             </tbody>
         </table>
+        </div>
+        <br> <br>
     </div>
-
             <div style=" padding: 10px; font-size:14px">
                 <h3><b>Your Custom Quote</b></h3>
-                <p>Your custom price for your shipment from {origin} to {destination} is {price}. If you have any
+                <p>Your custom price for your shipment from {origincity},{originstate},{originzipcode}  to {destinationcity} , {destinationstate}, {destinationzipcode} is {price}$. If you have any
                     questions or would like to book your shipment via phone, please feel free to call us at (516)
                     656-1474.</p>
 
@@ -95,49 +80,64 @@ const template = [
             </div>
         </div>
     </div>
+
     `
 
     },
     {
         id: 2,
-        subject: 'this is quote template',
-        text: `<div style="  justify-content: center; flex-direction:column font-family: Arial, sans-serif; align-items: center;">
-		<h1 style="width: 100%; text-align: center; display:block;">
-		H1, usama</h1>
+        subject: 'New Quote Email',
+        text: `<div style="justify-content: center; flex-direction:column font-family: Arial, sans-serif; align-items: center;">
+		<h2 style="width: 100%; text-align: center; display:block;">
+		H1, usama</h2>
 		<p style=" display: block; text-align: center;">Thank you for your interest in our company! Below you will find your auto transport quote details.</p>
-		<div style="">
-			<hr>
-			<div style="display: flex; justify-content: space-between; margin-bottom: -10px; margin-top: -10px;">
-				<div>
+
+
+			<div style=" border:1px solid black; display: flex; justify-content:space-between; margin-bottom: 10px; ">
+				<div style="padding:5px ">
 					<h3>Door to Door service</h3>
 				</div>
-				<div>
+				<div style="padding:5px">
 					<h3>$10000</h3>
 				</div>
 			</div>
-			<hr>
-			<div style="display: flex; justify-content: space-between; margin-bottom: -10px; margin-top: -10px;">
-				<div>
+
+			<div style="border:1px solid black;  display: flex; justify-content:space-between; margin-bottom: 10px; margin-top:10px;">
+				<div style="padding:5px">
 					<h3>Total</h3>
 				</div>
-				<div>
+				<div style="padding:5px">
 					<h3>$10000</h3>
 				</div>
 
 			</div>
-			<hr>
-		</div>
+
 		<button style="border-radius: 5px; border: none; cursor: pointer; padding: 15px; margin-top: 10px; background-color: rgb(23, 23, 73); color: white; font-size: 16px;
 		">Get Started now!</button>
-		<div style="width: 80%;">
+		<div style="width: 1000%;">
 
 			<h2  style="text-align: center; margin-top:10px; display:block;">Quote details</h2>
 			<div>
-				<b>origin:</b> {origincity},{originstate},{originzipcode} <br>
-				<b>destination:</b> {destinationcity} , {destinationstate}, {destinationzipcode} <br>
-				<b>ship date:</b> {shipdate} <br>
-				<b>price:</b> {price} <br> <br>
-				If you have any questions or would like us to match a competitor's rate please call me at (516) 656-1474.
+            <b>Origin:</b> {origincity},{originstate},{originzipcode} <br>
+            <b>Destination:</b> {destinationcity} , {destinationstate}, {destinationzipcode} <br>
+            <b>Ship date:</b> {shipdate} <br>
+            <b>Total price:</b> {price} <br>
+            <b>Deposite:</b> {deposit} <br> <br>
+            <b>Vehicles</b> <br>
+            <table style="border-collapse:collapse; margin-top:5px width: 100%; text-align: center; border: 1ps solid black;">
+            <thead>
+                <tr>
+                <th style="border: 1px solid #dddddd;">Make</th>
+                <th style="border: 1px solid #dddddd;">Model</th>
+                <th style="border: 1px solid #dddddd;">Model year</th>
+                <th style="border: 1px solid #dddddd; ">Model type</th>
+                </tr>
+            </thead>
+            <tbody>
+               {carrows}
+            </tbody>
+        </table> <br> <br>
+				If you have any questions or would like us to match a competitor's rate please call me at 5166561474.
 
 Regards, <br>
 <br>
@@ -150,7 +150,7 @@ Regards, <br>
         `
     },
     {
-        id: 3,
+        id: 8,
         subject: 'this is quote template',
         text: `<h1>Hi {name}</h1>
         Thank you for your interest in our company! Below you will find your auto transport   details.
@@ -175,27 +175,137 @@ Regards, <br>
         `
     },
     {
-        id: 6,
-        subject: 'this is a agreement template',
+        id: 3,
+        subject: 'Order Confirmation',
+        text: `
+        <div style="width: 100%; display: flex; justify-content: center;  align-items: center;">
+        <img src="{img}" width="20%" height="100%" alt="">
+    </div>
+    <div>
+        <h2 style="width: 100%; text-align: center; display:block;">
+            Thank You</h2>
+    </div>
+<div>
+    Hi, {name}
+    <p>Thank you for placing your order with {companyname} </p>
+</div> <br>
+    <div style="width: 80%;">
+        <hr>
+
+
+			<div style=" border:1px solid black; display: flex; justify-content: space-between; margin-bottom: 10px; ">
+				<div style="padding:5px ">
+					<h4>Door to Door service</h4>
+				</div>
+				<div style="padding:5px">
+					<h4>$10000</h4>
+				</div>
+			</div>
+
+			<div style="border:1px solid black;  display: flex; justify-content: space-between; margin-bottom: 10px; margin-top:10px;">
+				<div style="padding:5px">
+					<h4>Total</h4>
+				</div>
+				<div style="padding:5px">
+					<h4>$10000</h4>
+				</div>
+
+			</div>
+
+
+        <hr>
+    </div>
+    <div style="width: 100%; text-align: center;">
+        <h2>Order Details</h2>
+    </div>
+    <div style="width: 100%;">
+
+        <div>
+            <b>Origin:</b> {origincity},{originstate},{originzipcode} <br>
+            <b>Destination:</b> {destinationcity} , {destinationstate}, {destinationzipcode} <br>
+            <b>Ship date:</b> {shipdate} <br>
+            <b>Total price:</b> {price} <br>
+            <b>Deposite:</b> {deposit} <br> <br>
+            <b>Vehicles</b> <br>
+            <table style="border-collapse:collapse; margin-top:5px width:100% text-align: center; border: 1ps solid black;">
+            <thead>
+                <tr>
+                <th style="border: 1px solid #dddddd;">Make</th>
+                <th style="border: 1px solid #dddddd;">Model</th>
+                <th style="border: 1px solid #dddddd;">Model year</th>
+                <th style="border: 1px solid #dddddd; ">Model type</th>
+                </tr>
+            </thead>
+            <tbody>
+               {carrows}
+            </tbody>
+        </table> <br> <br>
+           <div style="width:100%">
+           if you have any questions please feel free to call us!
+           </div>
+Sincerely, <br>
+<br>
+{companyname}<br>
+{companyemail} <br>
+{companyphonono}
+        </div>
+    </div>
+       `
+    },
+    {
+        id: 5,
+        subject: 'this is a dispatched template',
         text: `
 
-      <div style="text-center">
-        <h1 style="color: rgba(0, 0, 0, 0.692);">Thank You!</h1>
-        <p style="color: rgba(0, 0, 0, 0.692);">
-          {name},
-          We have received your payment for order number <b>  </b>.
-          <br>
-          Please contact us at 5166561474 with any questions!
-          <br>
-          Sincerely,
-          <br>
-          5166561474
-        </p>
-      </div>
+
+        <div style="width:100%; display: flex; justify-content: center;  align-items: center;">
+            <img src="{img}" width="50%"  alt="">
+        </div>
+        <div style="display: flex; justify-content: center;">
+            <h3>Your order hase been dispatched</h3>
+        </div>
+        <div style="text-align: start; ">
+            <h4>Hi, {name}</h4>
+            <p>
+                We are happy to inform you that your shipment from {origincity}, {originstate} {originzipcode} to {destinationcity}, {destinationstate} {destinationzipcode} has been assigned to a truck. You will
+                be contacted shortly with an estimated pickup and delivery time. <br> <br>
+                Please feel free to call us with any questions! <br> <br>
+
+                Sincerely, <br>
+                {companyname} <br>
+                {companyphonono}
+            </p>
+
+
+    </div>
 
        `
+    },
+    {
+        id: 6,
+        subject:"We have recieved your payment",
+        text:`<div style="width: 100%; display: flex; justify-content: center;  align-items: center;">
+        <img src="../components/pages/unnamed.png" width="20%" height="100%" alt="">
+    </div>
+    <div>
+        <h2 style="width: 100%; text-align: center; display:block;">
+            Thank You</h2>
+    </div>
+
+    <div>
+        Hi, {name}
+        <p>We have received your payment  <br>
+            Please contact us at {companyphonono} with any questions! </p>
+    </div> <br>
+    Sincerely, <br>
+    <br>
+    {companyname} <br>
+    {companyemail} <br>
+    {companyphonono}
+                </div>`
     }
 ]
+
 
 
 export default template;

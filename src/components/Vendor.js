@@ -192,19 +192,26 @@ function Agentt(props) {
         }
     };
 
-        const sendEmailfuntion = (data) => {
+        const sendEmailfuntion =async (data) => {
         console.log(data)
         const { email, password } = data;
         const dataa = {
             id:data[0],
             email: data[2],
         }
-        dispatch(sendEmail(dataa))
-            .then((response) => {
-                if (emailsent) {
-                    toast.success(`Email Sent Successfully...!`);
-                }
-            })
+        try {
+            const isEmailSent = await dispatch(sendEmail(dataa));
+            if (isEmailSent) {
+              console.log("Email sent successfully");
+              toast.success("Email Sent Successfully...!");
+            } else {
+              console.log("Email sending failed");
+              toast.error("Email Not Sent Successfully...!");
+            }
+          } catch (error) {
+            console.log("Error in sendEmailFunction:", error.message);
+            toast.error("Email Not Sent Successfully...!");
+          }
 
     };
 

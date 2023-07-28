@@ -232,7 +232,7 @@ function Quotes(props) {
                         <div className='mailcount'>{row.mailcount}</div>
                         Send Email</button>
                     <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal" data-target="#updatelead">Update</button>
-                    <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal" data-target="#updatestatus" >Update Status</button>
+                    <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal"  data-target="#updatestatus" >Update Status</button>
 
                 </div>
             ),
@@ -365,7 +365,6 @@ function Quotes(props) {
         const destinationzipcode = e.target.deszipcode.value;
         const shipdate = e.target.shipdate.value;
         const howmany = e.target.howmany.value
-        const price = e.target.price.value
         const data = {
             leadid: editData[0],
             name: name,
@@ -382,7 +381,6 @@ function Quotes(props) {
             shipdate: shipdate,
             cars: cars,
             howmany: howmany,
-            price: price
         }
         console.log(data)
         dispatch(updateLead(data));
@@ -433,6 +431,7 @@ function Quotes(props) {
                     theme="light"
                 />
             </div>
+
 
             {/* veiw car  */}
             <div className="modal fade" id="viewcars" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -592,12 +591,7 @@ function Quotes(props) {
                                         value={editData[3]} placeholder="Phoneno" />
                                 </div>
 
-                                <div className="form-group">
-                                    <label for="password1">Set Price:</label>
-                                    <input type="text" className="form-control" id="password" name='price'
-                                        required
-                                        placeholder="Price" />
-                                </div>
+
 
                                 <hr />
 

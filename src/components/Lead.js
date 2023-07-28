@@ -364,15 +364,14 @@ function Lead(props) {
             howmany: howmany,
             cars: cars
         }
-        console.log(data)
-        dispatch(addLead(data));
         seteditData('')
-        if (Lead_Add) {
-            toast.success('Lead Add Successfully...!');
-        }
-        else if (!Lead_Add) {
-            toast.error('Lead Not Added Successfully...!');
-        }
+        dispatch(addLead(data))
+        .then(() => {
+          toast.success('Lead Added Successfully...!');
+        })
+        .catch(() => {
+          toast.error('Lead Not Added Successfully...!');
+        });
     }
 
     const updatelead = (e) => {
