@@ -64,7 +64,7 @@ router.get('/fetchagreementleaddata', async (req, res) => {
 
 
   router.post('/saveagreement', async (req, res) => {
-    const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    // const ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
     // Rest of your code...
     const currentDate = new Date();
@@ -74,7 +74,7 @@ router.get('/fetchagreementleaddata', async (req, res) => {
       day: '2-digit'
     });
 
-    console.log('User IP address:', ipAddress);
+    // console.log('User IP address:', ipAddress);
     try {
 
       const {
@@ -90,7 +90,8 @@ router.get('/fetchagreementleaddata', async (req, res) => {
         destinationstate,
         destinationzipcode,
         signature,
-        id
+        id,
+        ipaddress
       } = req.body;
 
 
@@ -122,7 +123,7 @@ router.get('/fetchagreementleaddata', async (req, res) => {
         lead.destinationzipcode = destinationzipcode;
         lead.agreement=true;
         lead.signature=signature;
-        lead.ipaddress=ipAddress;
+        lead.ipaddress=ipaddress;
         lead.signaturedate = formattedDate;
         await lead.save();
 
