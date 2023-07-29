@@ -27,7 +27,7 @@ function Agreement() {
     console.log(agreementtdata + "sua")
     const [leadid, setleadid] = useState()
     const [signature, setsignature] = useState()
-
+console.log(agreementtdata)
 //  get ip function
     const [ip, setIp] = useState();
     const  getIp = async () => {
@@ -134,8 +134,8 @@ function Agreement() {
 
 
     };
-    
-   
+
+
     return (
         <>
 
@@ -146,7 +146,7 @@ function Agreement() {
                 <div className="modal-dialog modal-lg" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Shipment Invoice Of Movera Vehicle Logistic and Tranportation</h5>
+                            <h5 className="modal-title" id="exampleModalLabel">Shipment Invoice </h5>
                             <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -156,7 +156,7 @@ function Agreement() {
                             <div className="invpoiceheading">
                                 <b>INVOICE</b>
                             </div>
-                            <div className="logoandnumber">
+                            {/* <div className="logoandnumber">
                                 <div className="logoo ">
                                     <img src={logoimg} width='100px' height='100px' alt="" />
 
@@ -165,10 +165,10 @@ function Agreement() {
                                 <div className="numberr">
                                     (214) 404-545
                                 </div>
-                            </div>
-                            <div className="ordernumbr">
+                            </div> */}
+                            {/* <div className="ordernumbr">
                                 <h6>ORDER#LQT6566 (18383 PRESTON RD STE 202, DALLAS TX 75252)</h6>
-                            </div>
+                            </div> */}
                             <div className="customeralex d-flex">
                                 <div className="" style={{ width: '50%' }}>
                                     <h6><b>Customer :</b> {agreementtdata.fullname}</h6>
@@ -179,7 +179,7 @@ function Agreement() {
                             </div>
                             <div className="d-flex">
                                 <div className="customerinfo">
-                                    <b>Phone : </b> {agreementtdata.phoneno} <br />
+                                    <b>Phone No : </b> {agreementtdata.phoneno} <br />
                                     <b>Payment Method : </b> {agreementtdata.payment}
                                 </div>
                                 <div className="orderpayment"></div>
@@ -273,6 +273,15 @@ function Agreement() {
                             </div>
                             <div className="details mt-3 ">
                                 <div className="text-center w-100 mt-3">
+                                    <h5><b>TERMS AND CONDITION</b></h5>
+                                </div>
+                                <p className="mt-1" style={{ fontSize: '13px', marginLeft: '10px' }}>
+
+                                      1) The carrier and driver jointly and separately are authorized to operate and transport his/her or their motor vehicle between its pickup location and the destination. While every effort will be made to confirm a driver for the estimated date and price, no guarantee of pickup or delivery date can be made. Changes may occur in both due to carrier schedules, mechanical failure, inclement weather, acts of God, among other unforeseen circumstances. HS Logistics will not be responsible for any charges or liabilities incurred due to delay of pickup or delivery. This includes but is not limited to airline tickets or rental car fees. The client will be given the carrier’s schedule at the time of dispatch. 2) The client agrees to not contract any other broker or carrier during the respective time which corresponds with their shipping option. Any client that is found working with another broker or carrier during this period, is subject to a non-refundable deposit fee. 3) Contracted carriers provide door to door transport if the truck driver can physically reach the pick-up and delivery addresses. If access to the pickup or delivery location is restricted by narrow streets, low- hanging trees or tight turns, the driver may ask that you meet the truck at a large parking lot nearby, such as a grocery store. 4) Carriers are not licensed or insured to transport any personal or household goods, however, we do understand that you may need to put some items in the vehicle. Carrier is not liable for damage caused to the vehicle from excessive or improper loading of personal items. These items must be put in the trunk and kept to a limit of 100 lbs. Any exceptions must be previously discussed and approved by HS Logistics. An additional fee may be assessed for personal items of any weight. Any misrepresentation of the personal belongings will result in a change of price and/or a dry run fee of $150 if a carrier is made to attend the scene of the pick-up and the shipment is different from expected. If a carrier is sent out and the vehicle is not ready as indicated by the shipper there will be an additional $75.00 rescheduling fee. HS Logistics must be notified, should the shipper be unavailable for pick up or delivery, the shipper must have an alternate representative take his/her place as shipper. 5) Vehicles must be tendered to the carrier in good running condition with no more than a half tank of fuel. Carrier will not be liable for damage caused by leaking fluids, freezing, exhaust systems, or antennas not tied down. Any claim for loss or damage must be noted and signed on condition report at time of delivery. 6) Trucking damage claims are covered by carriers from $100,000 up to $250,000 cargo insurance per load, and a minimum of 3/4 of a million dollars public liability and property damage. Any damage incurred to a vehicle during transport falls directly under the responsibility of the carrier and not HS Logistics. All carriers contracted will have insurance to cover damage caused by the driver or theft during transport. If damage is done, HS Logistics. will provide you with a full insurance packet for thecarrier to file a claim. All claims must be noted and signed for at time of delivery and submitted in writing within 15 days of delivery. 7) If a carrier is sent out and the vehicle is not ready as indicated by the shipper there will be an additional $75.00 rescheduling fee. HS Logistics must be notified, should the shipper be unavailable for pick up or delivery, the shipper must have an alternate representative take his/her place as shipper. If for any reason the vehicle becomes unavailable during a scheduled pick-up window, after an order has been placed, HS Logistics will not refund the deposit amount. 8) The client should under no circumstances release or receive vehicle(s) from a carrier without an inspection report (Bill of Lading/BOL) regardless of the time of day or the weather conditions. Failure to do so may result in the client’s inability to file a damage claim. Carriers insurance will only process claims for damages due to the carrier’s own negligence. Damage must be reported to HS Logistics within 24 hours of delivery. Damage must be clearly listed on the BOL and signed by the driver (no exceptions). If there is damage during transport, the client must notate those damages on the final inspection report, pay the remaining balance stated on this agreement, and then contact the carrier’s main office as well as the carrier's insurance company. Failure to notate any damage on the final inspection report releases the carrier of any liability and would result in the inability to process a damage claim. 09) A $150.00 non-operational fee will be charged for all non-running vehicles. This will be included in the final quote received from HS Logistics. If the vehicle becomes non-operational during transport, this fee will be applied to the original quote. Final quote will be provided to the customer at the time of dispatching with the carrier for the pickup of the vehicle. 10) HS Logistics agrees to provide a carrier to transport your vehicle as promptly as possible in accordance with your instructions but cannot guarantee pick-up or delivery on a specified date. A cancellation fee of $200 will be charged for orders canceled 7 days before the requested available pick- up date. HS Logistics does not agree to pay for your rental of a vehicle, nor shall it be liable for failure of mechanical or operating parts of your vehicle. Shipper warrants that he/she will pay the price quoted due HS Logistics for delivered vehicles and will not seek to charge back a credit card. This agreement and any shipment here under is subject to all terms and conditions of the carrier’s tariff and the uniform straight bill of lading, copies of which are available at the office of the carrier. 11) This agreement shall be governed by and construed in accordance with the laws of the State of California. The parties further agree that any legal action arising out of this agreement must be filed in a court of jurisdiction, and HS Logistics liability is limited to the amount of money HS Logistics broker’s fee only. The client hereby submits to the jurisdiction of such courts and waives any right to jurisdiction in any other location. I hereby agree to the transport terms provided by HS Logistics. I authorize a small down payment to be paid to HS Logistics via a credit or debit card or check by phone or mail. I further understand that any remaining balance is due on delivery and that it must be paid in full via cash, cashier’s check, and money order, to the authorized transporter.
+
+                                </p>
+                                    <hr />
+                                    <div className="text-center w-100 mt-3">
                                     <h5><b>DIGITAL SIGNATURE CERTIFICATE</b></h5>
                                 </div>
                                 <p className="mt-1" style={{ fontSize: '13px', marginLeft: '10px' }}>By selecting "I Agree" and entering

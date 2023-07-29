@@ -54,6 +54,7 @@ router.get('/fetchagreementleaddata', async (req, res) => {
       signaturedate: lead.signaturedate,
       ipaddress: lead.ipaddress,
     };
+    console.log(formattedLeads)
     res.status(200).json({ message: 'Lead fetch successful', data: formattedLeads });
   } catch (error) {
     console.error(error);

@@ -34,13 +34,10 @@ function Lead(props) {
     useEffect(() => {
         const pagename = 'admilead'
         const userid = userData?.id
-        console.log("id from reducer " + id)
-        console.log(userData)
         const data = {
             pagename: pagename,
             id: userid
         }
-        console.log(data)
         dispatch(fetchLead(data));
     }, [dispatch]);
 
