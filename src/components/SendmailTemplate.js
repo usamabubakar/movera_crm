@@ -114,7 +114,7 @@ const template = [
 
 		<button style="border-radius: 5px; border: none; cursor: pointer; padding: 15px; margin-top: 10px; background-color: rgb(23, 23, 73); color: white; font-size: 16px;
 		">Get Started now!</button>
-		<div style="width: 1000%;">
+		<div style="width: 100%;">
 
 			<h2  style="text-align: center; margin-top:10px; display:block;">Quote details</h2>
 			<div>
@@ -124,7 +124,8 @@ const template = [
             <b>Total price:</b> {price} <br>
             <b>Deposite:</b> {deposit} <br> <br>
             <b>Vehicles</b> <br>
-            <table style="border-collapse:collapse; margin-top:5px width: 100%; text-align: center; border: 1ps solid black;">
+            <div>
+            <table style="border-collapse:collapse; margin-top:5px; width: 100%; text-align: center; border: 1ps solid black;">
             <thead>
                 <tr>
                 <th style="border: 1px solid #dddddd;">Make</th>
@@ -136,7 +137,10 @@ const template = [
             <tbody>
                {carrows}
             </tbody>
-        </table> <br> <br>
+        </table>
+            
+            </div>
+            <br> <br>
 				If you have any questions or would like us to match a competitor's rate please call me at 5166561474.
 
 Regards, <br>

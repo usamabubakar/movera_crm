@@ -113,7 +113,7 @@ export const addLead = (data) =>async (dispatch) => {
         message: 'A new lead has been added',
       };
       // Send the notification data to the SSE server endpoint
-      axios.post('http://localhost:5001/api/sse/notify', notificationData, config)
+      axios.post(`${localhost}:5001/api/sse/notify`, notificationData, config)
         .then((response) => {
           console.log('Notification sent to SSE server:', response.data);
           // Handle the success case

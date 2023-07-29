@@ -2,7 +2,7 @@
   "name": "crm",
   "version": "1.0.0",
   "description": "crm backend designs",
-  "main": "index.js",
+  "main": "Index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "nodemon": "nodemon"
