@@ -28,6 +28,7 @@ const authReducer = (state = initialState, action) => {
 
     switch (action.type) {
         case LOGIN_SUCCESS:
+            console.log(action.payload.user, "login success se ho bhai");
             const { id, name, email, isAdmin, isAgent ,img} = action.payload.user;
             const token = action.payload.token;
             const isAdminn = isAdmin;
@@ -63,13 +64,13 @@ const authReducer = (state = initialState, action) => {
                 isLoading: false,
                 // user: action.payload
                 user : {
-                    id  : action.payload.id,
+                    id  : action.payload._id,
                     name: action.payload.name,
                     email: action.payload.email,
                     img: action.payload.img
                 },
                 isAdmin: action.payload.isAdmin,
-                isAgent: action.payload.isAgentt
+                isAgent: action.payload.isAgent
 
             };
         case LOGOUT_SUCCESS:

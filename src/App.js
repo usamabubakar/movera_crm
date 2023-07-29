@@ -38,6 +38,7 @@ function App() {
   const isAdmin = useSelector(state => state.auth.isAdmin);
   const isAgent = useSelector(state => state.auth.isAgent);
 console.log("chekcing", isAuthenticated);
+console.log("checking Agent Problem is Agent", isAgent);
 
   const handleWidth = () => {
     setHideshow(hideshow === 16 ? 3.5 : 16);

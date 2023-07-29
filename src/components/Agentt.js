@@ -48,7 +48,7 @@ function Agentt(props) {
 
     useEffect(() => {
         dispatch(fetchAgentData());
-    }, [dispatch]);
+    }, []);
 
     const columns = [
         {
