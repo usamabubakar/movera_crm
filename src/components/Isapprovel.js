@@ -29,7 +29,6 @@ function Isapprovel(props) {
 
 
     useEffect(() => {
-
         dispatch(fetchPendingLead());
     }, [dispatch]);
 

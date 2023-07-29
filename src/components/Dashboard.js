@@ -28,6 +28,7 @@ import { deletenoti } from '../state/actions/lead';
 import { getNotifications } from './sse';
 // import io from 'socket.io-client';
 // import { WebSocket } from 'websocket';
+import { fetchAgentData } from '../state/actions/agentCrud';
 
 
 import io, { Socket } from 'socket.io-client'
@@ -57,6 +58,7 @@ export default function Dashborad() {
     const userData = useSelector(state => state.auth.user);
 
     const [notificationnn, setNotificationnn] = useState([]);
+
 
     useEffect(() => {
         const recievenotification = getNotifications();
@@ -144,7 +146,7 @@ export default function Dashborad() {
 
     useEffect(() => {
         dispatch(Dashboard());
-
+        dispatch(fetchAgentData());
     }, [dispatch]);
 
 
@@ -203,7 +205,6 @@ export default function Dashborad() {
         dispatch(fetchnotification());
     };
     const notidel = (id) => {
-        console.log(id + "noti")
         dispatch(deletenoti(id))
     };
 

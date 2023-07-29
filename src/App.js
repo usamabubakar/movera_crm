@@ -37,19 +37,22 @@ function App() {
   const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
   const isAdmin = useSelector(state => state.auth.isAdmin);
   const isAgent = useSelector(state => state.auth.isAgent);
-console.log("chekcing", isAuthenticated);
+  const userData = useSelector(state => state.auth.user);
+
 
   const handleWidth = () => {
     setHideshow(hideshow === 16 ? 3.5 : 16);
   };
 
   const load = async () =>{
-          await store.dispatch(loadUser()); 
+         const loaduser= await store.dispatch(loadUser());
+         console.group("loaduser",loaduser)
+
         }
-    
+
     useEffect(() => {
           load();
-      
+
     if (!isAuthenticated    ) {
       if(window.location.pathname !== '/login' && window.location.pathname !== '/customeragreement' ){
 

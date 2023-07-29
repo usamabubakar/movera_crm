@@ -125,7 +125,6 @@ console.log("vendore meeil")
         res.status(200).json({ success: true, message: 'Email sent successfully'});
       }
 
-
     });
 
 
@@ -151,7 +150,7 @@ const mailOptions = {
       lead.mailcount += 1;
       await lead.save();
       console.log('Email sent: ' + info.response);
-      res.status(200).json({ success: true, message: 'Email sent successfully'});
+      res.status(200).json({ success: true, message: 'Email sent successfully' , data: lead});
     }
 
   });

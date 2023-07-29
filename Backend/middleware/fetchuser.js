@@ -7,7 +7,7 @@ const jwt_Secret_key = process.env.SECRET_KEY;
 const fetchuser = (req, res, next) => {
   // Get the token from the Authorization header
   const token = req.header('Authorization');
-  console.log(token)
+  console.log("token ha ya",token)
 
   if (!token || !token.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Invalid token' });

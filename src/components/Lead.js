@@ -17,7 +17,6 @@ import './style.css';
 function Lead(props) {
     const dispatch = useDispatch();
     const Lead_Add = useSelector(state => state.lead.leads);
-    console.log(Lead_Add)
     const Lead_Data = useSelector(state => state.leadsData.leadsData);
     const leaddelete = useSelector(state => state.lead.leadDelete);
     const [rowidValue, setrowIdValue] = useState()
@@ -27,9 +26,7 @@ function Lead(props) {
     const userData = useSelector(state => state.auth.user);
     const [selectedLeadIds, setSelectedLeadIds] = useState([]);
     const [leadnotification, setLeadNotification] = useState([]);
-
-
-
+    const id = useSelector(state => state.auth.user.id);
 
 
 
@@ -37,10 +34,13 @@ function Lead(props) {
     useEffect(() => {
         const pagename = 'admilead'
         const userid = userData?.id
+        console.log("id from reducer " + id)
+        console.log(userData)
         const data = {
             pagename: pagename,
             id: userid
         }
+        console.log(data)
         dispatch(fetchLead(data));
     }, [dispatch]);
 

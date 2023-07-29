@@ -18,30 +18,24 @@ const agentReducer = (state = initialState, action) => {
     switch (action.type) {
         case AGENT_FETCHING_SUCCESS:
             const agent_user = action.payload.data
-            console.log(agent_user)
             return {
                 ...state,
                 agents: agent_user,
                 error: null
             };
         case AGENT_ADD_SUCCESS:
-            console.log("agent added working reducer")
-            console.log(action.payload)
             return {
                 ...state,
                 success: action.payload,
                 agents: [...state.agents, action.payload]
             };
         case AGENT_DELETE_SUCCESS:
-            console.log(action.payload + "agent id after delet in reduceer")
             return {
                 ...state,
                 agents: state.agents.filter(agent => (agent.id || agent._id) !== action.payload),
                 userDelete: true
             }
         case AGENT_UPDATE_SUCCESS:
-            console.log("update working ")
-            console.log(action.payload._id)
             const updateagentid=action.payload._id
             const updatedata = state.agents.map((agent) => {
                 if (agent.id === updateagentid) {

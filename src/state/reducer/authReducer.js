@@ -16,7 +16,7 @@ import {
     isAuthenticated: isAuthenticated,
     isAdmin: false,
     isAgent: false,
-    user: userData || null,
+    user: {},
     token: token,
     errorMessage: null
   };
@@ -29,10 +29,10 @@ const authReducer = (state = initialState, action) => {
     switch (action.type) {
         case LOGIN_SUCCESS:
             const { id, name, email, isAdmin, isAgent ,img} = action.payload.user;
+
             const token = action.payload.token;
             const isAdminn = isAdmin;
             const isAgentt = isAgent;
-
             localStorage.setItem("token", token);
             localStorage.setItem(
                 "userData",
@@ -46,24 +46,21 @@ const authReducer = (state = initialState, action) => {
             return {
                 ...state,
                 isAuthenticated: true,
-                user: {
-                    id: id,
-                    name: name,
-                    email: email,
-                    img:img
-                },
+                user: action.payload.user,
                 isAdmin: isAdminn,
                 isAgent: isAgentt,
-                token: token
+                token: token,
+                img:img
             };
         case USER_LOADED:
+
             return {
                 ...state,
                 isAuthenticated: true,
                 isLoading: false,
                 // user: action.payload
                 user : {
-                    id  : action.payload.id,
+                    id  : action.payload._id,
                     name: action.payload.name,
                     email: action.payload.email,
                     img: action.payload.img
@@ -104,7 +101,7 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 errorMessage: action.payload.message
             }
-        
+
         case TOKEN_VERIFICATION_FAIL:
             return {
                 ...state,

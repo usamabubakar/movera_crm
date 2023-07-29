@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { EMAIL_SEND_SUCCESS, EMAIL_SEND_FAILURE } from './types';
+import { EMAIL_SEND_SUCCESS, EMAIL_SEND_FAILURE , UPDATE_LEAD} from './types';
 import getTokenConfig from './tokenConfig';
 import { websiteLink, localhost } from "../config/websitepath";
 
@@ -10,7 +10,12 @@ export const sendEmail = (data) => async (dispatch) => {
   try {
     const response = await axios.post(`${localhost}/api/sendemail/sendEmail`, data, config);
     // Dispatch the success action
+    console.log(response.data.data)
     dispatch({ type: EMAIL_SEND_SUCCESS });
+    // dispatch({
+    //   type: UPDATE_LEAD,
+    //   payload: updatedLead,
+    // });
     return true;
   } catch (error) {
     console.log("error in email:", error.message);

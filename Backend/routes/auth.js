@@ -217,6 +217,8 @@ router.post('/login', [
           isAgent: user_login.isAgent,
           img:user_login.img
         };
+        console.log("Server-side id:", user_login.id); // Log the id value before sending it to the client
+
         return res.status(200).json({ message: 'Admin login', token: token, userdata: userData });
       } else {
         return res.status(401).json({ message: 'Invalid username or password' });
@@ -301,7 +303,7 @@ router.get('/getuser', fetchuser, async (req, res) => {
     console.log(user, "i am user");
     res.send(user)
   } catch (error) {
-    
+
     console.log("bhai error a gya get user me ")
     console.log(error)
     res.send("internal error")
