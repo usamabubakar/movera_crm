@@ -129,7 +129,7 @@ console.log(agreementtdata)
             ipaddress: ip
         }
         dispatch(addagreement(data))
-
+        window.location.reload()
 
 
 
