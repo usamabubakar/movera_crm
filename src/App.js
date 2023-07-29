@@ -128,6 +128,7 @@ function App() {
     )
     :
     (<Route path="/customeragreement" element={<Agreement />} />)
+    (<Route path="/" element={<Navigate to="/login" />} />)
 
     }
 
