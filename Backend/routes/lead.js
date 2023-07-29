@@ -387,14 +387,14 @@ router.get('/pendinglead', fetchuser, async (req, res) => {
 router.delete('/deletependingLead', async (req, res) => {
   console.log(req.body)
   console.log("pendinlg lead det")
-    // try {
-    //     const leadId = req.params.id;
-    //     const user = await Lead.findByIdAndDelete(leadId);
-    //     res.status(200).json({ message: 'User deleted succesfully', leadid:user.id } );
-    // } catch (error) {
-    //     console.error(error);
-    //     res.status(500).json({ message: 'Internal server error' });
-    // }
+    try {
+        const leadId = req.params.id;
+        const user = await Lead.findByIdAndDelete(leadId);
+        res.status(200).json({ message: 'User deleted succesfully', leadid:user.id } );
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
 //   assign lead to agent
@@ -402,7 +402,7 @@ router.post('/assignlead', async (req, res) => {
   try {
     const data = req.body;
     const leadIds = Array.isArray(data.selectedleadId) ? data.selectedleadId : [data.leadId];
-    console.log(leadIds)
+
     const agentId = data.agentid;
     const user = await User.findOne({_id: agentId});
     const agentName = user.name;
@@ -421,8 +421,7 @@ router.post('/assignlead', async (req, res) => {
       return res.status(404).json({message: 'Leads not found'});
     }
 
-    console.log(assignedLeads)
-    res.status(200).json({message: 'Leads assigned successfully'});
+    res.status(200).json({message: 'Leads assigned successfully' ,data:assignedLeads});
     console.log("Leads assigned successfully");
   } catch (error) {
     console.error(error);

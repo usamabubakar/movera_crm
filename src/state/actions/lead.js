@@ -200,11 +200,13 @@ const config = getTokenConfig();
       try {
        const response= await axios.post(`${localhost}/api/lead/assignlead/`,data);
        dispatch({
+        type:UPDATE_LEAD,
 
        })
+       return true
 
       } catch (error) {
-
+        return false
       }
 
     }

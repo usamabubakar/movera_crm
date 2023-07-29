@@ -460,8 +460,13 @@ function Lead(props) {
             leadId: rowidValue,
             agentid: id
         }
-        console.log(data)
         dispatch(assignLead(data))
+        .then(() => {
+            toast.success('Lead Assign Successfully...!');
+          })
+          .catch(() => {
+            toast.error('Lead Not Assign Successfully...!');
+          });
     }
 
 
@@ -1251,7 +1256,7 @@ if (!Lead_Add) {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="agent-edit-delete-btn ml-1" style={{ padding: '9px 10px' }}  >Assign</button>
+                                <button type="submit" class="agent-edit-delete-btn ml-1" style={{ padding: '9px 10px' }} data-dismiss="modal"  >Assign</button>
 
                             </div>
                         </form>
@@ -1466,40 +1471,7 @@ if (!Lead_Add) {
             {/* // end */}
             {/* // assign lead */}
 
-            <div className="modal fade" id="assignlead" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
-                <div className="modal-dialog modal-dialog-centered" role="document">
-                    <div className="modal-content modelbg">
-                        <div className="modal-header border-bottom-0">
-                            <h5 className="modal-title" id="exampleModalLabel">Assign Lead</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close" >
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form>
-                            <div className="modal-body">
 
-                                <div className="form-group mt-n3">
-                                    <div>
-                                        <label for="assignto">Assign to</label>
-                                    </div>
-
-                                    <select name="leadsassign" id="assignlead" className='assignlead'>
-                                        <option value="volvo">Volvo</option>
-                                        <option value="saab">Saab</option>
-                                        <option value="mercedes">Mercedes</option>
-                                        <option value="audi">Audi</option>
-                                    </select>
-                                </div>
-
-
-                            </div>
-                            <div className="modal-footer mt-n4 border-top-0 d-flex justify-content-center" >
-                                <button type="submit" className="btn button-86" style={{ color: 'white' }}>Assign</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
 
             {/* delete model  */}
 

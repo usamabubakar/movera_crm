@@ -12,10 +12,10 @@ export const sendEmail = (data) => async (dispatch) => {
     // Dispatch the success action
     console.log(response.data.data)
     dispatch({ type: EMAIL_SEND_SUCCESS });
-    // dispatch({
-    //   type: UPDATE_LEAD,
-    //   payload: updatedLead,
-    // });
+    dispatch({
+      type: UPDATE_LEAD,
+      payload: response.data.data,
+    });
     return true;
   } catch (error) {
     console.log("error in email:", error.message);
