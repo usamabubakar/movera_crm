@@ -51,6 +51,7 @@ router.post('/addlead', fetchuser, async (req, res) => {
           make: car.make,
           vehicletype: car.vehicletype,
           modelyear: car.modelyear,
+          isoperable:car.Operable
         });
       }
 
@@ -94,6 +95,8 @@ router.post('/addlead', fetchuser, async (req, res) => {
           make: car.make,
           vehicletype: car.vehicletype,
           modelyear: car.modelyear,
+          isoperable:car.Operable
+
         });
       }
 
@@ -139,7 +142,8 @@ router.get('/fetchlead', async (req, res) => {
           model: vehicle.model,
           make: vehicle.make,
           vehicletype: vehicle.vehicletype,
-          modelyear: vehicle.modelyear
+          modelyear: vehicle.modelyear,
+          operable:vehicle.isoperable
         })),
         recieveddate: lead.recieveddate,
         isAssignedName: lead.isAssignedName,
@@ -160,7 +164,8 @@ router.get('/fetchlead', async (req, res) => {
           model: vehicle.model,
           make: vehicle.make,
           vehicletype: vehicle.vehicletype,
-          modelyear: vehicle.modelyear
+          modelyear: vehicle.modelyear,
+          operable:vehicle.isoperable
         })),
 
       }));
@@ -186,7 +191,8 @@ router.get('/fetchlead', async (req, res) => {
           model: vehicle.model,
           make: vehicle.make,
           vehicletype: vehicle.vehicletype,
-          modelyear: vehicle.modelyear
+          modelyear: vehicle.modelyear,
+          operable:vehicle.isoperable
         })),
         recieveddate: lead.recieveddate,
         isAssignedName: lead.isAssignedName,
@@ -275,7 +281,6 @@ router.get('/pendinglead', fetchuser, async (req, res) => {
       const leadId = req.params.leadId;
       const data = req.body;
       const { cars } = req.body;
-      console.log(data)
 
       const user = await User.findById(req.user_login.id);
       if (!user) {
@@ -330,6 +335,7 @@ router.get('/pendinglead', fetchuser, async (req, res) => {
           make: car.make,
           vehicletype: car.vehicletype,
           modelyear: car.modelyear,
+          isoperable:car.operable
         }));
       }
 
@@ -341,6 +347,7 @@ router.get('/pendinglead', fetchuser, async (req, res) => {
             make: newCar.make,
             vehicletype: newCar.vehicletype,
             modelyear: newCar.modelyear,
+            isoperable:newCar.operable
           }))
         );
       }
@@ -384,11 +391,12 @@ router.get('/pendinglead', fetchuser, async (req, res) => {
     }
   });
 
-router.delete('/deletependingLead', async (req, res) => {
-  console.log(req.body)
-  console.log("pendinlg lead det")
+router.delete('/deletependingLead/:id', async (req, res) => {
+
     try {
-        const leadId = req.params.id;
+      const leadId = req.params.id;
+
+  console.log("pendinlg lead det", leadId)
         const user = await Lead.findByIdAndDelete(leadId);
         res.status(200).json({ message: 'User deleted succesfully', leadid:user.id } );
     } catch (error) {
@@ -514,7 +522,7 @@ console.log(isApproved)
       lead.approvelStatus = isApproved;
       await lead.save();
 
-      res.status(200).json({ message: 'Lead status updated successfully' });
+      res.status(200).json({ message: 'Lead status updated successfully' , data:lead} );
     } catch (error) {
       console.error(error);
       res.status(500).send('Internal Server Error');

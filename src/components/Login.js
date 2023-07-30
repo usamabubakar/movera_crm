@@ -75,16 +75,18 @@ export default function Login(props) {
 
 
 
-    const handleEmailchecker = (e) => {
-        const email = e.target.value;
-        setEmail(email);
-        if (email.includes('@gmail.com')) {
-            dispatch(emailchecker(email));
-        }
-        else {
+      const [emailexist, setemailexist] = useState(null)
+      const handleEmailchecker = (e) => {
+          const email = e.target.value;
+          setEmail(email);
 
-        }
-    }
+          dispatch(emailchecker(email))
+              .then(() => {
+                  setemailexist(true)
+              }).catch(
+                  setemailexist(false)
+              )
+      }
 
     const signup = (e) => {
         e.preventDefault();
@@ -205,18 +207,22 @@ export default function Login(props) {
                                             {islodaing && <img src={loding} alt="" className="loading-image" width={30} height={30} />}
                                         </div>
 
-                                        {Email_exist == true && (
-                                            <div >
-                                                <small id="emailHelp" style={{ color: "#00cc00", fontSize: "12px" }} className="form-text">Email is correct! &#9989;</small>
-                                            </div>
 
-
-                                        )}
-                                        {Email_exist == false && (
-                                            <div >
-                                                <small id="emailHelp" style={{ color: "tomato", fontSize: "12px" }} className="form-text">Email already exists</small>
+                                    {emailexist === null ? null : (
+                                        emailexist ? (
+                                            <div>
+                                                <small id="emailHelp" style={{ color: "#00cc00", fontSize: "12px" }} className="form-text">
+                                                    Email is correct! &#9989;
+                                                </small>
                                             </div>
-                                        )}
+                                        ) : (
+                                            <div>
+                                                <small id="emailHelp" style={{ color: "tomato", fontSize: "12px" }} className="form-text">
+                                                    Email already exists
+                                                </small>
+                                            </div>
+                                        )
+                                    )}
 
                                     </div>
                                     <div className="form-group">

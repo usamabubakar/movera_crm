@@ -339,7 +339,9 @@ function Quotes(props) {
             setRecord(data);
         } else {
             const filteredData = data.filter((row) =>
-                row.name.toLowerCase().includes(searchText)
+            row.name.toLowerCase().includes(searchText) ||
+            row.email.toLowerCase().includes(searchText) ||
+            row.phoneno.includes(searchText)
             );
 
             setRecord(filteredData);
@@ -806,7 +808,7 @@ function Quotes(props) {
                                         <option value="Orders">Orders</option>
                                         <option value="Dispatched">Dispatched</option>
                                         <option value="Archived">Archived</option>
-                                        <option value="Potentail">Potential</option>
+                                        <option value="Potentail">Completed</option>
                                         <option value="Cancel">Cancel Order</option>
                                     </select>
                                 </div>

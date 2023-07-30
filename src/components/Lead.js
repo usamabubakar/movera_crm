@@ -1,6 +1,6 @@
 import DataTable from 'react-data-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { faTrashAlt, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { useState } from 'react';
 import { faEye, faEyeSlash, faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { fetchLead, addLead, deleteLead, assignLead } from '../state/actions/lead';
@@ -47,37 +47,36 @@ function Lead(props) {
     const [make, setMake] = useState('');
     const [model, setModel] = useState('');
     const [vehicletype, setVehicletype] = useState('');
-    const [idCounter, setIdCounter] = useState(0);
+    const [Operable, setOperable] = useState('');
 
+  const handleAddCar = () => {
+    if (modelyear.trim() !== '' && make.trim() !== '' && model.trim() !== '' && vehicletype.trim() !== '') {
+      const newCar = { id: cars.length, modelyear, make, model, vehicletype, Operable };
+      setCars((prevCars) => [...prevCars, newCar]);
+      setModelyear('');
+      setMake('');
+      setModel('');
+      setVehicletype('');
+      setOperable('');
+      console.log(cars);
+    }
+  };
 
-    const handleAddCar = () => {
-        if (modelyear.trim() !== '' && make.trim() !== '' && model.trim() !== '' && vehicletype.trim() !== '') {
-            const newCar = { id: cars.length, modelyear, make, model, vehicletype };
-            setCars((prevCars) => [...prevCars, newCar]);
-            setModelyear('');
-            setMake('');
-            setModel('');
-            setVehicletype('');
-            console.log(cars);
-        }
-    };
-    console.log(cars);
-    const deleteCar = (index) => {
-        setCars((prevCars) => {
-            const updatedCars = [...prevCars];
-            updatedCars.splice(index, 1);
-            return updatedCars;
-        });
-    };
+  const deleteCar = (index) => {
+    setCars((prevCars) => {
+      const updatedCars = [...prevCars];
+      updatedCars.splice(index, 1);
+      return updatedCars;
+    });
+  };
 
-
-    const updateCar = (index, property, value) => {
-        setCars((prevCars) => {
-            const updatedCars = [...prevCars];
-            updatedCars[index][property] = value;
-            return updatedCars;
-        });
-    };
+  const updateCar = (index, property, value) => {
+    setCars((prevCars) => {
+      const updatedCars = [...prevCars];
+      updatedCars[index][property] = value;
+      return updatedCars;
+    });
+  };
 
 
     //    const password ='*'.repeat(row.password.length)
@@ -209,37 +208,6 @@ function Lead(props) {
                     <button className='agent-edit-delete-btn ml-1' onClick={() => viewcar(row.vehicle)} type='button' data-toggle="modal" data-target="#viewcars">View Vehicles</button>
                 </div>
             ),
-
-            //     <table className='text-center data-table'>
-            //         <thead>
-            //             <tr>
-            //                 <th>Make</th>
-            //                 <th>Model</th>
-            //                 <th>Model Year</th>
-            //                 <th>Vehicle Type</th>
-            //             </tr>
-            //         </thead>
-            //         <tbody>
-            //             {row.vehicle.split(', ').map((vehicle, index) => {
-            //                 const [make, model, modelYear, vehicleType] = vehicle.split(' ');
-            //                 return (
-            //                     <tr key={index}>
-            //                         <td>{make}</td>
-            //                         <td>{model}</td>
-            //                         <td>{modelYear}</td>
-            //                         <td>{vehicleType}</td>
-            //                     </tr>
-            //                 );
-            //             })}
-            //         </tbody>
-
-            //     </table>
-            //     // <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
-            //     //     <button className='agent-edit-delete-btn ml-1' type='button' data-toggle="modal" data-target="#assignlead" onClick={() => getRowidValue(row.leadId)} >Assign Lead</button>
-
-            //     // </div>
-
-            // ),
             center: true,
             minWidth: '200px'
         },
@@ -295,8 +263,7 @@ function Lead(props) {
                 const receivedDate = new Date(lead.recieveddate);
                 const formattedDate = receivedDate.toLocaleDateString();
                 const formattedTime = receivedDate.toLocaleTimeString();
-                const vehicles = Array.isArray(lead.vehicle) ? lead.vehicle.map((vehicle) => `${vehicle.make} ${vehicle.model} ${vehicle.modelyear} ${vehicle.vehicletype}`).join(', ') : '';
-
+                const vehicles = Array.isArray(lead.vehicle) ? lead.vehicle.map((vehicle) => `${vehicle.make} ${vehicle.model} ${vehicle.modelyear} ${vehicle.vehicletype} ${vehicle.operable}`).join(', ') : '';
                 return {
                     id: index + 1,
                     leadId: lead.id || lead._id,
@@ -362,16 +329,18 @@ function Lead(props) {
             cars: cars
         }
         seteditData('')
+        console.log(data)
         dispatch(addLead(data))
-        .then(() => {
-          toast.success('Lead Added Successfully...!');
-        })
-        .catch(() => {
-          toast.error('Lead Not Added Successfully...!');
-        });
+            .then(() => {
+                toast.success('Lead Added Successfully...!');
+            })
+            .catch(() => {
+                toast.error('Lead Not Added Successfully...!');
+            });
     }
 
-    const updatelead = (e) => {
+    const updatelead = async(e) => {
+       try {
         e.preventDefault();
         console.log("add lead click");
         const name = e.target.name.value;
@@ -405,14 +374,17 @@ function Lead(props) {
             cars: cars
         }
         console.log(data)
-        dispatch(updateLead(data));
+       const update=await dispatch(updateLead(data));
         seteditData('')
-        if (!Lead_Add) {
+        if(update){
             toast.success('Lead update Successfully...!');
         }
-        else if (Lead_Add) {
+        else{
             toast.error('Lead Not update Successfully...!');
         }
+       } catch (error) {
+        toast.error('internal error');
+       }
     }
 
     const handleDelete = (id) => {
@@ -458,12 +430,12 @@ function Lead(props) {
             agentid: id
         }
         dispatch(assignLead(data))
-        .then(() => {
-            toast.success('Lead Assign Successfully...!');
-          })
-          .catch(() => {
-            toast.error('Lead Not Assign Successfully...!');
-          });
+            .then(() => {
+                toast.success('Lead Assign Successfully...!');
+            })
+            .catch(() => {
+                toast.error('Lead Not Assign Successfully...!');
+            });
     }
 
 
@@ -475,7 +447,9 @@ function Lead(props) {
             setRecord(data);
         } else {
             const filteredData = data.filter((row) =>
-                row.name.toLowerCase().includes(searchText)
+            row.name.toLowerCase().includes(searchText) ||
+            row.email.toLowerCase().includes(searchText) ||
+            row.phoneno.includes(searchText)
             );
 
             setRecord(filteredData);
@@ -527,7 +501,6 @@ function Lead(props) {
 
     const handletextleaddata = (e) => {
         const { value } = e.target;
-
         const parsedData = parseFormData(value);
         setFormData(parsedData);
     };
@@ -551,6 +524,7 @@ function Lead(props) {
           'model',
           'modelyear',
           'vehicletype',
+          'Operable' // Add 'Operable' to the list of fields to extract
         ];
 
         const parsedData = {
@@ -571,7 +545,7 @@ function Lead(props) {
               return; // Stop the function execution
             }
 
-            if (key === 'make' || key === 'model' || key === 'modelyear' || key === 'vehicletype') {
+            if (key === 'make' || key === 'model' || key === 'modelyear' || key === 'vehicletype' || key === 'Operable') {
               isParsingCarData = true; // Indicates that car data is being parsed
               if (Object.keys(currentCar).length === 4) {
                 parsedData.cars.push(currentCar);
@@ -596,20 +570,22 @@ function Lead(props) {
 
 
 
-    const handleSubmitlead = () => {
-        // Make an HTTP POST request to the backend to save the form data
-        console.log(formData)
-        dispatch(addLead(formData));
-        // seteditData('')
-console.log('Value of Lead_Add:', Lead_Add, typeof Lead_Add);
 
-if (!Lead_Add) {
-  console.log('Inside if block - Lead_Add is falsy.');
-  toast.error('Lead Not Added Successfully...!');
-} else if(Lead_Add){
-  console.log('Inside else block - Lead_Add is truthy.');
-  toast.success('Lead Add Successfully...!');
-}
+    const handleSubmitlead = () => {
+        console.log(formData)
+       try {
+       const add=  dispatch(addLead(formData));
+
+
+         if (add) {
+
+             toast.success('Lead Add Successfully...!');
+         } else  {
+            toast.error('Lead Not Added Successfully...!');
+         }
+       } catch (error) {
+        toast.error('internel eeror');
+       }
 
 
     };
@@ -670,7 +646,7 @@ if (!Lead_Add) {
                 <div class="modal-dialog " role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalScrollableTitle">Modal title</h5>
+                            <h5 class="modal-title" id="exampleModalScrollableTitle">Update Lead</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -791,10 +767,12 @@ if (!Lead_Add) {
                                 <div className="form-group">
                                     <h4>Home many Vehicle?</h4>
                                     <select name="howmany" value={editData[13]} onChange={(e) => handleInputChange(13, e.target.value)} required id="howmany" className='assignlead'>
-                                        <option value="volvo" >1</option>
-                                        <option value="saab">2</option>
-                                        <option value="mercedes">3</option>
-                                        <option value="audi">4</option>
+                                        <option value="1" >1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
                                     </select>
                                 </div>
                                 <div className='form-group'>
@@ -807,6 +785,7 @@ if (!Lead_Add) {
                                             <th>Make</th>
                                             <th>Model</th>
                                             <th>Vehicle Type</th>
+                                            <th>is Operable?</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -831,7 +810,12 @@ if (!Lead_Add) {
                                                         <input type="text" value={car.vehicletype} required className='update-modal-input' onChange={(e) => updateCar(index, 'vehicletype', e.target.value)} />
                                                     </td>
                                                     <td>
-                                                        <button className="toglebtn" required onClick={() => deleteCar(index)}>Delete</button>
+                                                        <input type="text" value={car.operable} required className='update-modal-input' onChange={(e) => updateCar(index, 'operable', e.target.value)} />
+                                                    </td>
+                                                    <td>
+                                                        <button className="toglebtn" required onClick={() => deleteCar(index)}>
+                                                            <FontAwesomeIcon icon={faTrashAlt}/>
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             ))
@@ -888,6 +872,20 @@ if (!Lead_Add) {
 
                                     </div>
                                 </div>
+                                <div className="form-group">
+                                        <label htmlFor="vehicleType">Is Operable?</label>
+                                        <select
+                                            name="vehicleType"
+                                            className="form-control ml-1 pb-1"
+                                            id="type"
+                                            value={Operable}
+                                            onChange={(e) => setOperable(e.target.value)}
+                                        >
+                                            <option value="">Select an option</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
                                 <button className='toglebtn ' type='button' onClick={handleAddCar} >Add Car</button>
                             </div>
                             <div className="modal-footer mt-n4 border-top-0 d-flex justify-content-center">
@@ -904,7 +902,7 @@ if (!Lead_Add) {
                 <div class="modal-dialog " role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalScrollableTitle">Modal title</h5>
+                            <h5 class="modal-title" id="exampleModalScrollableTitle">Add Lead</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -923,21 +921,15 @@ if (!Lead_Add) {
                                 </div>
 
                                 <div className="form-group">
-
                                     <label htmlFor="email">Email</label>
                                     <div className="loadingimginput">
                                         <input type="email" className="form-control" id="vemail" name="email" aria-describedby="emailHelp" placeholder="Enter Email"
-
                                         />
-
                                     </div>
-
-
                                 </div>
-
                                 <div className="form-group">
                                     <label for="password1">Phone No:</label>
-                                    <input type="number" className="form-control" id="password" name='phoneno' placeholder="Password" />
+                                    <input type="number" className="form-control" id="password" name='phoneno' placeholder="Phone no" />
                                 </div>
                                 <hr />
 
@@ -988,7 +980,7 @@ if (!Lead_Add) {
                                     </div>
                                     <div className="form-group ml-1">
                                         <label for="email1">Zip code</label>
-                                        <input type="number" className="form-control" id="deszipcode" name='deszipcode' aria-describedby="emailHelp" placeholder="Enter email" />
+                                        <input type="number" className="form-control" id="deszipcode" name='deszipcode' aria-describedby="emailHelp" required />
 
                                     </div>
                                 </div>
@@ -1003,10 +995,12 @@ if (!Lead_Add) {
                                 <div className="form-group">
                                     <h4>Home many Vehicle?</h4>
                                     <select name="howmany" id="howmany" className='assignlead'>
-                                        <option value="volvo" >1</option>
-                                        <option value="saab">2</option>
-                                        <option value="mercedes">3</option>
-                                        <option value="audi">4</option>
+                                        <option value="1" >1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+
                                     </select>
                                 </div>
                                 <div className='form-group'>
@@ -1019,13 +1013,14 @@ if (!Lead_Add) {
                                             <th>Make</th>
                                             <th>Model</th>
                                             <th>Vehicle Type</th>
+                                            <th>Is Operable?</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {cars.length === 0 ? (
                                             <tr>
-                                                <td colSpan="5">No Vehicle available</td>
+                                                <td colSpan="6">No Vehicle available</td>
                                             </tr>
                                         ) : (
                                             cars.map((car, index) => (
@@ -1034,8 +1029,11 @@ if (!Lead_Add) {
                                                     <td>{car.make}</td>
                                                     <td>{car.model}</td>
                                                     <td>{car.vehicletype}</td>
+                                                    <td>{car.Operable}</td>
                                                     <td>
-                                                        <button className='toglebtn' onClick={() => deleteCar(index)}>Delete</button>
+                                                        <button className='toglebtn' onClick={() => deleteCar(index)}>
+                                                            <FontAwesomeIcon icon={faTrashAlt}/>
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             ))
@@ -1090,7 +1088,22 @@ if (!Lead_Add) {
                                             onChange={(e) => setVehicletype(e.target.value)} placeholder="Enter type" />
 
                                     </div>
+
                                 </div>
+                                <div className="form-group">
+                                        <label htmlFor="vehicleType">Is Operable?</label>
+                                        <select
+                                            name="vehicleType"
+                                            className="form-control ml-1 pb-1"
+                                            id="type"
+                                            value={Operable}
+                                            onChange={(e) => setOperable(e.target.value)}
+                                        >
+                                            <option value="">Select an option</option>
+                                            <option value="Yes">Yes</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
                                 <button className='toglebtn ' type='button' onClick={handleAddCar} >Add Car</button>
                             </div>
                             <div className="modal-footer mt-n4 border-top-0 d-flex justify-content-center">
@@ -1121,17 +1134,20 @@ if (!Lead_Add) {
                                         <th>Model</th>
                                         <th>Model Year</th>
                                         <th>Vehicle Type</th>
+                                        <th>IS Operable?</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {Viewvehicle.map((vehicle, index) => {
-                                        const [make, model, modelyear, vehicletype] = vehicle.split(' ');
+                                        const [make, model, modelyear, vehicletype, operable] = vehicle.split(' ');
                                         return (
                                             <tr key={index}>
                                                 <td>{make}</td>
                                                 <td>{model}</td>
                                                 <td>{modelyear}</td>
                                                 <td>{vehicletype}</td>
+                                                <td>{operable}</td>
                                             </tr>
                                         );
                                     })}

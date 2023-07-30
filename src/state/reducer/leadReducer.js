@@ -1,3 +1,4 @@
+import { updateLead } from "../actions/lead";
 import {
   ADD_LEAD,
   DELETE_LEAD,
@@ -41,8 +42,7 @@ const leadReducer = (state = initialState, action) => {
       };
 
     case DELETE_LEAD:
-      console.log(action.payload)
-      console.log("delrt mul rry")
+
       const updatedLeadsData = state.leadsData.filter(leadData => !action.payload.includes(leadData.id || leadData._id));
       console.log(updatedLeadsData)
       return {
@@ -52,8 +52,6 @@ const leadReducer = (state = initialState, action) => {
 
       case UPDATE_LEAD:
         const updateleadtid = action.payload._id;
-        console.log(updateleadtid + "reducer");
-
         const updatedata = state.leadsData.map((lead) => {
           if (lead.id === updateleadtid) {
             return {
@@ -87,13 +85,11 @@ const leadReducer = (state = initialState, action) => {
               ophonono:action.payload.Ophonono,
               dpickup:action.payload.Dpickup,
               dphonono:action.payload.Dphonono
-
             };
           }
           return lead;
         });
-
-        console.log(updatedata);
+console.log("reducer approvel",updatedata)
         return {
           ...state,
           leadsData: updatedata,

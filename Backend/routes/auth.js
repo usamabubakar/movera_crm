@@ -215,7 +215,8 @@ router.post('/login', [
           email: user_login.email,
           isAdmin: user_login.isAdmin,
           isAgent: user_login.isAgent,
-          img:user_login.img
+          img:user_login.img,
+          emailpassword:user_login.emailpassword
         };
         console.log("Server-side id:", user_login.id); // Log the id value before sending it to the client
 

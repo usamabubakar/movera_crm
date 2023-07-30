@@ -64,17 +64,20 @@ export const addAgent = (data) => async (dispatch) => {
   try {
     const response = await axios.post(`${localhost}/api/agentcurd/addagent`, data, config);
     const agent = response.data.user
-    console.log(agent.id)
+    console.log("userid chk",response.data.user._id)
     dispatch({
       type: AGENT_ADD_SUCCESS,
       payload: agent
     });
     dispatch(notification());
+    return Promise.resolve();
   } catch (err) {
     const error = {
       message: err.response.data,
       status: err.response.status
     };
+    return Promise.reject();
+
     // Handle the error here, such as dispatching an error action or setting an error state
   }
 };
@@ -85,19 +88,24 @@ export const addAgent = (data) => async (dispatch) => {
 
 
 export const deleteAgent = (agentId) => async (dispatch) => {
-  console.log(agentId + "usama actuon dele")
   const config = getTokenConfig();
 
   try {
     const response = await axios.delete(`${localhost}/api/agentcurd/deleteAgent/${agentId}`,config);
     const agentid = response.data.data
+    console.log(response)
     dispatch({
       type: AGENT_DELETE_SUCCESS,
       payload: agentid,
     });
-    // Handle success or show a notification/message
-  } catch (error) {
-    // Handle error or show a notification/message
+    return true;
+  } catch (err) {
+    console.log("enrttnek error")
+    dispatch({
+      type: GET_ERRORS,
+      payload: err.message,
+    });
+return false;
   }
 };
 
@@ -119,10 +127,12 @@ export const updateAgent = (data) => async (dispatch) => {
       type: AGENT_UPDATE_SUCCESS,
       payload: agentdata
     });
+    return true
   } catch (err) {
     const error = {
       message: err.response.data,
       status: err.response.status
     };
+    return false
   }
 }

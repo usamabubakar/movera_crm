@@ -44,6 +44,8 @@ export default function Dashborad() {
     const totaladmin = useSelector(state => state.dashborddata.totaladmin);
     const totalagent = useSelector(state => state.dashborddata.totalagent);
     const payments = useSelector(state => state.dashborddata.payment);
+    // const admins = useSelector(state => state.dashborddata.admins);
+
 
     const onlineagent = useSelector(state => state.dashborddata.onlineagent);
     // const messages = useSelector((state) => state.messages.messages);
@@ -384,9 +386,11 @@ export default function Dashborad() {
                                     })
                                 ):(
                                 <tr >
-                                    <div className='d-flex justify-content-center align-items-center '>
+                                   <td colSpan={4}  style={{color:"black"}}>
+                                   <div className='d-flex justify-content-center align-items-center'>
                                     No Data available
                                 </div>
+                                   </td>
                                 </tr>
                                 )
                                 }

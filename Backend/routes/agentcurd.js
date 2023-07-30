@@ -25,7 +25,8 @@ router.get('/', fetchuser, async (req, res) => {
         password: user.password,
         starttime: user.starttime,
         endtime: user.endtime,
-        emailsent:user.emailsent
+        emailsent:user.emailsent,
+        phoneno:user.phoneno
       };
     });
 
@@ -55,7 +56,7 @@ router.post('/addagent', [
             return res.status(400).json({ message: "Email already exists" });
         }
 
-        const { name, email, password, isAgent, starttime, endtime } = req.body;
+        const { name, email, password, isAgent, starttime, endtime,phoneno } = req.body;
         // Create a new user object
         const newUser = new User({
             name: name,
@@ -64,7 +65,8 @@ router.post('/addagent', [
             isAgent: true,
             starttime:starttime,
             endtime:endtime,
-            emailsent:false
+            emailsent:false,
+            phoneno:phoneno
         });
 
 
@@ -80,34 +82,41 @@ router.post('/addagent', [
 
 // delete agent
 
-router.delete('/deleteAgent/:id',fetchuser, async (req, res) => {
+router.delete('/deleteAgent/:id', fetchuser, async (req, res) => {
   try {
-    const admin_name=req.user_login.name
-    const admin_id=req.user_login.id
+    const admin_name = req.user_login.name;
+    const admin_id = req.user_login.id;
     const agentId = req.params.id;
-    console.log(agentId , admin_name, admin_id) ;
+    console.log(agentId, admin_name, admin_id);
 
     // Delete the agent
     const deletedAgent = await User.findByIdAndDelete(agentId);
-console.log(deletedAgent)
+    if (!deletedAgent) {
+      return res.status(500).json({ message: 'agent not found' });
+    }
+    console.log(deletedAgent)
+
+    // Update associated leads
     const updatedLeads = await Lead.updateMany(
       { owner: agentId },
       {
         owner: admin_id,
         isAssigned: false,
         isAssignedName: 'Not Assigned',
-        approvelStatus:"Pending"
+        approvelStatus: 'Approved',
       }
     );
 
-    console.log(updatedLeads)
+    console.log(updatedLeads);
 
-    res.status(200).json({
-      message: 'Agent and associated leads deleted successfully', data:agentId
+    // Send success response
+    return res.status(200).json({
+      message: 'Agent and associated leads deleted successfully',
+      data: agentId,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 });
 
@@ -116,7 +125,7 @@ console.log(deletedAgent)
   router.post('/updateagent', async (req, res) => {
     try {
 
-      const { id, name, email, password, starttime, endtime } = req.body;
+      const { id, name, email, password, starttime, endtime,phoneno } = req.body;
       console.log(req.body)
 
       // Assuming you have a User model defined
@@ -127,6 +136,7 @@ console.log(deletedAgent)
         password:password,
         starttime,
         endtime,
+        phoneno
       }, { new: true });
 
       if (!user) {

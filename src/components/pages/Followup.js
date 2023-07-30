@@ -319,7 +319,9 @@ function Followup(props) {
             setRecord(data);
         } else {
             const filteredData = data.filter((row) =>
-                row.name.toLowerCase().includes(searchText)
+            row.name.toLowerCase().includes(searchText) ||
+            row.email.toLowerCase().includes(searchText) ||
+            row.phoneno.includes(searchText)
             );
 
             setRecord(filteredData);
@@ -514,207 +516,6 @@ function Followup(props) {
                 </div>
             </div>
 
-            {/* <div class="modal fade" id="addlead" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-                <div class="modal-dialog " role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalScrollableTitle">Modal title</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-
-
-
-                        <form onSubmit={addleadfunction}>
-                            <div className="modal-body">
-                                <div className="form-group mt-n3 ">
-                                    <div className="form-group">
-                                        <label for="email1">Full Name</label>
-                                        <input type="text" className="form-control" id="name" name='name' aria-describedby="emailHelp" placeholder="Enter Full Name" />
-
-                                    </div>
-
-                                </div>
-                                <div className="form-group">
-
-                                    <label htmlFor="email">Email</label>
-                                    <div className="loadingimginput">
-                                        <input type="email" className="form-control" id="vemail" name="email" aria-describedby="emailHelp" placeholder="Enter Email"
-
-                                        />
-
-                                    </div>
-
-
-                                </div>
-
-                                <div className="form-group">
-                                    <label for="password1">Phone No:</label>
-                                    <input type="number" className="form-control" id="password" name='phoneno' placeholder="Password" />
-                                </div>
-                                <hr />
-
-                                <h4>Origin</h4>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Origin Address</label>
-                                        <input type="text" className="form-control" id="originaddress" name='originaddress' aria-describedby="emailHelp" placeholder="Enter origin address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Origin City</label>
-                                        <input type="text" className="form-control" id="origincity" name='origincity' aria-describedby="emailHelp" placeholder="Enter email" />
-
-                                    </div>
-                                </div>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Origin state</label>
-                                        <input type="text" className="form-control" id="originstate" name='originstate' aria-describedby="emailHelp" placeholder="Enter origin address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Zip code</label>
-                                        <input type="number" className="form-control" id="zipcode" name='originzipcode' aria-describedby="emailHelp" placeholder="Enter email" />
-
-                                    </div>
-                                </div>
-                                <hr />
-                                <h4>Destination</h4>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Destination Address</label>
-                                        <input type="text" className="form-control" id="desadress" name='desadress' aria-describedby="emailHelp" placeholder="Enter destination address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Destination City</label>
-                                        <input type="text" className="form-control" id="descity" name='descity' aria-describedby="emailHelp" placeholder="Enter destination city" />
-
-                                    </div>
-                                </div>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Destination state</label>
-                                        <input type="text" className="form-control" id="desstate" name='desstate' aria-describedby="emailHelp" placeholder="Enter origin address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Zip code</label>
-                                        <input type="number" className="form-control" id="deszipcode" name='deszipcode' aria-describedby="emailHelp" placeholder="Enter email" />
-
-                                    </div>
-                                </div>
-                                <hr />
-                                <div className="form-group">
-                                    <h4>Ship Date</h4>
-                                    <div className="form-group">
-                                        <input type="date" className="form-control" id="shipdate" name='shipdate' placeholder="Password" />
-                                    </div>
-                                </div>
-                                <hr />
-                                <div className="form-group">
-                                    <h4>Home many Vehicle?</h4>
-                                    <select name="howmany" id="howmany" className='assignlead'>
-                                        <option value="volvo" >1</option>
-                                        <option value="saab">2</option>
-                                        <option value="mercedes">3</option>
-                                        <option value="audi">4</option>
-                                    </select>
-                                </div>
-                                <div className='form-group'>
-                                    <h4>Vehicle</h4>
-                                </div>
-                                <table >
-                                    <thead>
-                                        <tr>
-                                            <th>Model Year</th>
-                                            <th>Make</th>
-                                            <th>Model</th>
-                                            <th>Vehicle Type</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {cars.length === 0 ? (
-                                            <tr>
-                                                <td colSpan="5">No Vehicle available</td>
-                                            </tr>
-                                        ) : (
-                                            cars.map((car, index) => (
-                                                <tr key={index}>
-                                                    <td>{car.year}</td>
-                                                    <td>{car.make}</td>
-                                                    <td>{car.model}</td>
-                                                    <td>{car.typee}</td>
-                                                    <td>
-                                                        <button className='toglebtn' onClick={() => deleteCar(index)}>Delete</button>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
-
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group">
-                                        <label for="email1">Model Year</label>
-                                        <input
-                                            type="text"
-                                            className="form-control mr-1"
-                                            name="year"
-                                            id="year"
-                                            value={year}
-                                            onChange={(e) => setYear(e.target.value)} placeholder="Enter model year" />
-
-                                    </div>
-                                    <div className="form-group ">
-                                        <label for="email1">Make</label>
-                                        <input type="text"
-                                            name="make"
-                                            className="form-control ml-1"
-                                            id="make"
-                                            value={make}
-                                            onChange={(e) => setMake(e.target.value)} placeholder="Enter make" />
-
-                                    </div>
-                                </div>
-
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group ">
-                                        <label for="email1">Model</label>
-                                        <input
-                                            type="text"
-                                            className="form-control mr-1"
-                                            name="model"
-                                            id="model"
-                                            value={model}
-                                            onChange={(e) => setModel(e.target.value)} placeholder="Enter model " />
-
-                                    </div>
-                                    <div className="form-group ">
-                                        <label for="email1">Type</label>
-                                        <input
-                                            type="text"
-                                            name="model"
-                                            className="form-control ml-1"
-                                            id="type"
-                                            value={typee}
-                                            onChange={(e) => setTypee(e.target.value)} placeholder="Enter type" />
-
-                                    </div>
-                                </div>
-                                <button className='toglebtn ' type='button' onClick={handleAddCar} >Add Car</button>
-                            </div>
-                            <div className="modal-footer mt-n4 border-top-0 d-flex justify-content-center">
-                                <button type="submit" className="btn button-86" style={{ color: 'white' }} >Submit</button>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-            </div> */}
 
 
             {/* update lead  */}
@@ -1005,7 +806,7 @@ function Followup(props) {
                                         <option value="Orders">Orders</option>
                                         <option value="Dispatched">Dispatched</option>
                                         <option value="Archived">Archived</option>
-                                        <option value="Potentail">Potential</option>
+                                        <option value="Potentail">Completed</option>
                                         <option value="Cancel">Cancel Order</option>
                                     </select>
                                 </div>

@@ -73,7 +73,7 @@ const LeadSchema = new Schema({
     },
     howmany:{
         type:String,
-        required:true
+        required:true,
     },
     vehicle: [{
 
@@ -94,8 +94,9 @@ const LeadSchema = new Schema({
             required: false
         },
         isoperable: {
-            type: Number,
-            required: false
+            type: String,
+            required: false,
+            default:'no'
         }
     }],
     isAssigned:{

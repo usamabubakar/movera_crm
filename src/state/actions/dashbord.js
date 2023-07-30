@@ -15,7 +15,7 @@ import {
       const payment= response.data.payment
       const onlineadmin=response.data.onlineadmin
       const totalprice=response.data.totalprice
-
+      const admins=response.data.totaladmin
       dispatch({
         type: DASHBORD_DATA,
         payload: {
@@ -23,7 +23,8 @@ import {
             data,
             payment,
             onlineadmin,
-            totalprice
+            totalprice,
+            admins
         }
       });
     } catch (error) {

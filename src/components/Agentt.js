@@ -1,6 +1,6 @@
 import DataTable from 'react-data-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, {useRef} from 'react';
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { useState } from 'react';
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -34,8 +34,9 @@ function Agentt(props) {
     const agents = useSelector(state => state.agents.agents);
     const notification = useSelector(state => state.agents.notification);
     const emailsent = useSelector(state => state.emailsent.emailsend);
+const admindata=useSelector(state=>state.auth.emailpassword)
 
-
+console.log("admindata",admindata,typeof(admindata))
 
 
 
@@ -78,6 +79,13 @@ function Agentt(props) {
         },
         {
 
+            name: 'Phone no',
+            selector: row => row.phoneno,
+            center: true,
+            minWidth: '200px'
+        },
+        {
+
             name: 'Job Start Time',
             selector: row => row.jobstarttime,
             center: true,
@@ -97,15 +105,15 @@ function Agentt(props) {
 
             cell: (row) => (
                 <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
-                    <button className='agent-edit-delete-btn ' onClick={() => handleEdit(row.agentId)} data-toggle='modal' data-target='#agentemail'>{row.emailsent ? 'Already send' : 'Send Email'}</button>
+                    <button className='agent-edit-delete-btn ' onClick={() => handleEdit(row.agentId)} data-toggle='modal' data-target={admindata === 'none' ? '#emailpassword': '#agentemail'} >{row.emailsent ? 'Already send' : 'Send Email'}</button>
                     <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.agentId)} type='button' data-toggle="modal" data-target="#updatemodel">Edit</button>
                     <button
                         className='agent-edit-delete-btn ml-1'
                         type='button'
                         onClick={() => {
                             const id = row.agentId;
-                            console.log('Button clicked with id:', id);
-                            getRowidValue(id);
+                            handleEdit(id);
+                            getRowidValue(id)
                         }}
                         data-toggle="modal"
                         data-target="#deleteagent"
@@ -136,15 +144,16 @@ function Agentt(props) {
                 password: agent.password,
                 jobstarttime: agent.starttime,
                 jobendtime: agent.endtime,
-                emailsent:agent.emailsent
+                emailsent: agent.emailsent,
+                phoneno: agent.phoneno
             }));
             setData(dataa);
             setRecord(dataa);
         }
+        console.log(agents)
     }, [agents]);
 
     const getRowidValue = (id) => {
-        console.log('getRowidValue called with id:', id);
         setrowIdValue(id);
     };
 
@@ -152,108 +161,131 @@ function Agentt(props) {
         const searchText = event.target.value.toLowerCase();
 
         if (searchText === '') {
-          setRecord(data); // Use the component-scoped data variable
+            setRecord(data); // Use the component-scoped data variable
         } else {
-          const filteredData = data.filter((row) =>
-            row.name.toLowerCase().includes(searchText)
-          );
+            const filteredData = data.filter((row) =>
+                row.name.toLowerCase().includes(searchText)
+            );
 
-          setRecord(filteredData);
+            setRecord(filteredData);
         }
 
         setSearchText(event.target.value);
-      }
+    }
 
 
 
 
 
     const handleEdit = (id) => {
-        const foundAgent = agents.find((agent) => agent.id === id);
+        console.log("cheingl id", id)
+        const foundAgent = agents.find((agent) => agent.id === id || agent._id === id);
         seteditData([
-            foundAgent.id,
+            foundAgent.id || foundAgent._id,
             foundAgent.name,
             foundAgent.email,
             foundAgent.password,
             foundAgent.starttime,
-            foundAgent.endtime
+            foundAgent.endtime,
+            foundAgent.phoneno
 
         ]);
+        console.log(editData)
     };
 
 
     const addAgentfun = (e) => {
         e.preventDefault();
-
-        console.log("click")
         const name = e.target.aname.value;
         const email = e.target.aemail.value;
         const password = e.target.apassword.value;
         const starttime = e.target.astarttime.value;
         const endtime = e.target.aendtime.value;
-
-
+        const phoneno = e.target.phoneno.value
         const data = {
             name: name,
             email: email,
             password: password,
             starttime: starttime,
-            endtime: endtime
+            endtime: endtime,
+            phoneno: phoneno
         };
         console.log(data);
-        dispatch(addAgent(data)).then(
-            toast.success(`Agent added Successfully...!`)
-        )
+
+        dispatch(addAgent(data)).then(() => {
+            toast.success('Agent Added Successfully...!');
+        })
+            .catch(() => {
+                toast.error('Agent Not Added Successfully...!');
+            });
+
 
     };
 
     const handleDelete = async (id) => {
-        console.log(editData)
-        console.log(id)
-        dispatch(deleteAgent(id)).then(
-            toast.success(`Agent ${editData[1]} delete Successfully...!`)
-        )
+        try {
+          console.log(editData);
+          console.log(id);
+          const isDeleted = await dispatch(deleteAgent(id));
+
+          if (isDeleted) {
+            toast.success(`Agent ${editData[1]} deleted successfully.`);
+          } else {
+            toast.error(`Agent ${editData[1]} not deleted.`);
+          }
+        } catch (error) {
+          toast.error(`An error occurred while deleting agent ${editData[1]}.`);
+        }
+      };
+
+
+    const updateagent = async(e) => {
+
+        try {
+            e.preventDefault();
+            console.log("click udpoate")
+            const name = e.target.name.value;
+            const email = e.target.email.value;
+            const password = e.target.password.value;
+            const starttime = e.target.starttime.value;
+            const endtime = e.target.endtime.value;
+            const phoneno=e.target.phoneno.value;
+            const data = {
+                id: editData[0],
+                name: name,
+                email: email,
+                password: password,
+                starttime: starttime,
+                endtime: endtime,
+                phoneno:phoneno
+            };
+            console.log(data)
+
+          const update=  await dispatch(updateAgent(data))
+          if(update){
+            toast.success(`Agent ${editData[1]} update Successfully.`)
+          }
+
+            else{
+                toast.error(`Agent ${editData[1]} Not update Successfully.`)
+            }
+          } catch (error) {
+            toast.error(`An error occurred while deleting agent ${editData[1]}.`);
+          }
 
     };
 
-    const updateagent = (e) => {
-        e.preventDefault();
-        console.log("click udpoate")
-        const name = e.target.name.value;
-        const email = e.target.email.value;
-        const password = e.target.password.value;
-        const starttime = e.target.starttime.value;
-        const endtime = e.target.endtime.value;
-        const data = {
-            id: editData[0],
-            name: name,
-            email: email,
-            password: password,
-            starttime: starttime,
-            endtime: endtime
-        };
-
-
-        dispatch(updateAgent(data)).then(
-            toast.success(`Agent ${editData[1]} update Successfully...!`)
-        )
-
-
-
-
-    };
-
-
+    const [emailexist, setemailexist] = useState(null)
     const handleEmailchecker = (e) => {
         const email = e.target.value;
         setEmail(email);
-        if (email.includes('@gmail.com')) {
-            dispatch(emailchecker(email));
-            console.log('Email entered is a Gmail address');
-        }
-        else {
 
-        }
+        dispatch(emailchecker(email))
+            .then(() => {
+                setemailexist(true)
+            }).catch(
+                setemailexist(false)
+            )
     }
     const lodingimg = () => {
         setIsLoading(true);
@@ -269,60 +301,87 @@ function Agentt(props) {
             return newData;
         });
     };
-    const sendEmailfuntion =async (data) => {
+    const sendEmailfuntion = async (data) => {
         console.log("email function");
         const { email, password, starttime, endtime } = data;
         const dataa = {
-          id: data[0],
-          email: data[2],
-          password: data[3],
-          starttime: data[4],
-          endtime: data[5],
+            id: data[0],
+            email: data[2],
+            password: data[3],
+            starttime: data[4],
+            endtime: data[5],
         };
 
         try {
             const isEmailSent = await dispatch(sendEmail(dataa));
             if (isEmailSent) {
 
-              toast.success("Email Sent Successfully...!");
+                toast.success("Email Sent Successfully...!");
             } else {
-              toast.error("Email Not Sent Successfully...!");
+                toast.error("Email Not Sent Successfully...!");
             }
-          } catch (error) {
+        } catch (error) {
             console.log("Error in sendEmailFunction:", error.message);
             toast.error("Email Not Sent Successfully...!");
-          }
+        }
 
     };
+    const emailPasswordRef = useRef(null);
 
+const setEmailpassword=(data)=>{
 
-
+    console.log(data)
+}
 
 
     return (
 
         <>
 
-                <div >
-                    <ToastContainer
-                        position="top-center"
-                        autoClose={1500}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
-                        rtl={false}
-                        pauseOnFocusLoss
-                        draggable
-                        pauseOnHover
-                        theme="light"
-                    />
+            <div >
+                <ToastContainer
+                    position="top-center"
+                    autoClose={1500}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="light"
+                />
+            </div>
+
+{/* emailpasswrod */}
+<div class="modal fade" id="emailpassword" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Send Instruction to  vendors</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+                        <div className="form-group">
+                                    <label htmlFor="password">Please set you email App password first</label>
+                                    <input type="text" className="form-control" id="appassword" name="appassword" ref={emailPasswordRef} placeholder="Email app password" required />
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="agent-edit-delete-btn ml-1" style={{ padding: '9px 10px' }}  onClick={() => setEmailpassword(emailPasswordRef.current.value)} data-dismiss="modal">save it </button>
+
+                        </div>
+                    </div>
                 </div>
+            </div>
 
+            {/* email  */}
 
-
-{/* email  */}
-
-<div class="modal fade" id="agentemail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="agentemail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -415,36 +474,44 @@ function Agentt(props) {
                                             onChange={handleEmailchecker}
                                             onFocus={lodingimg}
                                             onBlur={hideloadingimg}
+                                            required
                                         />
                                         {islodaing && <img src={loding} alt="" className="loading-image" width={30} height={30} />}
 
                                     </div>
 
-                                    {Email_exist == true && (
-                                        <div >
-                                            <small id="emailHelp" style={{ color: "#00cc00", fontSize: "12px" }} className="form-text">Email is correct! &#9989;</small>
-                                        </div>
-
-
-                                    )}
-                                    {Email_exist == false && (
-                                        <div >
-                                            <small id="emailHelp" style={{ color: "tomato", fontSize: "12px" }} className="form-text">Email already exists</small>
-                                        </div>
+                                    {emailexist === null ? null : (
+                                        emailexist ? (
+                                            <div>
+                                                <small id="emailHelp" style={{ color: "#00cc00", fontSize: "12px" }} className="form-text">
+                                                    Email is correct! &#9989;
+                                                </small>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <small id="emailHelp" style={{ color: "tomato", fontSize: "12px" }} className="form-text">
+                                                    Email already exists
+                                                </small>
+                                            </div>
+                                        )
                                     )}
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="password">Password</label>
-                                    <input type="password" className="form-control" id="apassword" name="password" placeholder="Password" />
+                                    <input type="password" className="form-control" id="apassword" name="password" placeholder="Password" required />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="password">Phone No</label>
+                                    <input type="number" className="form-control" id="phoneno" name="phoneno" placeholder="Phoneno" required />
                                 </div>
                                 <div className="form-group d-flex justify-content-between">
                                     <div className="w-50 mr-1">
                                         <label htmlFor="starttime">Start Time</label>
-                                        <input type="time" className="form-control" id="astarttime" name="starttime" placeholder="Start Time" />
+                                        <input type="time" className="form-control" id="astarttime" name="starttime" placeholder="Start Time" required />
                                     </div>
                                     <div className="w-50 ml-1">
                                         <label htmlFor="endtime">End Time</label>
-                                        <input type="time" className="form-control" id="aendtime" name="endtime" placeholder="End Time" />
+                                        <input type="time" className="form-control" id="aendtime" name="endtime" placeholder="End Time" required />
                                     </div>
                                 </div>
                             </div>
@@ -505,8 +572,14 @@ function Agentt(props) {
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="password">Password</label>
-                                    <input type="password" className="form-control" id="password" value={editData[3]}  name="password" placeholder="Password"
-                                     onChange={(e) => { handleInputChange(3, e.target.value); }}
+                                    <input type="password" className="form-control" id="password" value={editData[3]} name="password" placeholder="Password"
+                                        onChange={(e) => { handleInputChange(3, e.target.value); }}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="password">Phono No</label>
+                                    <input type="number" className="form-control" id="phoneno" value={editData[6]} name="phoneno" placeholder="Phone no"
+                                        onChange={(e) => { handleInputChange(6, e.target.value); }}
                                     />
                                 </div>
                                 <div className="form-group d-flex justify-content-between">
@@ -547,7 +620,7 @@ function Agentt(props) {
                         <div className='agentsearchicon d-flex align-items-center'>
                             <FontAwesomeIcon icon={faSearch} className='mr-1' />
                         </div>
-                        <input type="text" value={searchText}  onChange={handlefilter} placeholder='Search by name ' />
+                        <input type="text" value={searchText} onChange={handlefilter} placeholder='Search by name ' />
 
                     </div>
                 </div>

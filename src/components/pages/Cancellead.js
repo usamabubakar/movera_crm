@@ -2,6 +2,7 @@ import DataTable from 'react-data-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { useState } from 'react';
+import React, { useRef } from 'react';
 import { faEye, faEyeSlash, faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { fetchLead, addLead, deleteLead, assignLead } from '../../state/actions/lead';
 
@@ -123,16 +124,16 @@ function Cancellead(props) {
 
         },
         {
-            name: 'Received Date',
-            selector: row => row.recieveddate,
+            name: 'Total Vehicles',
+            cell: (row) => (
+                <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
+                    <button className='agent-edit-delete-btn ml-1' onClick={() => viewcar(row.vehicle)} type='button' data-toggle="modal" data-target="#viewcars">View Vehicles</button>
+                </div>
+            ),
+            center: true,
             minWidth: '200px'
+        },
 
-        },
-        {
-            name: 'Time',
-            selector: row => row.time,
-            minWidth: "150px"
-        },
 
         {
             name: 'Action',
@@ -154,6 +155,13 @@ function Cancellead(props) {
 
         },
     ];
+    const [Viewvehicle, setViewvehicle] = useState([])
+
+    const viewcar = (data) => {
+        console.log(data);
+        const vehicles = data.split(', ');
+        setViewvehicle(vehicles);
+    }
 
     const sendEmailfunction = (data,e) => {
         e.preventDefault()
@@ -177,60 +185,88 @@ function Cancellead(props) {
 
     };
 
-const updatestatus =(data, e)=>{
-    e.preventDefault();
-    const status=e.target.status.value;
-    const dataa = {
-        leadid:data[0],
-        agentid:userData.id,
-        status:status
-    }
-    dispatch(updateStatus(dataa));
-}
-
-    let data = [];
-    useEffect(() => {
-        if (leads && Array.isArray(leads)) {
-            data = leads.map((lead, index) => {
-
-                const receivedDate = new Date(lead.recieveddate);
-                const formattedDate = receivedDate.toLocaleDateString();
-                const formattedTime = receivedDate.toLocaleTimeString();
-                const vehicles = lead.vehicle.map((vehicle) => `${vehicle.make} ${vehicle.model} ${vehicle.
-                    modelyear} ${vehicle.vehicletype}`).join(', ');
-                return {
-                    id: index + 1,
-                    leadId: lead.id,
-                    name: lead.fullname,
-                    email: lead.email,
-                    phoneno: lead.phoneno,
-                    assignto: lead.isAssignedName,
-                    shipdate: lead.shipdate,
-                    recieveddate: formattedDate,
-                    time: formattedTime,
-                    vehicle: vehicles,
-                    mailcount:lead.mailcount,
-                    approvalStatus:lead.approvelStatus,
-                    addby:lead.addBy,
-                    rowClass: lead.isAssigned ? 'assigned-row' : ''
-                };
-            });
-
-
-            setRecord(data);
+    const statusRef = useRef(null);
+    const updatestatus = (data) => {
+        // e.preventDefault();
+        const status = statusRef.current.value;
+        console.log(status);
+        console.log(data)
+        const dataa = {
+            leadid: data[0],
+            agentid: userData.id,
+            status: status
         }
-
-    }, [leads]);
-    //   console.log(conditionalRowStyles)
-
-    const [record, setRecord] = useState(data);
-    function handlefilter(event) {
-        console.log("usama")
-        const newdata = data.filter(row => {
-            return row.name.toLowerCase().includes(event.target.value.toLowerCase())
-        })
-        setRecord(newdata)
+        dispatch(updateStatus(dataa));
+        if (!Lead_Add) {
+            toast.success('status update Successfully...!');
+        }
+        else if (Lead_Add) {
+            toast.error('Lead status not update Successfully...!');
+        }
     }
+
+const [record, setRecord] = useState([]);
+const [searchText, setSearchText] = useState('');
+let [data, setData] = useState([]);
+useEffect(() => {
+    if (leads && Array.isArray(leads)) {
+        const dataa = leads.map((lead, index) => {
+
+            const receivedDate = new Date(lead.recieveddate);
+            const formattedDate = receivedDate.toLocaleDateString();
+            const formattedTime = receivedDate.toLocaleTimeString();
+            const vehicles = lead.vehicle?.map((vehicle) => `${vehicle.make} ${vehicle.model} ${vehicle.
+                modelyear} ${vehicle.vehicletype} ${vehicle.operable}`).join(', ');
+
+            return {
+                id: index + 1,
+                leadId: lead.id,
+                name: lead.fullname,
+                email: lead.email,
+                phoneno: lead.phoneno,
+                origincity: lead.origincity,
+                originaddress: lead.originaddress,
+                originstate: lead.originstate,
+                originzipcode: lead.originzipcode,
+                destinationcity: lead.destinationcity,
+                destinationaddress: lead.destinationaddress,
+                destinationstate: lead.destinationstate,
+                destinationzipcode: lead.destinationzipcode,
+                shipdate: lead.shipdate,
+                vehicle: vehicles,
+                mailcount: lead.mailcount,
+                price: lead.price,
+                approvalStatus: lead.approvelStatus,
+                intialdeposit:lead.intialdeposite,
+                opickup:lead.Opickup,
+                ophonono:lead.Ophonono,
+                dpickup:lead.Dpickup,
+                dphonono:lead.Dphonono,
+                rowClass: lead.isAssigned ? 'assigned-row' : ''
+            };
+        });
+        setData(dataa);
+        setRecord(dataa);
+    }
+
+}, [leads]);
+function handlefilter(event) {
+    const searchText = event.target.value.toLowerCase();
+
+    if (searchText === '') {
+        setRecord(data);
+    } else {
+        const filteredData = data.filter((row) =>
+        row.name.toLowerCase().includes(searchText) ||
+        row.email.toLowerCase().includes(searchText) ||
+        row.phoneno.includes(searchText)
+        );
+
+        setRecord(filteredData);
+    }
+
+    setSearchText(event.target.value);
+}
 
     const getRowidValue = (id) => {
         setrowIdValue(id);
@@ -572,10 +608,11 @@ const updatestatus =(data, e)=>{
 
 
 
-            {/* assign lead  */}
 
 
-            <div class="modal fade" id="updatestatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+               {/* update lead status  */}
+               <div class="modal fade" id="updatestatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -584,26 +621,30 @@ const updatestatus =(data, e)=>{
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="" onSubmit={(e) => updatestatus(editData,e)}>
+                        <form action="">
                             <div class="modal-body">
                                 <div className="form-group">
                                     <h4>Update Lead Status</h4>
-
-                                    <select name="status" id="status" className='assignlead'>
-                                        <option value="" >Select</option>
+                                    <select name="status" id="status" className='assignlead' ref={statusRef}>
+                                        <option value="">Select</option>
+                                        <option value="lead">Leads</option>
                                         <option value="Followup">Follow Up</option>
                                         <option value="Quotes">Quotes</option>
                                         <option value="Orders">Orders</option>
                                         <option value="Dispatched">Dispatched</option>
                                         <option value="Archived">Archived</option>
-                                        <option value="Potentail">Potential</option>
+                                        <option value="Potentail">Completed</option>
+                                        <option value="Cancel">Cancel Order</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="agent-edit-delete-btn ml-1" style={{ padding: '9px 10px' }}  >Assign</button>
-
+                                <button type="button" class="agent-edit-delete-btn ml-1" data-dismiss="modal" onClick={() => {
+                                    if (statusRef.current.value !== '') {
+                                        updatestatus(editData);
+                                    }
+                                }}>Update Status</button>
                             </div>
                         </form>
                     </div>
@@ -612,7 +653,50 @@ const updatestatus =(data, e)=>{
 
 
             {/* // end */}
+            <div className="modal fade" id="viewcars" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">Lead total Vehicles {Viewvehicle?.length}</h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <table className="text-center data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Make</th>
+                                        <th>Model</th>
+                                        <th>Model Year</th>
+                                        <th>Vehicle Type</th>
+                                        <th>Is Operable?</th>
 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {Viewvehicle.map((vehicle, index) => {
+                                        const [make, model, modelyear, vehicletype, Operable] = vehicle.split(' ');
+                                        return (
+                                            <tr key={index}>
+                                                <td>{make}</td>
+                                                <td>{model}</td>
+                                                <td>{modelyear}</td>
+                                                <td>{vehicletype}</td>
+                                                <td>{Operable}</td>
+
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
 

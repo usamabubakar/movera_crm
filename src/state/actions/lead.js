@@ -6,6 +6,7 @@ import {
    STATUS_UPDATE_SUCCESS,
    NOTIFICATION,
    DELETE_NOTIFICATION,
+   UPDATE_LEAD_STATUS,
    GET_ERRORS
 
 } from "./types";
@@ -31,7 +32,6 @@ console.log(data.onlineadmin);
   } catch (error) {
 console.log("error")
   }
-
 };
 
 export const fetchPendingLead =()=>async(dispatch) => {
@@ -63,15 +63,17 @@ export const approveLeadFunction = (data) => async (dispatch) => {
       config
     );
 
-    console.log(response.data.message);
+    console.log(response);
 
     // Dispatch an action to update the leads list in your Redux store
-    // dispatch({
-    //   type: UPDATE_LEAD_STATUS,
-    //   payload: { leadId: data.id, status: data.status },
-    // });
+    dispatch({
+      type: UPDATE_LEAD,
+      payload:response.data.data
+    });
+return true
   } catch (error) {
     console.log(error);
+    return false
   }
 };
 
@@ -101,8 +103,8 @@ export const addLead = (data) =>async (dispatch) => {
         type: GET_ERRORS,
         payload: err.message,
       });
-      };
       return Promise.reject();
+    };
 
     }
     const sendNotificationToSSEServer = (leadData) => {
@@ -124,10 +126,8 @@ export const addLead = (data) =>async (dispatch) => {
         });
     };
     export const updateLead = ( data) => async (dispatch) => {
-      console.log("update lead usama config");
       const config = getTokenConfig();
       const leadId=data.leadid
-
       try {
         const response = await axios.put(
           `${localhost}/api/lead/updatelead/${leadId}`,
@@ -174,10 +174,10 @@ const config = getTokenConfig();
     };
 
     export const deletependingLead = (data) => async (dispatch) => {
-      // console.log(typeof data);
+      console.log("froma ction oending lead",data);
       const config = getTokenConfig();
       try {
-        const response = await axios.delete(`${localhost}/api/lead/deletependingLead`,data );
+        const response = await axios.delete(`${localhost}/api/lead/deletependingLead/${data}`);
 
         const leadid = response.data.leadid;
         console.log(leadid);
@@ -186,10 +186,12 @@ const config = getTokenConfig();
           type: DELETE_LEAD,
           payload: leadid,
         });
+        return Promise.resolve()
 
         // Handle success or show a notification/message
       } catch (error) {
         console.error(error); // Log the actual error for debugging purposes
+        return Promise.reject()
 
         // Handle error or show a notification/message
       }
@@ -201,7 +203,6 @@ const config = getTokenConfig();
        const response= await axios.post(`${localhost}/api/lead/assignlead/`,data);
        dispatch({
         type:UPDATE_LEAD,
-
        })
        return true
 

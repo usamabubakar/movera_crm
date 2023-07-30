@@ -40,28 +40,6 @@ function Isapprovel(props) {
     const [typee, setTypee] = useState('');
     const [idCounter, setIdCounter] = useState(0);
 
-
-    const handleAddCar = () => {
-        if (year.trim() !== '' && make.trim() !== '' && model.trim() !== '' && typee.trim() !== '') {
-            const newCar = { id: cars.length, year, make, model, typee };
-            setCars((prevCars) => [...prevCars, newCar]);
-            setYear('');
-            setMake('');
-            setModel('');
-            setTypee('');
-            console.log(cars);
-        }
-    };
-    console.log(cars);
-    const deleteCar = (id) => {
-        console.log(id);
-        setCars((prevCars) =>
-            prevCars.filter((car) => car.id !== parseInt(id, 10))
-        );
-    };
-
-
-
     //    const password ='*'.repeat(row.password.length)
     const [isOn, setIsOn] = useState(false);
 
@@ -74,29 +52,7 @@ function Isapprovel(props) {
 
 
 
-    const handleEdit = (id) => {
-        const foundlead = leads.find((lead) => lead.id === id);
-        console.log(foundlead);
-        seteditData([
-            foundlead.id,
-            foundlead.fullname,
-            foundlead.email,
-            foundlead.phoneno,
-            foundlead.originaddress,
-            foundlead.origincity,
-            foundlead.originstate,
-            foundlead.originzipcode,
-            foundlead.destinationaddress,
-            foundlead.destinationcity,
-            foundlead.destinationstate,
-            foundlead.destinationzipcode,
-            foundlead.shipdate,
-            foundlead.howmany,
-            foundlead.vehicle
 
-        ]);
-
-    };
 
 
     const columns = [
@@ -142,13 +98,7 @@ function Isapprovel(props) {
             selector: row => row.shipdate,
             minWidth: '150px'
         },
-        {
-            name: 'Vehicle',
-            selector: row => row.vehicle,
-            minWidth: '300px',
-            center: true
 
-        },
         {
             name: 'Received Date',
             selector: row => row.recieveddate,
@@ -160,6 +110,16 @@ function Isapprovel(props) {
             selector: row => row.time,
             minWidth: "150px"
         },
+        {
+            name: 'View Vehicles',
+            cell: (row) => (
+                <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
+                    <button className='agent-edit-delete-btn ml-1' onClick={() => viewcar(row.vehicle)} type='button' data-toggle="modal" data-target="#viewcars">View Vehicles</button>
+                </div>
+            ),
+            center: true,
+            minWidth: '200px'
+        },
 
         {
             name: 'Action',
@@ -167,7 +127,7 @@ function Isapprovel(props) {
             cell: (row) => (
                 <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
                     <button
-                        className={`agent-edit-delete-btn ml-1${row.approvelstatus === 'Not Approved' ? ' d-none' : ''}`}
+                        className={`agent-edit-delete-btn ml-1 `}
                         type='button'
                         data-toggle="modal"
                         data-target="#assignlead"
@@ -183,7 +143,13 @@ function Isapprovel(props) {
 
         },
     ];
+    const [Viewvehicle, setViewvehicle] = useState([])
 
+    const viewcar = (data) => {
+        console.log(data);
+        const vehicles = data.split(', ');
+        setViewvehicle(vehicles);
+    }
 
 
     let data = [];
@@ -195,7 +161,7 @@ function Isapprovel(props) {
                 const formattedDate = receivedDate.toLocaleDateString();
                 const formattedTime = receivedDate.toLocaleTimeString();
                 const vehicles = lead.vehicle.map((vehicle) => `${vehicle.make} ${vehicle.model} ${vehicle.
-                    modelyear} ${vehicle.vehicletype}`).join(', ');
+                    modelyear} ${vehicle.vehicletype} ${vehicle.isoperable}` ).join(', ');
                 return {
                     id: index + 1,
                     leadId: lead.id,
@@ -223,21 +189,40 @@ function Isapprovel(props) {
 
 
 
-    const handleDelete = (id) => {
-        dispatch(deletependingLead(id))
-        if (!leaddelete) {
+    const handleDelete = async(id) => {
+        try {
+      const del=await dispatch(deletependingLead(id))
+        if (del) {
             toast.success("Lead deleted Successfully...!");
+        }
+        else{
+            toast.error("Lead not deleted Successfully...!");
+        }
+        } catch (error) {
+            toast.error('internal error');
         }
     };
 
-    const pendingleadfun = (e) => {
+    const pendingleadfun =async (e) => {
+      try {
         e.preventDefault()
         const status = e.target.pendingleadstatus.value
         const data = {
             leadId: rowidValue,
             status: status
         }
-        dispatch(approveLeadFunction(data))
+     const aprovel= await dispatch(approveLeadFunction(data))
+     if(aprovel){
+        toast.success("Lead Status Updated");
+     }
+     else{
+        toast.error("Lead Status not Updated");
+
+     }
+      } catch (error) {
+        toast.error("internal eeror");
+
+      }
     }
 
 
@@ -281,7 +266,50 @@ function Isapprovel(props) {
                 />
             </div>
 
+   {/* view cars  */}
+   <div className="modal fade" id="viewcars" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">Lead total Vehicles {Viewvehicle?.length}</h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <table className="text-center data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Make</th>
+                                        <th>Model</th>
+                                        <th>Model Year</th>
+                                        <th>Vehicle Type</th>
+                                        <th>IS Operable?</th>
 
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {Viewvehicle.map((vehicle, index) => {
+                                        const [make, model, modelyear, vehicletype, operable] = vehicle.split(' ');
+                                        return (
+                                            <tr key={index}>
+                                                <td>{make}</td>
+                                                <td>{model}</td>
+                                                <td>{modelyear}</td>
+                                                <td>{vehicletype}</td>
+                                                <td>{operable}</td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* delete lead  */}
             <div class="modal fade" id="deletelead" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -357,7 +385,7 @@ function Isapprovel(props) {
                         </div>
                         <input type="text" onChange={handlefilter} placeholder='Search by name ' />
                     </div>
-                    <div className="realtime d-flex justify-content-center align-items-centers">
+                    {/* <div className="realtime d-flex justify-content-center align-items-centers">
                         <div>
                             {isOn && (
                                 <div className={`isonbtn ${isOn ? 'show' : ''}`}>
@@ -374,7 +402,7 @@ function Isapprovel(props) {
                             Real Time
                         </div>
 
-                    </div>
+                    </div> */}
                 </div>
                 <div className='agentdata'>
 
