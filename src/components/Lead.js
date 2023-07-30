@@ -365,6 +365,8 @@ function Lead(props) {
         dispatch(addLead(data))
         .then(() => {
           toast.success('Lead Added Successfully...!');
+          document.getElementById('closeleadmodal').click();
+          
         })
         .catch(() => {
           toast.error('Lead Not Added Successfully...!');
@@ -670,7 +672,7 @@ if (!Lead_Add) {
                 <div class="modal-dialog " role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalScrollableTitle">Modal title</h5>
+                            <h5 class="modal-title" id="exampleModalScrollableTitle">Update Lead</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -898,14 +900,13 @@ if (!Lead_Add) {
                     </div>
                 </div>
             </div>
-
             {/* add lead  */}
             <div class="modal fade" id="addlead" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
                 <div class="modal-dialog " role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalScrollableTitle">Modal title</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <h5 class="modal-title" id="exampleModalScrollableTitle">Add Lead</h5>
+                            <button id='closeleadmodal' type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -1480,7 +1481,6 @@ if (!Lead_Add) {
                     <div className="agenttab">
                         Leads
                     </div>
-
                     <div className="agentbtn d-flex">
                         <button type='button' data-toggle="modal" data-target="#addlead" className='button-86 m-1'><b>Add Lead <FontAwesomeIcon icon={faPlus} className='ml-1' /> </b></button>
                         <button type='button' data-toggle="modal" data-target="#textlead" className='button-86 m-1'><b>Add text Lead <FontAwesomeIcon icon={faPlus} className='ml-1' /> </b></button>

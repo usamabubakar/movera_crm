@@ -82,7 +82,7 @@ export const secretkey = (key) => async (dispatch) => {
     const results = secret_key_response;
     console.log(results.status);
     if (results.status==200) {
-      console.log("secret key suces")
+      console.log("secret key sucess")
       dispatch({
         type: SECRET_KEY_SUCCESS,
         payload: true
@@ -98,20 +98,18 @@ export const secretkey = (key) => async (dispatch) => {
   }
 }
 
-export const logout_user = () => (dispatch, getState) => {
+export const logout_user =  () => (dispatch, getState) => {
   const config = getTokenConfig();
 
-  try {
+
     axios.post(`${localhost}/api/auth/logout`, {}, config).then(res => {
       dispatch({
         type: LOGOUT_SUCCESS
       })
     })
-
-  } catch (error) {
+    .catch((error) => {  
     console.error(error);
-    console.log("not logout ")
-  }
+   }) 
 
 }
 

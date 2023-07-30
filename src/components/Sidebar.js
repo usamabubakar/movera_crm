@@ -24,12 +24,14 @@ const Sidebar = (props) => {
     const imagg = `/uploads/${userData?.img}`;
     //   console.log(imagg)
     const dispatch = useDispatch();
+
     const handleLogout = (e) => {
-        e.preventDefault();
+        
+        // e.preventDefault();
         console.log("click logout")
 
         dispatch(logout_user());
-        socket.emit('logout', userData.id);
+        // socket.emit('logout', userData.id);
     };
 
 

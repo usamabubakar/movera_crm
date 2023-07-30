@@ -73,7 +73,7 @@ function App() {
         {
           isAuthenticated ? (
             <>
-              {isAdmin ? (
+              {isAdmin && window.location.pathname !== '/customeragreement' ? (
                 <div className="sidebardiv" style={{ width: `${hideshow}rem` }}>
                   <div className="hideshowicon">
                     <FontAwesomeIcon icon={faCircleArrowLeft} onClick={handleWidth} />
@@ -81,7 +81,7 @@ function App() {
                   <Sidebar widthh={hideshow} />
                 </div>
               ) : (
-                isAgent ? (
+                isAgent && window.location.pathname !== '/customeragreement' ? (
                   <div className="sidebardiv" style={{ width: `${hideshow}rem` }}>
                     <div className="hideshowicon">
                       <FontAwesomeIcon icon={faCircleArrowLeft} onClick={handleWidth} />

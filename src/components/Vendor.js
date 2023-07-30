@@ -147,15 +147,23 @@ function Agentt(props) {
             password: password,
         };
 
-        dispatch(addVendor(data));
-        if (signUP_success == true) {
+        dispatch(addVendor(data))
+            .then(() => {
+            
             console.log(signUP_success + "vendor created")
             toast.success('Vendor add Successfully...!');
-        }
-        else {
+            document.getElementById('closeagentmodal').click();
+        }).catch(() => {
             toast.error('Vendor add Successfully...!');
+            document.getElementById('closeagentmodal').click();
 
-        }
+        } )
+
+        // if (signUP_success == true) {
+        // }
+    //     else {
+
+    //     }
     };
 
     const handleDelete = (id) => {
@@ -186,9 +194,12 @@ function Agentt(props) {
         if (signUP_success == true) {
             console.log(signUP_success + "admin created")
             toast.success(`Vendor ${editData[1]} update Successfully...!`);
+            document.getElementById('closeeditagentmodal').click();
         }
         else {
             toast.error(`Vendor ${data} not update Successfully...!`);
+            document.getElementById('closeeditagentmodal').click();
+
         }
     };
 
@@ -341,8 +352,8 @@ function Agentt(props) {
                 <div className="modal-dialog modal-dialog-centered" role="document">
                     <div className="modal-content modelbg">
                         <div className="modal-header border-bottom-0">
-                            <h5 className="modal-title" id="exampleModalLabel">Create Account</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <h5 className="modal-title" id="exampleModalLabel">Add Agent</h5>
+                            <button  id='closeagentmodal' type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -398,8 +409,8 @@ function Agentt(props) {
                 <div className="modal-dialog modal-dialog-centered" role="document">
                     <div className="modal-content modelbg">
                         <div className="modal-header border-bottom-0">
-                            <h5 className="modal-title" id="exampleModalLabel">Create Account</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <h5 className="modal-title" id="exampleModalLabel">Edit Agent</h5>
+                            <button id='closeeditagentmodal' type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
