@@ -55,7 +55,7 @@
     "eject": "react-scripts eject",
     "make": "npm install && npm run build && cd Backend && npm install ",
     "test_make": "npm install  && cd Backend && npm install ",
-    "server": "cd Backend && node Index.js",
+    "server": "cd Backend && npm run nodemon ",
     "client": "npm start",
     "dev": "concurrently \"npm run server \" \"npm run client\" "
   },
