@@ -211,14 +211,9 @@ console.log("admindata",admindata,typeof(admindata))
             phoneno: phoneno
         };
         console.log(data);
-
-        dispatch(addAgent(data)).then(() => {
-            toast.success('Agent Added Successfully...!');
-        })
-            .catch(() => {
-                toast.error('Agent Not Added Successfully...!');
-            });
-
+        dispatch(addAgent(data)).then(
+            toast.success(`Agent added Successfully...!`)
+        )
 
     };
 
@@ -266,12 +261,12 @@ console.log("admindata",admindata,typeof(admindata))
             toast.success(`Agent ${editData[1]} update Successfully.`)
           }
 
-            else{
-                toast.error(`Agent ${editData[1]} Not update Successfully.`)
-            }
-          } catch (error) {
-            toast.error(`An error occurred while deleting agent ${editData[1]}.`);
-          }
+        dispatch(updateAgent(data)).then(
+            toast.success(`Agent ${editData[1]} update Successfully...!`)
+        )
+
+
+
 
     };
 
@@ -316,7 +311,7 @@ console.log("admindata",admindata,typeof(admindata))
             const isEmailSent = await dispatch(sendEmail(dataa));
             if (isEmailSent) {
 
-                toast.success("Email Sent Successfully...!");
+              toast.success("Email Sent Successfully...!");
             } else {
                 toast.error("Email Not Sent Successfully...!");
             }
@@ -326,9 +321,7 @@ console.log("admindata",admindata,typeof(admindata))
         }
 
     };
-    const emailPasswordRef = useRef(null);
 
-const setEmailpassword=(data)=>{
 
     console.log(data)
 }
@@ -386,7 +379,7 @@ const setEmailpassword=(data)=>{
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Send Instruction to  vendors</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button id='closeemailmodal'  type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -450,13 +443,12 @@ const setEmailpassword=(data)=>{
                     </div>
                 </div>
             </div>
-
             <div className="modal fade" id="addagent" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered" role="document">
                     <div className="modal-content modelbg">
                         <div className="modal-header border-bottom-0">
                             <h5 className="modal-title" id="exampleModalLabel">Create Account</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <button id='closeagentmodel' type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -529,8 +521,8 @@ const setEmailpassword=(data)=>{
                 <div className="modal-dialog modal-dialog-centered" role="document">
                     <div className="modal-content modelbg">
                         <div className="modal-header border-bottom-0">
-                            <h5 className="modal-title" id="exampleModalLabel">Create Account</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                            <h5 className="modal-title" id="exampleModalLabel">Edit Account</h5>
+                            <button id='closeeditmodal' type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>

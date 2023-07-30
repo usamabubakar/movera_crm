@@ -331,12 +331,14 @@ function Lead(props) {
         seteditData('')
         console.log(data)
         dispatch(addLead(data))
-            .then(() => {
-                toast.success('Lead Added Successfully...!');
-            })
-            .catch(() => {
-                toast.error('Lead Not Added Successfully...!');
-            });
+        .then(() => {
+          toast.success('Lead Added Successfully...!');
+          document.getElementById('closeleadmodal').click();
+
+        })
+        .catch(() => {
+          toast.error('Lead Not Added Successfully...!');
+        });
     }
 
     const updatelead = async(e) => {
@@ -896,14 +898,13 @@ function Lead(props) {
                     </div>
                 </div>
             </div>
-
             {/* add lead  */}
             <div class="modal fade" id="addlead" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
                 <div class="modal-dialog " role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalScrollableTitle">Add Lead</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <button id='closeleadmodal' type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -1496,7 +1497,6 @@ function Lead(props) {
                     <div className="agenttab">
                         Leads
                     </div>
-
                     <div className="agentbtn d-flex">
                         <button type='button' data-toggle="modal" data-target="#addlead" className='button-86 m-1'><b>Add Lead <FontAwesomeIcon icon={faPlus} className='ml-1' /> </b></button>
                         <button type='button' data-toggle="modal" data-target="#textlead" className='button-86 m-1'><b>Add text Lead <FontAwesomeIcon icon={faPlus} className='ml-1' /> </b></button>
