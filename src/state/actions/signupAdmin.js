@@ -52,25 +52,26 @@ export const emailchecker = (email) => async (dispatch) => {
   try {
     const response = await axios.post(`${localhost}/api/auth/emailexist` ,{ email });
     const responseData = response.data;
-    console.log(responseData);
+    console.log("emal exit",response);
     dispatch({
       type:EMAIL_EXIST,
       payload:true
     })
+    return Promise.resolve();
  // Handle other status codes if needed
 
   } catch (error) {
     if (error.response) {
       const status = error.response.status;
-      console.log(status);
 
       if (status === 409) {
-        console.log("Email already exists");
         dispatch({
           type: EMAIL_EXIST,
           payload: false
         });
       }
+      return Promise.reject();
+
 
       // Handle other status codes if needed
     } else {

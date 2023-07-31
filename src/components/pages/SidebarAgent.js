@@ -55,7 +55,7 @@ const SidebarAgent = (props) => {
             <div className="image-area">
                 <img src={Adminimage} alt="" />
                 <h5 className="pt-2 adminname">{userData?.name}</h5>
-                <p className="mt-n2 des">Lead Developer</p>
+                <p className="mt-n2 des">Agent  Dashbord</p>
             </div>
 
             <div className="menu">
@@ -127,11 +127,11 @@ const SidebarAgent = (props) => {
                             <FontAwesomeIcon icon={faListAlt} />
                         </div>
                         <span>
-                        Potential
+                        Completed
                         </span>
                     </NavLink>
                 </div>
-                {/* <div className="menuitems">
+                <div className="menuitems">
                     <NavLink to="/cancelleads" className='anchortag' style={{ textDecoration: 'none' }}>
                         <div className="menuicon">
                             <FontAwesomeIcon icon={faTrashAlt} />
@@ -140,8 +140,8 @@ const SidebarAgent = (props) => {
                             Cancel Orders
                         </span>
                     </NavLink>
-                </div> */}
-                <div className="menuitems">
+                </div>
+                {/* <div className="menuitems">
                     <NavLink to="/chat" className='anchortag' style={{ textDecoration: 'none' }}>
                         <div className="menuicon">
                             <FontAwesomeIcon icon={faMessage} />
@@ -150,7 +150,7 @@ const SidebarAgent = (props) => {
                             Chat
                         </span>
                     </NavLink>
-                </div>
+                </div> */}
                 {/* <div className="menuitems">
                     <NavLink to="/vendor" className='anchortag' style={{ textDecoration: 'none' }}>
                         <div className="menuicon">

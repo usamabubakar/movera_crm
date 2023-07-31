@@ -55,6 +55,15 @@ const userSchema = new Schema({
     img:{
         type: String,
         default:'none'
+    },
+    phoneno:{
+        type:String,
+        defult:'none'
+    },
+    emailpassword:{
+        type:String,
+        required:false,
+        default:'none'
     }
 });
 

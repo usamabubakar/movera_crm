@@ -21,7 +21,7 @@ router.get('/dashborddata', async (req, res) => {
     const admin= await User.find({isAdmin:true});
     const onlineAgent= await User.find({isAgent:true, loggedIn:true});
     const onlineAdmin= await User.find({isAdmin:true, loggedIn:true});
-
+    console.log(admin)
     const onlineAgentCount=onlineAgent.length;
     const agentCount = agent.length;
     const leadCount = leads.length;
@@ -68,7 +68,7 @@ const allData={
 }
 
     console.log("reposme send");
-    res.status(202).json({ message: "Agent fetch successful", onlineagent: onlineagentName, onlineadmin:onlineadmin, data:allData , payment:payment, totalprice: totalPrice});
+    res.status(202).json({ message: "Agent fetch successful", onlineagent: onlineagentName, onlineadmin:onlineadmin, data:allData , payment:payment, totalprice: totalPrice, totaladmin:admin});
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error");

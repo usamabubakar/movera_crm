@@ -167,7 +167,9 @@ function CutomerAgreement(props) {
             setRecord(data);
         } else {
             const filteredData = data.filter((row) =>
-                row.name.toLowerCase().includes(searchText)
+            row.name.toLowerCase().includes(searchText) ||
+            row.email.toLowerCase().includes(searchText) ||
+            row.phoneno.includes(searchText)
             );
 
             setRecord(filteredData);
@@ -238,10 +240,6 @@ function CutomerAgreement(props) {
                     </div>
                 </div>
             </div>
-
-
-
-
 
 
             <div className='agenttable'>

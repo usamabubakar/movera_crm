@@ -13,6 +13,7 @@ import { logout_user } from '../state/actions/authUser';
 import { useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import Adminchat from './Adminchat';
+import { fetchAgentData } from '../state/actions/agentCrud';
 
 import { useSelector } from 'react-redux';
 
@@ -66,6 +67,10 @@ const Sidebar = (props) => {
         })
 
     }, []);
+
+    useEffect(() => {
+        dispatch(fetchAgentData());
+    }, [dispatch]);
 
 
     return (

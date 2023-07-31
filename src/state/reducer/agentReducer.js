@@ -47,6 +47,7 @@ const agentReducer = (state = initialState, action) => {
                     password: action.payload.password,
                     starttime: action.payload.starttime,
                     endtime: action.payload.endtime,
+                    phoneno:action.payload.phoneno
                   };
                 }
                 return agent;

@@ -8,7 +8,7 @@ const initialState = {
   onlineAdmin:[],
   totalleads: null,
   payment:null,
-  price:null
+  price:null,
 };
 
 const dashbordReducer = (state = initialState, action) => {
@@ -26,7 +26,7 @@ const dashbordReducer = (state = initialState, action) => {
         totalleads: data.leadcount,
         payment:payment,
         onlineAdmin:onlineadmin,
-        price:action.payload.totalprice
+        price:action.payload.totalprice,
       };
 
     default:

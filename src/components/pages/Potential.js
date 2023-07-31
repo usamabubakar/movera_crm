@@ -215,6 +215,7 @@ function Potential(props) {
             toast.error('Lead status not update Successfully...!');
         }
     }
+    const [searchText, setSearchText] = useState('');
 
     let data = [];
     useEffect(() => {
@@ -271,15 +272,21 @@ function Potential(props) {
 
     const [record, setRecord] = useState(data);
     function handlefilter(event) {
-        console.log("usama")
-        const newdata = data.filter(row => {
-            return row.name.toLowerCase().includes(event.target.value.toLowerCase())
-        })
-        setRecord(newdata)
-    }
+        const searchText = event.target.value.toLowerCase();
 
-    const getRowidValue = (id) => {
-        setrowIdValue(id);
+        if (searchText === '') {
+            setRecord(data);
+        } else {
+            const filteredData = data.filter((row) =>
+            row.name.toLowerCase().includes(searchText) ||
+            row.email.toLowerCase().includes(searchText) ||
+            row.phoneno.includes(searchText)
+            );
+
+            setRecord(filteredData);
+        }
+
+        setSearchText(event.target.value);
     }
 
 

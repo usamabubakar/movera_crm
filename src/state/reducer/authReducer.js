@@ -18,7 +18,8 @@ import {
     isAgent: false,
     user: {},
     token: token,
-    errorMessage: null
+    errorMessage: null,
+    emailpassword:null
   };
 
   // Rest of your code...
@@ -29,7 +30,7 @@ const authReducer = (state = initialState, action) => {
     switch (action.type) {
         case LOGIN_SUCCESS:
             console.log(action.payload.user, "login success se ho bhai");
-            const { id, name, email, isAdmin, isAgent ,img} = action.payload.user;
+            const { id, name, email, isAdmin, isAgent ,img, emailpassword} = action.payload.user;
 
             const token = action.payload.token;
             const isAdminn = isAdmin;
@@ -51,7 +52,8 @@ const authReducer = (state = initialState, action) => {
                 isAdmin: isAdminn,
                 isAgent: isAgentt,
                 token: token,
-                img:img
+                img:img,
+                emailpassword:emailpassword
             };
         case USER_LOADED:
 
