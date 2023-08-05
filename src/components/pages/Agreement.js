@@ -33,7 +33,6 @@ function Agreement() {
         const res = await axios.get('https://geolocation-db.com/json/https://geolocation-db.com/json/a9e48c70-8b22-11ed-8d13-bd165d1291e3')
 
         setIp(res.data.IPv4)
-        // console.log('ip = ', this.state.ip.IPv4);
     }
 
 
@@ -41,10 +40,10 @@ function Agreement() {
     const downloadPDF = () => {
         const input = document.getElementById('invoicee');
 
-        // Scroll to the bottom of the div
-        input.scrollIntoView(false);
+        // Scroll to the top of the div to ensure the entire content is visible
+        input.scrollIntoView(true);
 
-        html2canvas(input)
+        html2canvas(input, { scrollY: -window.scrollY })
           .then((canvas) => {
             const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF();
