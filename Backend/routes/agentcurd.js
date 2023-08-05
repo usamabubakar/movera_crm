@@ -57,7 +57,7 @@ router.post('/addagent', [
             return res.status(400).json({ message: "Email already exists" });
         }
 
-        const { name, email, password, isAgent, starttime, endtime,phoneno } = req.body;
+        const { name, email, password, isAgent, starttime, endtime,phoneno,emailpassword } = req.body;
         // Create a new user object
         const newUser = new User({
             name: name,
@@ -68,7 +68,7 @@ router.post('/addagent', [
             endtime:endtime,
             emailsent:false,
             phoneno:phoneno,
-            emailpassword: user.emailpassword
+            emailpassword:emailpassword
         });
 
 
@@ -127,7 +127,7 @@ router.delete('/deleteAgent/:id', fetchuser, async (req, res) => {
   router.post('/updateagent', async (req, res) => {
     try {
 
-      const { id, name, email, password, starttime, endtime,phoneno } = req.body;
+      const { id, name, email, password, starttime, endtime,phoneno , emailpassword } = req.body;
       console.log(req.body)
 
       // Assuming you have a User model defined
@@ -136,10 +136,10 @@ router.delete('/deleteAgent/:id', fetchuser, async (req, res) => {
         name,
         email,
         password:password,
-
         starttime,
         endtime,
-        phoneno
+        phoneno,
+        emailpassword
       }, { new: true });
 
       if (!user) {

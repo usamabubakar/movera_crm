@@ -19,11 +19,13 @@ export const fetchVendorData =()=>async(dispatch) => {
         type:VENDOR_FETCHING_SUCCESS,
         payload: data
     });
+    return true
   } catch (error) {
     dispatch({
       type:GET_ERRORS,
       payload:null
     });
+    return false
   }
 
 };
@@ -43,11 +45,15 @@ export const addVendor = (data) => async (dispatch) => {
       type: VENDOR_ADD_SUCCESS,
       payload: vendor
     });
+    return true
+
   } catch (err) {
     const error = {
       message: err.response.data,
       status: err.response.status
     };
+    return false
+
     // Handle the error here, such as dispatching an error action or setting an error state
   }
 };
@@ -66,9 +72,9 @@ const vendorid=response.data.vendorid
       type: VENDOR_DELETE_SUCCESS,
       payload: vendorid,
     });
-
+    return true
   } catch (error) {
-
+    return false
   }
 };
 
@@ -83,15 +89,18 @@ export const updateVendor = (data) => async (dispatch) => {
   };
   try {
     const response = await axios.post(`${localhost}/api/vendorcrud/updatevendor`, data, config);
-    console.log(response);
+    const vendor=response.data.data
     dispatch({
       type: VENDOR_UPDATE_SUCCESS,
-      payload: true
+      payload: vendor
     });
+    return true
+
   } catch (err) {
     const error = {
       message: err.response.data,
       status: err.response.status
     };
+    return false
 }
 }

@@ -16,13 +16,14 @@ router.post('/sendEmail', fetchuser,async(req, res) => {
 console.log(req.body)
   const user= await User.findById(req.user_login.id);
   const lead = await Lead.findOne({_id:leadid});
+  console.log(user)
 
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
     auth: {
-        user: 'moveralogistic@gmail.com',
-        pass: 'cgkwnrrfputocydk'
+        user: user.email,
+        pass: user.emailpassword
     }
 });
   if(user.isAdmin){
@@ -33,7 +34,7 @@ if(chekagentorvendor.isvendor){
 console.log("vendore meeil")
 
   const mailOptions = {
-    from: 'moveralogistic@gmail.com',
+    from: user.email,
     to: email,
     subject: "Api Lead Instructions",
     text:`Your token: : ${chekagentorvendor.vendortoken} \n\n
@@ -103,7 +104,7 @@ console.log("vendore meeil")
   else if(chekagentorvendor.isAgent) {
     console.log('Reached sendEmail endpoint agent');
     const mailOptions = {
-      from: 'moveralogistic@gmail.com',
+      from: user.email,
       to: email,
       subject: "Login credetionals",
       text:` Congrualations...!!! you are selected for job and join offcie tomarrow and your login credetionals are:
@@ -124,7 +125,6 @@ console.log("vendore meeil")
         console.log('Email sent: ' + info.response);
         res.status(200).json({ success: true, message: 'Email sent successfully'});
       }
-
     });
 
 
@@ -133,9 +133,10 @@ console.log("vendore meeil")
 }
 
   else  {
+
     console.log(customeremail + "agent");
 const mailOptions = {
-    from: 'moveralogistic@gmail.com',
+    from: user.email,
     to: customeremail,
     subject: subject,
     text:'sm transport',

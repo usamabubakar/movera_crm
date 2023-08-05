@@ -37,7 +37,7 @@ function Agentt(props) {
     const emailsent = useSelector(state => state.emailsent.emailsend);
     const admindata=useSelector(state=>state.auth.user)
 // satest
-    console.log("admindata",admindata,typeof(admindata))
+
 
 
 
@@ -84,6 +84,12 @@ function Agentt(props) {
             selector: row => row.phoneno,
             center: true,
             minWidth: '200px'
+        },
+        {
+            name: 'email app password',
+            selector: row => row.emailpassword,
+            center: true,
+            minWidth: '250px'
         },
         {
 
@@ -146,12 +152,12 @@ function Agentt(props) {
                 jobstarttime: agent.starttime,
                 jobendtime: agent.endtime,
                 emailsent: agent.emailsent,
-                phoneno: agent.phoneno
+                phoneno: agent.phoneno,
+                emailpassword:agent.emailpassword
             }));
             setData(dataa);
             setRecord(dataa);
         }
-        console.log(agents)
     }, [agents]);
 
     const getRowidValue = (id) => {
@@ -181,6 +187,7 @@ function Agentt(props) {
     const handleEdit = (id) => {
         console.log("cheingl id", id)
         const foundAgent = agents.find((agent) => agent.id === id || agent._id === id);
+
         seteditData([
             foundAgent.id || foundAgent._id,
             foundAgent.name,
@@ -188,10 +195,10 @@ function Agentt(props) {
             foundAgent.password,
             foundAgent.starttime,
             foundAgent.endtime,
-            foundAgent.phoneno
+            foundAgent.phoneno,
+            foundAgent.emailpassword
 
         ]);
-        console.log(editData)
     };
 
 
@@ -203,16 +210,17 @@ function Agentt(props) {
         const starttime = e.target.astarttime.value;
         const endtime = e.target.aendtime.value;
         const phoneno = e.target.phoneno.value
+        const apppassword=e.target.apppassword.value
         const data = {
             name: name,
             email: email,
             password: password,
             starttime: starttime,
             endtime: endtime,
-            phoneno: phoneno
+            phoneno: phoneno,
+            emailpassword:apppassword
         };
         console.log(data);
-
         dispatch(addAgent(data)).then(() => {
             toast.success('Agent Added Successfully...!');
         })
@@ -225,7 +233,6 @@ function Agentt(props) {
 
     const handleDelete = async (id) => {
         try {
-          console.log(editData);
           console.log(id);
           const isDeleted = await dispatch(deleteAgent(id));
 
@@ -251,6 +258,7 @@ function Agentt(props) {
             const starttime = e.target.starttime.value;
             const endtime = e.target.endtime.value;
             const phoneno=e.target.phoneno.value;
+            const apppassword=e.target.apppassword.value;
             const data = {
                 id: editData[0],
                 name: name,
@@ -258,10 +266,9 @@ function Agentt(props) {
                 password: password,
                 starttime: starttime,
                 endtime: endtime,
-                phoneno:phoneno
+                phoneno:phoneno,
+                emailpassword:apppassword
             };
-            console.log(data)
-
           const update=  await dispatch(updateAgent(data))
           if(update){
             toast.success(`Agent ${editData[1]} update Successfully.`)
@@ -312,11 +319,9 @@ function Agentt(props) {
             starttime: data[4],
             endtime: data[5],
         };
-
         try {
             const isEmailSent = await dispatch(sendEmail(dataa));
             if (isEmailSent) {
-
                 toast.success("Email Sent Successfully...!");
             } else {
                 toast.error("Email Not Sent Successfully...!");
@@ -330,16 +335,22 @@ function Agentt(props) {
     const emailPasswordRef = useRef(null);
 // satest
 const [empass, setEmpass] = useState();
-const setEmailpassword=()=>{
+const setEmailpassword=async ()=>{
 
     const empas =  {empas : empass, id : admindata._id}
-    
-    console.log(empas, "set email called")
-    
-    dispatch(updateAgentAppPass(empas));
-    dispatch(loadUser());
-    
 
+    console.log(empas, "set email called")
+
+   const passs=await dispatch(updateAgentAppPass(empas))
+   if(passs){
+    toast.success("Email password set Successfully...!");
+   }
+   else{
+
+        toast.error("Email password Not set Successfully...!")
+   }
+
+    dispatch(loadUser());
 }
 
 
@@ -367,7 +378,7 @@ const setEmailpassword=()=>{
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Send Instruction to Agents</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">{agentdata.emailpassword=='none' ? 'set you Email App password':'Send Instruction to Agents'}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -401,73 +412,86 @@ const setEmailpassword=()=>{
             {/* email  */}
 
             <div class="modal fade" id="agentemail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Send Instruction to  Agents</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div className="form-group">
-                                <label htmlFor="subject"><b>Subject:</b> Agent Login credetionals</label>
-                                <hr />
-                            </div>
-                            <div className="form-group">
-                                    <label htmlFor="password"> {admindata.emailpassword != 'none'? "Email": "Please set you email App password first" } </label>
-                                   {admindata.emailpassword != 'none'?
-                                <h3>You Can Send Email</h3>
-                                :
-                                <>
-                                <input type="text" className="form-control" onChange={(e)=> setEmpass(e.target.value) }
-                                 id="appassword" name="appassword" ref={emailPasswordRef} placeholder="Email app password" required />
-                               <button type="button" onClick={setEmailpassword}
-                               class="close" data-dismiss="modal" aria-label="Close">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">{admindata.emailpassword === 'none' ? 'Set your Email App password' : 'Send Instruction to Agents'}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {admindata.emailpassword === 'none' ? (
+                    // Conditionally rendered content for 'none'
+                    <div className="form-group">
+
+                        <label htmlFor="password">Please set your email App password first</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            onChange={(e) => setEmpass(e.target.value)}
+                            id="appassword"
+                            name="appassword"
+                            ref={emailPasswordRef}
+                            placeholder="Email app password"
+                            required
+                        />
+                        <div className="d-flex justify-content-center align-items-center p-2">
+                            <button
+                                type="button"
+                                onClick={setEmailpassword}
+                                class="agent-edit-delete-btn"
+                                data-dismiss="modal"
+                            >
                                 Add password
                             </button>
-                               </>
-                                }
-                                </div>
-                        
-                            <div className="form-group">
-                                {!admindata.emailpassword == 'none'&&
-                                
-                                <table>
-                                    <thead>
-                                        <td><b>Email</b></td>
-                                        <td><b>Password</b></td>
-                                        <td><b>Job Start Time</b></td>
-                                        <td><b>Job End Time</b></td>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>{editData[2]}</td>
-                                            <td>{editData[3]}</td>
-                                            <td>{editData[4]}</td>
-                                            <td>{editData[5]}</td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            }
-
-
-                            </div>
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            {admindata.emailpassword != 'none' && 
-                            <button type="button"  
-                            class="agent-edit-delete-btn ml-1" style={{ padding: '9px 10px' }} onClick={() => sendEmailfuntion(editData)} data-dismiss="modal">Send </button>
-                            }
-
                         </div>
                     </div>
-                </div>
+                ) : (
+                    // Conditionally rendered content when not 'none'
+                    <div className="form-group">
+                        <label htmlFor="subject"><b>Subject:</b> Agent Login credentials</label>
+                        <hr />
+                        <table>
+                            <thead>
+                                <tr>
+                                    <td><b>Email</b></td>
+                                    <td><b>Password</b></td>
+                                    <td><b>Job Start Time</b></td>
+                                    <td><b>Job End Time</b></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>{editData[2]}</td>
+                                    <td>{editData[3]}</td>
+                                    <td>{editData[4]}</td>
+                                    <td>{editData[5]}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                {admindata.emailpassword !== 'none' && (
+                    // Conditionally rendered content when not 'none'
+                    <button
+                        type="button"
+                        class="agent-edit-delete-btn ml-1"
+                        style={{ padding: '9px 10px' }}
+                        onClick={() => sendEmailfuntion(editData)}
+                        data-dismiss="modal"
+                    >
+                        Send
+                    </button>
+                )}
+            </div>
+        </div>
+    </div>
+</div>
+
 
             {/* // model */}
             {/* delete user model  */}
@@ -545,6 +569,10 @@ const setEmailpassword=()=>{
                                     <label htmlFor="password">Phone No</label>
                                     <input type="number" className="form-control" id="phoneno" name="phoneno" placeholder="Phoneno" required />
                                 </div>
+                                <div className="form-group">
+                                    <label htmlFor="password">Emial App Password</label>
+                                    <input type="text" className="form-control" id="apppassword" name="apppassword" placeholder="email app password" required />
+                                </div>
                                 <div className="form-group d-flex justify-content-between">
                                     <div className="w-50 mr-1">
                                         <label htmlFor="starttime">Start Time</label>
@@ -621,6 +649,12 @@ const setEmailpassword=()=>{
                                     <label htmlFor="password">Phono No</label>
                                     <input type="number" className="form-control" id="phoneno" value={editData[6]} name="phoneno" placeholder="Phone no"
                                         onChange={(e) => { handleInputChange(6, e.target.value); }}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="password">Email app password</label>
+                                    <input type="text" className="form-control" id="apppassword" value={editData[7]} name="apppassword" placeholder="Email app passwprd"
+                                        onChange={(e) => { handleInputChange(7, e.target.value); }}
                                     />
                                 </div>
                                 <div className="form-group d-flex justify-content-between">

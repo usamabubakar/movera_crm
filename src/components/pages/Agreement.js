@@ -12,6 +12,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import logoimg from "../../images/logo.png";
 import axios from 'axios';
+import html2pdf from 'html2pdf.js';
 
 
 
@@ -39,22 +40,30 @@ function Agreement() {
 
     const downloadPDF = () => {
         const input = document.getElementById('invoicee');
+        const pdfOptions = {
+          margin: 10,
+          filename: 'summary.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        };
 
-        // Scroll to the top of the div to ensure the entire content is visible
-        input.scrollIntoView(true);
+        // Store the current height and overflow properties
+        const originalHeight = input.style.height;
+        const originalOverflow = input.style.overflow;
 
-        html2canvas(input, { scrollY: -window.scrollY })
-          .then((canvas) => {
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF();
-            const imgProps = pdf.getImageProperties(imgData);
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        // Set the height to the full scroll height and remove overflow to display the entire content
+        input.style.height = input.scrollHeight + 'px';
+        input.style.overflow = 'visible';
 
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            pdf.save(`${agreementtdata.fullname} shipment_invoice.pdf`);
-          });
+        // Generate the PDF
+        html2pdf().from(input).set(pdfOptions).save();
+
+        // Restore the original height and overflow properties after generating the PDF
+        input.style.height = originalHeight;
+        input.style.overflow = originalOverflow;
       };
+
 
 
 

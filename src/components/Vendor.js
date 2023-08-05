@@ -1,7 +1,7 @@
 import DataTable from 'react-data-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import './style.css'
 import { connect } from 'react-redux';
@@ -17,6 +17,10 @@ import { useEffect } from 'react';
 import { updateVendor } from '../state/actions/vendorCrud';
 import { deleteVendor } from '../state/actions/vendorCrud';
 import { sendEmail } from '../state/actions/email';
+import {  updateAgentAppPass } from '../state/actions/agentCrud';
+import { loadUser, login_user } from '../state/actions/authUser';
+
+
 
 
 
@@ -29,10 +33,9 @@ function Agentt(props) {
     const vendordata = useSelector(state => state.vendordata);
     const vendordelete = useSelector(state => state.agent.userDelete);
     const emailsent = useSelector(state => state.emailsent.emailsend);
-    console.log("checkin email");
-    const vendors = useSelector(state => state.vendors.vendor);
-    console.log(vendors)
 
+    const vendors = useSelector(state => state.vendors.vendor);
+    const admindata=useSelector(state=>state.auth.user)
 
     const [email, setEmail] = useState('');
     const [islodaing, setIsLoading] = useState(false);
@@ -149,7 +152,7 @@ function Agentt(props) {
 
         dispatch(addVendor(data))
             .then(() => {
-            
+
             console.log(signUP_success + "vendor created")
             toast.success('Vendor add Successfully...!');
             document.getElementById('closeagentmodal').click();
@@ -166,17 +169,17 @@ function Agentt(props) {
     //     }
     };
 
-    const handleDelete = (id) => {
-        dispatch(deleteVendor(id))
-        if (vendordelete[0] == true) {
-            toast.success(`Vendor ${vendordelete[1]} deleted Successfully...!`);
+    const handleDelete = async(id) => {
+     const del=await dispatch(deleteVendor(id))
+        if (del) {
+            toast.success(`Vendor deleted Successfully...!`);
         }
         else {
-            toast.error(`Vendor ${vendordelete[1]} not deleted Successfully...!`);
+            toast.error(`Vendor  not deleted Successfully...!`);
         }
     };
 
-    const updatevendor = (e) => {
+    const updatevendor = async(e) => {
         e.preventDefault();
         console.log("click update")
         const name = e.target.name.value;
@@ -190,14 +193,16 @@ function Agentt(props) {
         };
 
 
-        dispatch(updateVendor(data))
-        if (signUP_success == true) {
-            console.log(signUP_success + "admin created")
-            toast.success(`Vendor ${editData[1]} update Successfully...!`);
+      const update=await  dispatch(updateVendor(data))
+        if (update) {
+            console.log("updatE")
+            toast.success(`Vendor update Successfully...!`);
             document.getElementById('closeeditagentmodal').click();
         }
         else {
-            toast.error(`Vendor ${data} not update Successfully...!`);
+            console.log("updatE not")
+
+            toast.error(`Vendor not update Successfully...!`);
             document.getElementById('closeeditagentmodal').click();
 
         }
@@ -270,6 +275,26 @@ function Agentt(props) {
       }
 
 
+    const emailPasswordRef = useRef(null);
+
+      const [empass, setEmpass] = useState();
+      const setEmailpassword=async ()=>{
+
+          const empas =  {empas : empass, id : admindata._id}
+
+          console.log(empas, "set email called")
+
+         const passs=await dispatch(updateAgentAppPass(empas))
+         if(passs){
+          toast.success("Email password set Successfully...!");
+         }
+         else{
+
+              toast.error("Email password Not set Successfully...!")
+         }
+
+          dispatch(loadUser());
+      }
 
     return (
 
@@ -299,7 +324,7 @@ function Agentt(props) {
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Delete Agent</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Delete vendor</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -315,44 +340,86 @@ function Agentt(props) {
                     </div>
                 </div>
             </div>
+
             <div class="modal fade" id="vendoremail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Send Instruction to  vendors</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    {admindata.emailpassword === 'none' ? 'Set your Email App password' : 'Send Instruction to vendors'}
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {admindata.emailpassword === 'none' ? (
+                    // Conditionally rendered content for 'none'
+                    <div className="form-group">
+                        <label htmlFor="subject"><b>Subject:</b> Set Your Email App Password</label>
+                        <hr />
+                        <label htmlFor="password">Please set your email App password first</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            onChange={(e) => setEmpass(e.target.value)}
+                            id="appassword"
+                            name="appassword"
+                            ref={emailPasswordRef}
+                            placeholder="Email app password"
+                            required
+                        />
+                        <div className="d-flex justify-content-center align-items-center p-2">
+                            <button
+                                type="button"
+                                onClick={setEmailpassword}
+                                class="agent-edit-delete-btn"
+                                data-dismiss="modal"
+                            >
+                                Add password
                             </button>
                         </div>
-                        <div class="modal-body">
-                            <div className="form-group">
-                                <label htmlFor="subject"><b>Subject:</b> Api Lead Instructions</label>
-                                <hr />
-
-                                <br />
-                                This is the Instruction for API, make a post request to <a href="">"http://localhost:5000/api/vendor/leadbyvendor"</a>
-                                and you lead must b in JSON formet and your token must b valid otherwise Lead will not post to this API
-                                <hr />
-
-
-                            </div>
-
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="agent-edit-delete-btn ml-1" style={{ padding: '9px 10px' }} onClick={() => sendEmailfuntion(editData)} data-dismiss="modal">Send </button>
-
-                        </div>
                     </div>
-                </div>
+                ) : (
+                    // Conditionally rendered content when not 'none'
+                    <div className="form-group">
+                        <label htmlFor="subject"><b>Subject:</b> Api Lead Instructions</label>
+                        <hr />
+                        <br />
+                        This is the Instruction for API, make a post request to{" "}
+                        <a href="">"http://localhost:5000/api/vendor/leadbyvendor"</a> and you lead must b in JSON formet and your
+                        token must b valid otherwise Lead will not post to this API
+                        <hr />
+                    </div>
+                )}
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    Close
+                </button>
+                {admindata.emailpassword !== 'none' && (
+                    // Conditionally rendered content when not 'none'
+                    <button
+                        type="button"
+                        class="agent-edit-delete-btn ml-1"
+                        style={{ padding: '9px 10px' }}
+                        onClick={() => sendEmailfuntion(editData)}
+                        data-dismiss="modal"
+                    >
+                        Send
+                    </button>
+                )}
+            </div>
+        </div>
+    </div>
+</div>
+
 
             <div className="modal fade" id="addagent" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered" role="document">
                     <div className="modal-content modelbg">
                         <div className="modal-header border-bottom-0">
-                            <h5 className="modal-title" id="exampleModalLabel">Add Agent</h5>
+                            <h5 className="modal-title" id="exampleModalLabel">Add Vendor</h5>
                             <button  id='closeagentmodal' type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -409,7 +476,7 @@ function Agentt(props) {
                 <div className="modal-dialog modal-dialog-centered" role="document">
                     <div className="modal-content modelbg">
                         <div className="modal-header border-bottom-0">
-                            <h5 className="modal-title" id="exampleModalLabel">Edit Agent</h5>
+                            <h5 className="modal-title" id="exampleModalLabel">Edit Vendor</h5>
                             <button id='closeeditagentmodal' type="button" className="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>

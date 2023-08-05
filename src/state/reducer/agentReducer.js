@@ -47,14 +47,14 @@ const agentReducer = (state = initialState, action) => {
                     password: action.payload.password,
                     starttime: action.payload.starttime,
                     endtime: action.payload.endtime,
-                    phoneno:action.payload.phoneno
+                    phoneno:action.payload.phoneno,
+                    emailpassword:action.payload.emailpassword
                   };
                 }
                 return agent;
               });
 
 
-            console.log(updatedata)
 
             return {
                 ...state,

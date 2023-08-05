@@ -270,3 +270,8 @@ text-align: center;
     border-radius: 10px;
     text-align: center;
 }
+
+#invoicee {
+    max-height: 800px; /* Set the maximum height to 800 pixels */
+    overflow-y: scroll; /* Add vertical scrollbar if content exceeds the max-height */
+  }

@@ -61,14 +61,14 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 isAuthenticated: true,
                 isLoading: false,
-                user: action.payload.user,
-                // user : {
-                //     id  : action.payload.user._id,
-                //     name: action.payload.user.name,
-                //     email: action.payload.user.email,
-                //     img: action.payload.user.img,
-                //     emailpassword:
-                // },
+                // user: action.payload.user,
+                user : {
+                    id  : action.payload.user._id,
+                    name: action.payload.user.name,
+                    email: action.payload.user.email,
+                    img: action.payload.user.img,
+                    emailpassword:action.payload.user.emailpassword
+                },
                 isAdmin: action.payload.user.isAdmin,
                 isAgent: action.payload.user.isAgent
 
