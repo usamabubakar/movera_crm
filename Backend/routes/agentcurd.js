@@ -26,7 +26,8 @@ router.get('/', fetchuser, async (req, res) => {
         starttime: user.starttime,
         endtime: user.endtime,
         emailsent:user.emailsent,
-        phoneno:user.phoneno
+        phoneno:user.phoneno,
+        emailpassword: user.emailpassword
       };
     });
 
@@ -66,7 +67,8 @@ router.post('/addagent', [
             starttime:starttime,
             endtime:endtime,
             emailsent:false,
-            phoneno:phoneno
+            phoneno:phoneno,
+            emailpassword: user.emailpassword
         });
 
 
@@ -134,6 +136,7 @@ router.delete('/deleteAgent/:id', fetchuser, async (req, res) => {
         name,
         email,
         password:password,
+
         starttime,
         endtime,
         phoneno
@@ -141,6 +144,31 @@ router.delete('/deleteAgent/:id', fetchuser, async (req, res) => {
 
       if (!user) {
         return res.status(404).json({ message: 'Agent not found' });
+      }
+
+      res.status(200).json({ message: 'Agent updated successfully', data: user });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
+
+  router.post('/updateagentapppass', async (req, res) => {
+    try {
+      const { empas, id} = req.body;
+      console.log(req.body , "app pass route" )
+
+      // Assuming you have a User model defined
+      // const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await User.findByIdAndUpdate(id, {
+        emailpassword: empas
+      }, { new: true });
+
+      if (!user) {
+        return res.status(404).json({ message: 'Agent not found' });
+      }else{
+        console.log("email updated")
       }
 
       res.status(200).json({ message: 'Agent updated successfully', data: user });
