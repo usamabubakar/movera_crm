@@ -14,7 +14,14 @@ import { websiteLink, localhost } from "../config/websitepath";
 
 import axios from "axios";
 import getTokenConfig from './tokenConfig';
+import io from 'socket.io-client';
 
+const socket = io("http://localhost:5000", {
+  withCredentials: true,
+  extraHeaders: {
+    "my-custom-header": "abcd"
+  }
+});
 
 export const fetchLead =(dataa)=>async(dispatch) => {
     try {
@@ -92,6 +99,7 @@ export const addLead = (data) =>async (dispatch) => {
       const newlead=response.data.data
       if (response.status === 200) {
         sendNotificationToSSEServer(response.data);
+        socket.emit('newlead',(newlead));
       }
     dispatch({
         type:ADD_LEAD,

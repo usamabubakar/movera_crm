@@ -73,7 +73,7 @@ const LeadSchema = new Schema({
     },
     howmany:{
         type:String,
-        required:true,
+        required:false,
     },
     vehicle: [{
 

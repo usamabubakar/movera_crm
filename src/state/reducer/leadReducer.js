@@ -84,12 +84,12 @@ const leadReducer = (state = initialState, action) => {
               opickup:action.payload.Opickup,
               ophonono:action.payload.Ophonono,
               dpickup:action.payload.Dpickup,
-              dphonono:action.payload.Dphonono
+              dphonono:action.payload.Dphonono,
+
             };
           }
           return lead;
         });
-console.log("reducer approvel",updatedata)
         return {
           ...state,
           leadsData: updatedata,

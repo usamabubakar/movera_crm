@@ -202,13 +202,12 @@ router.get('/fetchlead', async (req, res) => {
         paymentstatus:lead.paymentstatus,
         price:lead.price,
         intialdeposite:lead.intialdeposite,
-        Dphonono:lead.Dphonono,
-        Dpickup:lead.Dpickup,
-        Ophonono:lead.Ophonono,
-        Opickup:lead.Opickup
+        dphonono:lead.Dphonono,
+        dpickup:lead.Dpickup,
+        ophonono:lead.Ophonono,
+        opickup:lead.Opickup
       }));
     }
-
     const onlineAdmin= await User.find({isAdmin:true, loggedIn:true});
     const onlineadmin = onlineAdmin.map(admin => {
       return {
@@ -353,7 +352,6 @@ router.get('/pendinglead', fetchuser, async (req, res) => {
       }
 
       await lead.save();
-
       res.status(200).json({ message: "Lead updated successfully", data: lead });
     } catch (error) {
       console.error(error);

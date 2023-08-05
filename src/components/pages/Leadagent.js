@@ -80,6 +80,10 @@ function Leadagent(props) {
 
 
 
+
+
+
+
     useEffect(() => {
         const pagename = 'lead'
         const userid = userData.id
@@ -311,9 +315,12 @@ function Leadagent(props) {
             foundlead.howmany,
             foundlead.vehicle,
             foundlead.price,
-            foundlead.intialdeposite
+            foundlead.intialdeposite,
+            foundlead.dphonono,
+            foundlead.dpickup,
+            foundlead.ophonono,
+            foundlead.opickup,
         ]);
-
 
     };
     const [subject, setsubject]=useState('')
@@ -402,10 +409,10 @@ function Leadagent(props) {
                     price: lead.price,
                     approvalStatus: lead.approvelStatus,
                     intialdeposit:lead.intialdeposite,
-                    opickup:lead.Opickup,
-                    ophonono:lead.Ophonono,
-                    dpickup:lead.Dpickup,
-                    dphonono:lead.Dphonono,
+                    opickup:lead.opickup,
+                    ophonono:lead.ophonono,
+                    dpickup:lead.dpickup,
+                    dphonono:lead.dphonono,
                     rowClass: lead.isAssigned ? 'assigned-row' : ''
                 };
             });
@@ -583,6 +590,10 @@ function Leadagent(props) {
         const howmany = e.target.howmany.value;
         const price = e.target.price.value
         const inprice=e.target.inprice.value
+        const pickupname=e.target.pickupname.value;
+        const pickupno=e.target.pickupno.value;
+        const dropoffname=e.target.dropoffname.value;
+        const dropoffno=e.target.dropoffno.value
         const data = {
             leadid: editData[0],
             name: name,
@@ -600,12 +611,14 @@ function Leadagent(props) {
             howmany: howmany,
             cars: cars,
             price: price,
-            inprice:inprice
+            inprice:inprice,
+            pickupname:pickupname,
+            pickupno:pickupno,
+            dropoffname:dropoffname,
+            dropoffno:dropoffno
         }
-        console.log(data)
-        ;
+        console.log(data);
         try {
-            console.log("emial sent agent")
             const isupdate = await dispatch(updateLead(data));
             if (isupdate) {
 
@@ -856,12 +869,13 @@ function Leadagent(props) {
             </div>
 
 
+
             {/* update lead  */}
             <div class="modal fade" id="updatelead" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
                 <div class="modal-dialog " role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalScrollableTitle">Update Lead</h5>
+                            <h5 class="modal-title" id="exampleModalScrollableTitle">Modal title</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -880,7 +894,6 @@ function Leadagent(props) {
 
                                 </div>
                                 <div className="form-group">
-
                                     <label htmlFor="email">Email</label>
                                     <div className="loadingimginput">
                                         <input type="email" className="form-control" id="vemail" name="email" value={editData[2]}
@@ -888,7 +901,6 @@ function Leadagent(props) {
                                             aria-describedby="emailHelp" placeholder="Enter Email"
 
                                         />
-
                                     </div>
 
 
@@ -900,7 +912,6 @@ function Leadagent(props) {
                                         onChange={(e) => handleInputChange(3, e.target.value)} required
                                         value={editData[3]} placeholder="Phoneno" />
                                 </div>
-
                                 <hr />
                                 <div className="form-group">
                                     <label for="password1">Pay to Carrier</label>
@@ -914,7 +925,7 @@ function Leadagent(props) {
                                         required
                                         placeholder="Price" value={editData[16]}  onChange={(e) => handleInputChange(16, e.target.value)} />
                                 </div>
-                                <hr />
+
                                 <h4>Origin</h4>
                                 <div className='d-flex justify-content-between'>
                                     <div className="form-group mr-1">
@@ -932,6 +943,7 @@ function Leadagent(props) {
 
                                     </div>
                                 </div>
+
                                 <div className='d-flex justify-content-between'>
                                     <div className="form-group mr-1">
                                         <label for="email1">Origin state</label>
@@ -945,6 +957,22 @@ function Leadagent(props) {
                                         <input type="text" className="form-control" id="zipcode" name='originzipcode' aria-describedby="emailHelp" value={editData[7]}
                                             onChange={(e) => handleInputChange(7, e.target.value)} required
                                             placeholder="Zip code" />
+
+                                    </div>
+                                </div>
+                                <div className='d-flex justify-content-between'>
+                                    <div className="form-group mr-1">
+                                        <label for="email1">Pickup person name</label>
+                                        <input type="text" className="form-control" id="pickupname" value={editData[20]}
+                                            onChange={(e) => handleInputChange(20, e.target.value)} required
+                                            name='pickupname' aria-describedby="emailHelp" placeholder="origin address" />
+                                    </div>
+                                ,
+                                    <div className="form-group ml-1">
+                                        <label for="email1">Pickup phono no</label>
+                                        <input type="text" className="form-control" id="pickupno" name='pickupno' aria-describedby="emailHelp"
+                                            onChange={(e) => handleInputChange(19, e.target.value)} required
+                                            value={editData[19]} placeholder="Origin city" />
 
                                     </div>
                                 </div>
@@ -982,6 +1010,22 @@ function Leadagent(props) {
 
                                     </div>
                                 </div>
+                                <div className='d-flex justify-content-between'>
+                                    <div className="form-group mr-1">
+                                        <label for="email1">Drop Off person name</label>
+                                        <input type="text" className="form-control" id="dropoffname" name='dropoffname' value={editData[18]}
+                                            onChange={(e) => handleInputChange(18, e.target.value)} required
+                                            aria-describedby="emailHelp" placeholder="Destination address" />
+                                    </div>
+
+                                    <div className="form-group ml-1">
+                                        <label for="email1">Drop Off person phoneno</label>
+                                        <input type="text" className="form-control" id="dropoffno" name='dropoffno' aria-describedby="emailHelp" value={editData[17]}
+                                            onChange={(e) => handleInputChange(17, e.target.value)} required
+                                            placeholder="Destination city" />
+
+                                    </div>
+                                </div>
                                 <hr />
                                 <div className="form-group">
                                     <h4>Ship Date</h4>
@@ -995,12 +1039,10 @@ function Leadagent(props) {
                                 <div className="form-group">
                                     <h4>Home many Vehicle?</h4>
                                     <select name="howmany" value={editData[13]} onChange={(e) => handleInputChange(13, e.target.value)} required id="howmany" className='assignlead'>
-                                        <option value="1" >1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-
+                                        <option value="volvo" >1</option>
+                                        <option value="saab">2</option>
+                                        <option value="mercedes">3</option>
+                                        <option value="audi">4</option>
                                     </select>
                                 </div>
                                 <div className='form-group'>
@@ -1013,14 +1055,13 @@ function Leadagent(props) {
                                             <th>Make</th>
                                             <th>Model</th>
                                             <th>Vehicle Type</th>
-                                            <th>is Operable?</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {cars.length === 0 ? (
                                             <tr>
-                                                <td colSpan="6">No Vehicle available</td>
+                                                <td colSpan="5">No Vehicle available</td>
                                             </tr>
                                         ) : (
                                             cars.map((car, index) => (
@@ -1038,12 +1079,7 @@ function Leadagent(props) {
                                                         <input type="text" value={car.vehicletype} required className='update-modal-input' onChange={(e) => updateCar(index, 'vehicletype', e.target.value)} />
                                                     </td>
                                                     <td>
-                                                        <input type="text" value={car.operable} required className='update-modal-input' onChange={(e) => updateCar(index, 'operable', e.target.value)} />
-                                                    </td>
-                                                    <td>
-                                                        <button className="toglebtn" required onClick={() => deleteCar(index)}>
-                                                            <FontAwesomeIcon icon={faTrashAlt}/>
-                                                        </button>
+                                                        <button className="toglebtn" required onClick={(e) => deleteCar(e, index)}>Delete</button>
                                                     </td>
                                                 </tr>
                                             ))
@@ -1100,20 +1136,6 @@ function Leadagent(props) {
 
                                     </div>
                                 </div>
-                                <div className="form-group">
-                                        <label htmlFor="vehicleType">Is Operable?</label>
-                                        <select
-                                            name="vehicleType"
-                                            className="form-control ml-1 pb-1"
-                                            id="type"
-                                            value={Operable}
-                                            onChange={(e) => setOperable(e.target.value)}
-                                        >
-                                            <option value="">Select an option</option>
-                                            <option value="Yes">Yes</option>
-                                            <option value="No">No</option>
-                                        </select>
-                                    </div>
                                 <button className='toglebtn ' type='button' onClick={handleAddCar} >Add Car</button>
                             </div>
                             <div className="modal-footer mt-n4 border-top-0 d-flex justify-content-center">

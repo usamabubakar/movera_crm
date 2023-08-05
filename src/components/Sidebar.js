@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import './Sidebar.css';
 import Adminimage from '../images/3.jpg';
@@ -7,13 +7,15 @@ import {
     faDashboard, faUser, faUsers, faChartLine, faPowerOff,
     faChat, faCalendarDays, faChartSimple, faGear, faMessage, faThumbTack, faUserTie, faTrashAlt, faArchive, faListAlt, faBoxOpen
 } from "@fortawesome/free-solid-svg-icons";
-
+import NotificationSound from "./notisound.mp3";
 import { NavLink , useLocation} from 'react-router-dom';
 import { logout_user } from '../state/actions/authUser';
 import { useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 import Adminchat from './Adminchat';
 import { fetchAgentData } from '../state/actions/agentCrud';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
 
 import { useSelector } from 'react-redux';
 
@@ -27,8 +29,8 @@ const Sidebar = (props) => {
     const dispatch = useDispatch();
 
     const handleLogout = (e) => {
-        
-        // e.preventDefault();
+
+        e.preventDefault();
         console.log("click logout")
 
         dispatch(logout_user());
@@ -66,7 +68,32 @@ const Sidebar = (props) => {
             setonlineuser(res)
         })
 
+
     }, []);
+    const audioPlayer = useRef(null);
+
+  function playAudio() {
+    audioPlayer.current.play();
+  }
+  const newSockett = io("http://localhost:4000");
+
+  useEffect(() => {
+      console.log("new notifc area");
+
+      const handleNewLeadNoti = (res) => {
+          playAudio();
+          toast.success("New lead added by agent!", { key: new Date().getTime() });
+      };
+
+      // Add the event listener only once when the component mounts
+      newSockett.on("newlead_noti", handleNewLeadNoti);
+
+      return () => {
+          // Clean up the event listener when the component unmounts
+          newSockett.off("newlead_noti", handleNewLeadNoti);
+      };
+  }, []); // The empty dependency array ensures this effect runs only once on mount and cleans up on unmount
+
 
     useEffect(() => {
         dispatch(fetchAgentData());
@@ -74,6 +101,22 @@ const Sidebar = (props) => {
 
 
     return (
+        <>
+
+        {/* <ToastContainer
+            position="bottom-left"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            /> */}
+            <audio ref={audioPlayer} src={NotificationSound} />
+
         <div className='sidebar' style={{ width: `${props.widthh}rem` }}>
             <div style={{ color: 'white' }}></div>
             <div className="image-area">
@@ -201,7 +244,9 @@ const Sidebar = (props) => {
                 </div>
             </div>
         </div>
+        </>
     );
+
 };
 
 export default Sidebar;

@@ -14,6 +14,7 @@ const multer = require('multer');
 // const startSSEServer =require('../Backend/routes/soket')
 const path = require('path');
 const initSocket = require('./socket1');
+const notiSocket =require('./notisocket')
 // const upload = require('./routes/multerconfig');
 
 // // ... other configurations and middleware ...
@@ -132,8 +133,17 @@ var clients = [];
 
 // io.listen(5000);
 // startSSEServer();
+
+
 io.listen(4000)
-initSocket(io);
+Promise.all([initSocket(io), notiSocket(io)]);
+async function setupSockets() {
+  await initSocket(io);
+  await notiSocket(io);
+}
+
+setupSockets();
+
 startSSEServer();
 
 server.listen(port, () => {

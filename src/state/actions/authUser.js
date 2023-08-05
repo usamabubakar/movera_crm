@@ -107,9 +107,9 @@ export const logout_user =  () => (dispatch, getState) => {
         type: LOGOUT_SUCCESS
       })
     })
-    .catch((error) => {  
+    .catch((error) => {
     console.error(error);
-   }) 
+   })
 
 }
 

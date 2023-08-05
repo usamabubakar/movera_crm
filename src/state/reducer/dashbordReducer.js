@@ -14,8 +14,8 @@ const initialState = {
 const dashbordReducer = (state = initialState, action) => {
   switch (action.type) {
     case DASHBORD_DATA:
-
       const onlineadmin =action.payload.onlineadmin
+      console.log("chking online ", onlineadmin)
       const { onlineAgentNames , data , payment, price} = action.payload;
       return {
         ...state,

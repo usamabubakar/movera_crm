@@ -302,7 +302,8 @@ router.get('/getuser', fetchuser, async (req, res) => {
     console.log(userId, "id")
     const user = await User.findOne({ _id: userId }).select('-password');
     console.log(user, "i am user");
-    res.send(user)
+    return res.status(200).json({ message: 'user loded', user:user });
+
   } catch (error) {
 
     console.log("bhai error a gya get user me ")
