@@ -4,9 +4,9 @@ import { websiteLink, localhost } from "../config/websitepath";
 
 export const fetchagreemetndata = (hashId) => async (dispatch) => {
   try {
-    console.log(hashId);
+
     const response = await axios.get(`${localhost}/api/agreement/fetchagreementleaddata?hash_id=${hashId}`);
-    console.log(response)
+
     dispatch({ type: AGREEMENT_DATA_FETCH, payload: response.data.data });
   } catch (error) {
     console.error(error);

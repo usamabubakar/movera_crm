@@ -2,18 +2,24 @@ import DataTable from 'react-data-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { useState } from 'react';
-import { faEye, faEyeSlash, faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faPlus, faSearch ,faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import { fetchLead, addLead, deleteLead, assignLead } from '../../state/actions/lead';
+
 import { useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from 'react-redux';
 import { sendEmail } from '../../state/actions/email';
 import { updateStatus } from '../../state/actions/lead';
+import template from '../SendmailTemplate';
 import { updateLead } from '../../state/actions/lead';
-import React, { useRef } from 'react';
+import { company1, company2 } from '../companydetails';
+import parse from 'html-react-parser'
+import Car from './unnamed.png'
 
+import { io } from 'socket.io-client';
 
 import '../style.css';
 
@@ -21,6 +27,8 @@ import '../style.css';
 function Quotes(props) {
     const dispatch = useDispatch();
     const Lead_Add = useSelector(state => state.lead.leads);
+    const showtost = useSelector(state => state.lead.showToast);
+
     const Lead_Data = useSelector(state => state.leadsData.leadsData);
     const leaddelete = useSelector(state => state.lead.leadDelete);
     const [rowidValue, setrowIdValue] = useState()
@@ -29,6 +37,8 @@ function Quotes(props) {
     const [editData, seteditData] = useState([]);
     const userData = useSelector(state => state.auth.user);
     const emailsent = useSelector(state => state.emailsent.emailsend);
+    const emailDivRef = useRef(null);
+
     const customStyles = {
         headCells: {
             style: {
@@ -38,7 +48,6 @@ function Quotes(props) {
             },
         },
     };
-
 
 
     useEffect(() => {
@@ -57,83 +66,43 @@ function Quotes(props) {
     const [make, setMake] = useState('');
     const [model, setModel] = useState('');
     const [vehicletype, setVehicletype] = useState('');
-    const [idCounter, setIdCounter] = useState(0);
+    const [Operable, setOperable] = useState('');
 
+  const handleAddCar = () => {
+    if (modelyear.trim() !== '' && make.trim() !== '' && model.trim() !== '' && vehicletype.trim() !== '') {
+      const newCar = { id: cars.length, modelyear, make, model, vehicletype, Operable };
+      setCars((prevCars) => [...prevCars, newCar]);
+      setModelyear('');
+      setMake('');
+      setModel('');
+      setVehicletype('');
+      setOperable('');
+      console.log(cars);
+    }
+  };
 
-    const handleAddCar = () => {
-        if (modelyear.trim() !== '' && make.trim() !== '' && model.trim() !== '' && vehicletype.trim() !== '') {
-            const newCar = { id: cars.length, modelyear, make, model, vehicletype };
-            setCars((prevCars) => [...prevCars, newCar]);
-            setModelyear('');
-            setMake('');
-            setModel('');
-            setVehicletype('');
-            console.log(cars);
-        }
-    };
-    const deleteCar = (e, index) => {
-        e.preventDefault();
-        setCars((prevCars) => {
-            const updatedCars = [...prevCars];
-            updatedCars.splice(index, 1);
-            return updatedCars;
-        });
-    };
+  const deleteCar = (index) => {
+    setCars((prevCars) => {
+      const updatedCars = [...prevCars];
+      updatedCars.splice(index, 1);
+      return updatedCars;
+    });
+  };
 
-
-    const updateCar = (index, property, value) => {
-        setCars((prevCars) => {
-            const updatedCars = [...prevCars];
-            updatedCars[index][property] = value;
-            return updatedCars;
-        });
-    };
-
-
-
-    //    const password ='*'.repeat(row.password.length)
-    const [isOn, setIsOn] = useState(false);
-
-
-
-
-    const handleToggle = () => {
-        setIsOn(!isOn);
-    };
+  const updateCar = (index, property, value) => {
+    setCars((prevCars) => {
+      const updatedCars = [...prevCars];
+      updatedCars[index][property] = value;
+      return updatedCars;
+    });
+  };
 
 
 
 
 
-    const handleEdit = (id) => {
-        const foundlead = leads.find((lead) => lead.id === id);
-        console.log(foundlead);
-        if (Array.isArray(foundlead.vehicle)) {
-            setCars([...foundlead.vehicle]);
-        } else {
-            setCars([]);
-        }
-        seteditData([
-            foundlead.id,
-            foundlead.fullname,
-            foundlead.email,
-            foundlead.phoneno,
-            foundlead.originaddress,
-            foundlead.origincity,
-            foundlead.originstate,
-            foundlead.originzipcode,
-            foundlead.destinationaddress,
-            foundlead.destinationcity,
-            foundlead.destinationstate,
-            foundlead.destinationzipcode,
-            foundlead.shipdate,
-            foundlead.howmany,
-            foundlead.vehicle,
-            foundlead.price
 
-        ]);
 
-    };
 
 
     const columns = [
@@ -208,7 +177,32 @@ function Quotes(props) {
         {
             name: 'Price',
             selector: row => row.price,
-            minWidth: '150px'
+            minWidth: '70px'
+        },
+        {
+            name: 'Initial deposite',
+            selector: row => row.intialdeposit,
+            minWidth: '70px'
+        },
+        {
+            name: 'Pickup person name',
+            selector: row => row.opickup,
+            minWidth: '200px'
+        },
+        {
+            name: 'Pickup person no',
+            selector: row => row.ophonono,
+            minWidth: '200px'
+        },
+        {
+            name: 'Dropoff person name',
+            selector: row => row.dpickup,
+            minWidth: '200px'
+        },
+        {
+            name: 'Dropoff person no',
+            selector: row => row.dphonono,
+            minWidth: '200px'
         },
         {
             name: 'Total Vehicles',
@@ -228,12 +222,24 @@ function Quotes(props) {
                 <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
                     <button className='agent-edit-delete-btn d-flex align-items-center '
                         disabled={row.approvalStatus === 'Not Approved' || row.approvalStatus === 'Pending'}
-                        data-toggle="modal" onClick={() => handleEdit(row.leadId)} data-target="#vendoremail">
+                        data-toggle="modal" onClick={() => handleEdit(row.leadId)}
+                        data-target={
+                            row.price == 0
+                                ? "#priceerror" : "#vendoremail"
+                        }
+                    >
                         <div className='mailcount'>{row.mailcount}</div>
                         Send Email</button>
                     <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal" data-target="#updatelead">Update</button>
-                    <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal"  data-target="#updatestatus" >Update Status</button>
-
+                    <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal"
+                        data-target={
+                            row.price == 0
+                                ? "#priceerror"
+                                : row.mailcount == 0
+                                    ? "#oneemail"
+                                    : "#updatestatus"
+                        }
+                    >Update Status</button>
                 </div>
             ),
             minWidth: '400px',
@@ -249,25 +255,70 @@ function Quotes(props) {
         const vehicles = data.split(', ');
         setViewvehicle(vehicles);
     }
-    const sendEmailfunction = (data, e) => {
+
+    const handleEdit = (id) => {
+        const foundlead = leads.find((lead) => lead.id === id);
+
+        if (Array.isArray(foundlead.vehicle)) {
+            setCars([...foundlead.vehicle]);
+        } else {
+            setCars([]);
+        }
+        seteditData([
+            foundlead.id,
+            foundlead.fullname,
+            foundlead.email,
+            foundlead.phoneno,
+            foundlead.originaddress,
+            foundlead.origincity,
+            foundlead.originstate,
+            foundlead.originzipcode,
+            foundlead.destinationaddress,
+            foundlead.destinationcity,
+            foundlead.destinationstate,
+            foundlead.destinationzipcode,
+            foundlead.shipdate,
+            foundlead.howmany,
+            foundlead.vehicle,
+            foundlead.price,
+            foundlead.intialdeposite,
+            foundlead.dphonono,
+            foundlead.dpickup,
+            foundlead.ophonono,
+            foundlead.opickup,
+        ]);
+
+    };
+    const [subject, setsubject]=useState('')
+
+    const sendEmailfunction = async (data, e) => {
         e.preventDefault()
-
-        const text = e.target.emailtext.value;
-
+        console.log("emial sent agent")
+        const text = emailDivRef.current.innerHTML;
         const dataa = {
             leadid: data[0],
             customeremail: data[2],
             text: text,
             agentemail: userData.email,
-            agentid: userData.id
+            agentid: userData.id,
+            subject:subject
         }
-        console.log(dataa)
-        dispatch(sendEmail(dataa))
-            .then((response) => {
-                if (emailsent) {
-                    toast.success(`Email Sent Successfully...!`);
-                }
-            })
+
+        try {
+            console.log("emial sent agent")
+            const isEmailSent = await dispatch(sendEmail(dataa));
+            if (isEmailSent) {
+                console.log("send")
+                toast.success("Email Sent Successfully...!");
+            } else {
+                console.log("not send")
+
+                toast.error("Email Not Sent Successfully...!");
+            }
+        } catch (error) {
+            console.log("Error in sendEmailFunction:", error.message);
+            toast.error("Email Not Sent Successfully...!");
+        }
 
     };
 
@@ -302,7 +353,8 @@ function Quotes(props) {
                 const formattedDate = receivedDate.toLocaleDateString();
                 const formattedTime = receivedDate.toLocaleTimeString();
                 const vehicles = lead.vehicle?.map((vehicle) => `${vehicle.make} ${vehicle.model} ${vehicle.
-                    modelyear} ${vehicle.vehicletype}`).join(', ');
+                    modelyear} ${vehicle.vehicletype} ${vehicle.operable}`).join(', ');
+
                 return {
                     id: index + 1,
                     leadId: lead.id,
@@ -319,14 +371,17 @@ function Quotes(props) {
                     destinationzipcode: lead.destinationzipcode,
                     shipdate: lead.shipdate,
                     vehicle: vehicles,
-                    price:lead.price,
                     mailcount: lead.mailcount,
+                    price: lead.price,
                     approvalStatus: lead.approvelStatus,
+                    intialdeposit:lead.intialdeposite,
+                    opickup:lead.opickup,
+                    ophonono:lead.ophonono,
+                    dpickup:lead.dpickup,
+                    dphonono:lead.dphonono,
                     rowClass: lead.isAssigned ? 'assigned-row' : ''
                 };
             });
-
-
             setData(dataa);
             setRecord(dataa);
         }
@@ -351,7 +406,139 @@ function Quotes(props) {
     }
 
 
-    const updatelead = (e) => {
+
+    const handleInputChange = (index, value) => {
+        seteditData((preveditData) => {
+            const updatedData = [...preveditData];
+            updatedData[index] = value;
+            return updatedData;
+        });
+    };
+
+
+
+
+    const addleadfunction = (e) => {
+        e.preventDefault();
+        console.log("add lead click agenr");
+        const name = e.target.name.value;
+        const email = e.target.email.value;
+        const phoneno = e.target.phoneno.value;
+        const originaddress = e.target.originaddress.value;
+        const orgincity = e.target.origincity.value;
+        const originstate = e.target.originstate.value;
+        const originzipcode = e.target.originzipcode.value;
+        const destinationaddress = e.target.desadress.value;
+        const destinationcity = e.target.descity.value;
+        const destinationstate = e.target.desstate.value;
+        const destinationzipcode = e.target.deszipcode.value;
+        const shipdate = e.target.shipdate.value;
+        const howmany = e.target.howmany.value;
+        const data = {
+            name: name,
+            email: email,
+            phoneno: phoneno,
+            originaddress: originaddress,
+            origincity: orgincity,
+            originstate: originstate,
+            originzipcode: originzipcode,
+            destinationaddress: destinationaddress,
+            destinationcity: destinationcity,
+            destinationstate: destinationstate,
+            destinationzipcode: destinationzipcode,
+            shipdate: shipdate,
+            howmany: howmany,
+            cars: cars
+        }
+
+        dispatch(addLead(data))
+            .then(() => {
+                toast.success('Lead Added Successfully...!');
+            })
+            .catch(() => {
+                toast.error('Lead Not Added Successfully...!');
+            });
+    }
+
+
+
+
+
+
+
+    const getRowidValue = (id) => {
+        setrowIdValue(id);
+    }
+    const [company, setcompany] = useState("");
+    const [companydetails, setcompanydetails] = useState(null);
+
+    const companyselection = (data) => {
+        console.log(data)
+        if (data === '1') {
+            setcompanydetails(company1)
+        }
+        if (data === '2') {
+            setcompanydetails(company2)
+        }
+
+        setcompany(data)
+    }
+
+
+    const defaulttext = 'Select any template'
+    const [Templatetext, setTemplatetext] = useState(defaulttext)
+
+
+    const templateSeclection = (leadData, e) => {
+        e.preventDefault();
+        console.log(companydetails)
+        const templateno = e.target.value;
+        console.log(templateno + "temolat ni")
+        const matchedTemplate = template.find((tpl) => tpl.id === parseInt(templateno));
+        setsubject(matchedTemplate.subject)
+        console.log(subject)
+        if (matchedTemplate) {
+            const templateData = (matchedTemplate) => {
+                let replacedText = matchedTemplate.text
+                    .replace('{name}', leadData[1])
+                    .replace('{price}', leadData[15])
+                    .replace('{origin}', leadData[3])
+                    .replace('{origincity}', leadData[5])
+                    .replace('{originstate}', leadData[6])
+                    .replace('{originzipcode}', leadData[7])
+                    .replace('{destinationcity}', leadData[9])
+                    .replace('{destinationstate}', leadData[10])
+                    .replace('{destinationzipcode}', leadData[11])
+                    .replace('{shipdate}', leadData[12])
+                    .replace('{leadid}', leadData[0])
+                    .replace('{companyname}', companydetails?.name)
+                    .replace('{companyemail}', companydetails?.email)
+                    .replace('{companyphonono}', companydetails?.phone)
+                    .replace('{img}', Car)
+                    .replace('{deposit}', leadData[16])
+
+                const carRows = leadData[14].map((car, index) => {
+                    return `
+                      <tr style="border: 1px solid #dddddd;">
+                        <td style="border: 1px solid #dddddd;">${car.make}</td>
+                        <td style="border: 1px solid #dddddd;">${car.model}</td>
+                        <td style="border: 1px solid #dddddd;">${car.modelyear}</td>
+                        <td style="border: 1px solid #dddddd;">${car.vehicletype}</td>
+                      </tr>
+                    `;
+                });
+
+                replacedText = replacedText.replace('{carrows}', carRows.join(''));
+                const Templatetext1 = replacedText.toString();
+                // console.log(typeof(Templatetext1))
+                setTemplatetext(Templatetext1); // Set the updated value of setTemplatetext
+            };
+
+            templateData(matchedTemplate); // Call the templateData function
+        }
+
+    }
+    const updatelead = async (e) => {
         e.preventDefault();
         console.log("add lead click");
         const name = e.target.name.value;
@@ -366,7 +553,13 @@ function Quotes(props) {
         const destinationstate = e.target.desstate.value;
         const destinationzipcode = e.target.deszipcode.value;
         const shipdate = e.target.shipdate.value;
-        const howmany = e.target.howmany.value
+        const howmany = e.target.howmany.value;
+        const price = e.target.price.value
+        const inprice=e.target.inprice.value
+        const pickupname=e.target.pickupname.value;
+        const pickupno=e.target.pickupno.value;
+        const dropoffname=e.target.dropoffname.value;
+        const dropoffno=e.target.dropoffno.value
         const data = {
             leadid: editData[0],
             name: name,
@@ -381,41 +574,34 @@ function Quotes(props) {
             destinationstate: destinationstate,
             destinationzipcode: destinationzipcode,
             shipdate: shipdate,
-            cars: cars,
             howmany: howmany,
+            cars: cars,
+            price: price,
+            inprice:inprice,
+            pickupname:pickupname,
+            pickupno:pickupno,
+            dropoffname:dropoffname,
+            dropoffno:dropoffno
         }
-        console.log(data)
-        dispatch(updateLead(data));
-        seteditData('')
-        if (!Lead_Add) {
-            toast.success('Lead update Successfully...!');
-        }
-        else if (Lead_Add) {
+        console.log(data);
+        try {
+            const isupdate = await dispatch(updateLead(data));
+            if (isupdate) {
+
+                toast.success('Lead update Successfully...!');
+            } else {
+                toast.error('Lead Not update Successfully...!');
+
+            }
+        } catch (error) {
             toast.error('Lead Not update Successfully...!');
+
+        seteditData('')
         }
     }
-
-
-
-
-
-    const getRowidValue = (id) => {
-        setrowIdValue(id);
-    }
-
-    const handleInputChange = (index, value) => {
-        seteditData((preveditData) => {
-            const updatedData = [...preveditData];
-            updatedData[index] = value;
-            return updatedData;
-        });
-    };
-
-
 
 
     return (
-
         <>
 
 
@@ -434,6 +620,45 @@ function Quotes(props) {
                 />
             </div>
 
+            {/*send at eat one emial*/}
+            <div className="modal fade" id="oneemail" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">First email required</h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            Please send the first email
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Price eeroor */}
+            <div className="modal fade" id="priceerror" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">Prie updation required</h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            Please update the price First
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* veiw car  */}
             <div className="modal fade" id="viewcars" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -453,17 +678,21 @@ function Quotes(props) {
                                         <th>Model</th>
                                         <th>Model Year</th>
                                         <th>Vehicle Type</th>
+                                        <th>Is Operable?</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {Viewvehicle.map((vehicle, index) => {
-                                        const [make, model, modelyear, vehicletype] = vehicle.split(' ');
+                                        const [make, model, modelyear, vehicletype, Operable] = vehicle.split(' ');
                                         return (
                                             <tr key={index}>
                                                 <td>{make}</td>
                                                 <td>{model}</td>
                                                 <td>{modelyear}</td>
                                                 <td>{vehicletype}</td>
+                                                <td>{Operable}</td>
+
                                             </tr>
                                         );
                                     })}
@@ -476,64 +705,82 @@ function Quotes(props) {
                     </div>
                 </div>
             </div>
-
-            {/* set price  */}
-            <div className="modal fade" id="setprice" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Price not updated</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div className="modal-body">
-                            <b>Kindly Set price First</b>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {/* send email  */}
-            <div class="modal fade" id="vendoremail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade bd-example-modal-xl emailmodelsent" id="vendoremail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Send Instruction to  vendors</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Send Email to Customer</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <form onSubmit={(e) => sendEmailfunction(editData, e)}>
-                            <div class="modal-body">
+                            <div class="modal-body ">
                                 <div className="form-group">
-
-                                    <label htmlFor="token"><b>company : vehicle transport</b> </label>
-
-                                    <br />
-
-
                                     <div className="form-group">
-                                        <label htmlFor="token">Select Template</label>
-                                        <select name="emailtext" id="emailtext" className='assignlead'>
-                                            <option value="" >Select</option>
-                                            <option value="check the status">1</option>
-                                            <option value="runing project">2</option>
-                                            <option value="lead generate">3</option>
+                                        <label htmlFor="token"> <b>Select company</b> </label>
+                                        <select name="emailtext" id="emailtext" onChange={(e) => companyselection(e.target.value)} className='assignlead'>
+                                            <option value="0">Select any company</option>
+                                            <option value="1" >HS logistic</option>
+                                            <option value="2">SM transport</option>
                                         </select>
 
                                     </div>
+                                    {
+                                        company === '1' && (
+                                            <div className="form-group">
+                                                <label htmlFor="token"> <b>Select Template for HS logistic</b> </label>
+                                                <select name="emailtext" id="emailtext" onChange={(e) => templateSeclection(editData, e)} className='assignlead'>
+                                                    <option value="" >Select any template</option>
+                                                    <option value="1">Follow up</option>
+                                                    <option value="2">New Quotes</option>
+                                                    <option value="3">Order Confirmation</option>
+                                                    <option value="4">Agreement</option>
+                                                    <option value="5">Dispatched</option>
+                                                    <option value="6">Payment Recieved</option>
+                                                    <option value="7">Second Follow Up</option>
+                                                </select>
+                                            </div>
+                                        )
+                                    }
+                                    {
+                                        company === "2" && (
+                                            <div className="form-group">
+                                                <label htmlFor="token"> <b>Select Template fo SM transport</b> </label>
+                                                <select name="emailtext" id="emailtext" onChange={(e) => templateSeclection(editData, e)} className='assignlead'>
+                                                    <option value="" disabled >Select any template</option>
+                                                    <option value="1">Follow up</option>
+                                                    <option value="2">New Quotes</option>
+                                                    <option value="3">Dispatched</option>
+                                                    <option value="4">Order Confirmation</option>
+                                                    <option value="5">Payment Recieved</option>
+                                                    <option value="6">Agreement</option>
+                                                    <option value="7">Second Follow Up</option>
+                                                </select>
+                                            </div>
+                                        )
+                                    }
+
 
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="subject"><b>Valid Formet for JSON data</b></label>
-                                    <br />
-
+                                    <label htmlFor="subject"><b>Template Overview</b></label>
+                                    {/* <textarea name="emailtemplatetext" cols="30" rows="10" className='textareemail p-2' value={Templatetext} defaultValue='Select your template'></textarea> */}
+                                    <div className='emialtemplatediv' ref={emailDivRef}>
+                                        {parse(Templatetext)}
+                                    </div>
                                     <hr />
-
+                                </div>
+                                <div className="form-group">
+                                    <div>
+                                        <label htmlFor="subject" className='lableemail'><b>From:</b></label> <br />
+                                        <input type="text" className='fromemail' readOnly value={'usamaabubakar785@gmail.com'} />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="subject" className='lableemail'><b>To:</b></label> <br />
+                                        <input type="text" className='toemail' readOnly value={editData[2]} />
+                                    </div>
 
                                 </div>
 
@@ -547,6 +794,47 @@ function Quotes(props) {
                     </div>
                 </div>
             </div>
+            {/* update lead status  */}
+            <div class="modal fade" id="updatestatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Assign Lead</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="">
+                            <div class="modal-body">
+                                <div className="form-group">
+                                    <h4>Update Lead Status</h4>
+                                    <select name="status" id="status" className='assignlead' ref={statusRef}>
+                                        <option value="">Select</option>
+                                        <option value="lead">Leads</option>
+                                        <option value="Followup">Follow Up</option>
+                                        <option value="Quotes">Quotes</option>
+                                        <option value="Orders">Orders</option>
+                                        <option value="Dispatched">Dispatched</option>
+                                        <option value="Archived">Archived</option>
+                                        <option value="Potentail">Completed</option>
+                                        <option value="Cancel">Cancel Order</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="agent-edit-delete-btn ml-1" data-dismiss="modal" onClick={() => {
+                                    if (statusRef.current.value !== '') {
+                                        updatestatus(editData);
+                                    }
+                                }}>Update Status</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
 
             {/* update lead  */}
             <div class="modal fade" id="updatelead" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
@@ -572,7 +860,6 @@ function Quotes(props) {
 
                                 </div>
                                 <div className="form-group">
-
                                     <label htmlFor="email">Email</label>
                                     <div className="loadingimginput">
                                         <input type="email" className="form-control" id="vemail" name="email" value={editData[2]}
@@ -580,7 +867,6 @@ function Quotes(props) {
                                             aria-describedby="emailHelp" placeholder="Enter Email"
 
                                         />
-
                                     </div>
 
 
@@ -592,10 +878,19 @@ function Quotes(props) {
                                         onChange={(e) => handleInputChange(3, e.target.value)} required
                                         value={editData[3]} placeholder="Phoneno" />
                                 </div>
-
-
-
                                 <hr />
+                                <div className="form-group">
+                                    <label for="password1">Pay to Carrier</label>
+                                    <input type="number" className="form-control" id="password" name='price'
+                                        required
+                                        placeholder="Price" value={editData[15]}  onChange={(e) => handleInputChange(15, e.target.value)} />
+                                </div>
+                                <div className="form-group">
+                                    <label for="password1">Initial deposite</label>
+                                    <input type="number" className="form-control" id="inprice" name='inprice'
+                                        required
+                                        placeholder="Price" value={editData[16]}  onChange={(e) => handleInputChange(16, e.target.value)} />
+                                </div>
 
                                 <h4>Origin</h4>
                                 <div className='d-flex justify-content-between'>
@@ -614,6 +909,7 @@ function Quotes(props) {
 
                                     </div>
                                 </div>
+
                                 <div className='d-flex justify-content-between'>
                                     <div className="form-group mr-1">
                                         <label for="email1">Origin state</label>
@@ -627,6 +923,22 @@ function Quotes(props) {
                                         <input type="text" className="form-control" id="zipcode" name='originzipcode' aria-describedby="emailHelp" value={editData[7]}
                                             onChange={(e) => handleInputChange(7, e.target.value)} required
                                             placeholder="Zip code" />
+
+                                    </div>
+                                </div>
+                                <div className='d-flex justify-content-between'>
+                                    <div className="form-group mr-1">
+                                        <label for="email1">Pickup person name</label>
+                                        <input type="text" className="form-control" id="pickupname" value={editData[20]}
+                                            onChange={(e) => handleInputChange(20, e.target.value)} required
+                                            name='pickupname' aria-describedby="emailHelp" placeholder="origin address" />
+                                    </div>
+                                ,
+                                    <div className="form-group ml-1">
+                                        <label for="email1">Pickup phono no</label>
+                                        <input type="text" className="form-control" id="pickupno" name='pickupno' aria-describedby="emailHelp"
+                                            onChange={(e) => handleInputChange(19, e.target.value)} required
+                                            value={editData[19]} placeholder="Origin city" />
 
                                     </div>
                                 </div>
@@ -661,6 +973,22 @@ function Quotes(props) {
                                         <input type="text" className="form-control" id="deszipcode" name='deszipcode' aria-describedby="emailHelp" value={editData[11]}
                                             onChange={(e) => handleInputChange(11, e.target.value)} required
                                             placeholder="Destination zip code" />
+
+                                    </div>
+                                </div>
+                                <div className='d-flex justify-content-between'>
+                                    <div className="form-group mr-1">
+                                        <label for="email1">Drop Off person name</label>
+                                        <input type="text" className="form-control" id="dropoffname" name='dropoffname' value={editData[18]}
+                                            onChange={(e) => handleInputChange(18, e.target.value)} required
+                                            aria-describedby="emailHelp" placeholder="Destination address" />
+                                    </div>
+
+                                    <div className="form-group ml-1">
+                                        <label for="email1">Drop Off person phoneno</label>
+                                        <input type="text" className="form-control" id="dropoffno" name='dropoffno' aria-describedby="emailHelp" value={editData[17]}
+                                            onChange={(e) => handleInputChange(17, e.target.value)} required
+                                            placeholder="Destination city" />
 
                                     </div>
                                 </div>
@@ -786,53 +1114,9 @@ function Quotes(props) {
             </div>
 
 
-            {/* update lead status  */}
-            <div class="modal fade" id="updatestatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Assign Lead</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form action="">
-                            <div class="modal-body">
-                                <div className="form-group">
-                                    <h4>Update Lead Status</h4>
-                                    <select name="status" id="status" className='assignlead' ref={statusRef}>
-                                        <option value="">Select</option>
-                                        <option value="lead">Leads</option>
-                                        <option value="Followup">Follow Up</option>
-                                        <option value="Quotes">Quotes</option>
-                                        <option value="Orders">Orders</option>
-                                        <option value="Dispatched">Dispatched</option>
-                                        <option value="Archived">Archived</option>
-                                        <option value="Potentail">Completed</option>
-                                        <option value="Cancel">Cancel Order</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="agent-edit-delete-btn ml-1" data-dismiss="modal" onClick={() => {
-                                    if (statusRef.current.value !== '') {
-                                        updatestatus(editData);
-                                    }
-                                }}>Update Status</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-
 
 
             {/* // end */}
-            {/* // assign lead */}
-
-
 
 
 
@@ -841,7 +1125,7 @@ function Quotes(props) {
             <div className='agenttable'>
                 <div className="agent-header ">
                     <div className="agenttab">
-                        New Quotes
+                       New Quotes
                     </div>
 
                 </div>
@@ -850,7 +1134,8 @@ function Quotes(props) {
                         <div className='agentsearchicon d-flex align-items-center'>
                             <FontAwesomeIcon icon={faSearch} className='mr-1' />
                         </div>
-                        <input type="text" onChange={handlefilter} placeholder='Search by name ' />
+                        <input type="text" value={searchText} onChange={handlefilter} placeholder='Search by name ' />
+
                     </div>
 
                 </div>
@@ -864,7 +1149,6 @@ function Quotes(props) {
                         responsive
                         highlightOnHover
                         customStyles={customStyles}
-
                     />
                 </div>
             </div>

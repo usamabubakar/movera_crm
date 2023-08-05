@@ -53,6 +53,12 @@ router.get('/fetchagreementleaddata', async (req, res) => {
       payment: lead.paymentstatus,
       signaturedate: lead.signaturedate,
       ipaddress: lead.ipaddress,
+      intialdeposite:lead.intialdeposite,
+      Opickup:lead.Opickup,
+      Ophonono:lead.Ophonono,
+      Dpickup:lead.Dpickup,
+      Dphonono:lead.Dphonono
+
     };
     console.log(formattedLeads)
     res.status(200).json({ message: 'Lead fetch successful', data: formattedLeads });
@@ -69,11 +75,20 @@ router.get('/fetchagreementleaddata', async (req, res) => {
 
     // Rest of your code...
     const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
+
+const options = {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false // Use 24-hour format
+};
+
+const formattedDate = currentDate.toLocaleString('en-US', options);
+
+
 
     // console.log('User IP address:', ipAddress);
     try {
@@ -92,9 +107,12 @@ router.get('/fetchagreementleaddata', async (req, res) => {
         destinationzipcode,
         signature,
         id,
-        ipaddress
+        ipaddress,
+        Opickup,
+        Ophonono,
+        Dpickup,
+        Dphonono
       } = req.body;
-
 
       const lead = await Lead.findOne({ _id: id });
     //   console.log(lead);
@@ -126,8 +144,13 @@ router.get('/fetchagreementleaddata', async (req, res) => {
         lead.signature=signature;
         lead.ipaddress=ipaddress;
         lead.signaturedate = formattedDate;
-        await lead.save();
+        lead.Opickup = Opickup;
+        lead.Ophonono = Ophonono;
+        lead.Dpickup = Dpickup;
+        lead.Dphonono = Dphonono;
 
+        await lead.save();
+console.log(lead)
         res.status(200).json({ message: 'Agreement saved successfully after updating lead data' });
       }
     } catch (error) {

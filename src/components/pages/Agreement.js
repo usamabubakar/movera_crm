@@ -24,15 +24,14 @@ function Agreement() {
     const [isChecked, setIsChecked] = useState(false);
     const signatureRef = useRef(null);
     const agreementtdata = useSelector(state => state.customerdata.agreementData);
-    console.log(agreementtdata + "sua")
     const [leadid, setleadid] = useState()
     const [signature, setsignature] = useState()
-console.log(agreementtdata)
+
 //  get ip function
     const [ip, setIp] = useState();
     const  getIp = async () => {
         const res = await axios.get('https://geolocation-db.com/json/https://geolocation-db.com/json/a9e48c70-8b22-11ed-8d13-bd165d1291e3')
-        console.log(res.data.IPv4);
+
         setIp(res.data.IPv4)
         // console.log('ip = ', this.state.ip.IPv4);
     }
@@ -110,6 +109,10 @@ console.log(agreementtdata)
         const destinationcity = event.target.elements.destinationcity.value
         const destinationstate = event.target.elements.destinationstate.value
         const destinationzipcode = event.target.elements.destinationzipcode.value
+        const Opickup = event.target.elements.Opickup.value
+       const Ophonono = event.target.elements.Ophonono.value
+       const Dpickup = event.target.elements.Dpickup.value
+       const Dphonono = event.target.elements.Dphonono.value
         const esign = signature
 
         const data = {
@@ -126,7 +129,11 @@ console.log(agreementtdata)
             destinationstate: destinationstate,
             signature: esign,
             id: leadid,
-            ipaddress: ip
+            ipaddress: ip,
+            Opickup:Opickup,
+            Ophonono:Ophonono,
+            Dpickup:Dpickup,
+            Dphonono:Dphonono
         }
         dispatch(addagreement(data))
         window.location.reload()
@@ -196,6 +203,10 @@ console.log(agreementtdata)
                                     </div>
                                     <div className="p-2">
                                         <b>Price: </b> {agreementtdata.price} $ <br />
+                                        <b>Intial deposit: </b> {agreementtdata.intialdeposite} $ <br />
+                                        <b>Remaining: </b> { agreementtdata.price - agreementtdata.intialdeposite } $ <br /> <br />
+
+
 
                                     </div>
                                 </div>
@@ -382,6 +393,14 @@ console.log(agreementtdata)
                                                             <label htmlFor="">Origin Zip Code</label> <br />
                                                             <input type="text" id='originzipcode' name='originzipcode' onChange={handleInputChange} defaultValue={agreementtdata.originzipcode} />
                                                         </div>
+                                                        <div>
+                                                            <label htmlFor="">Origin Pickup Person Name</label> <br />
+                                                            <input type="text" id='Opickup' name='Opickup' onChange={handleInputChange} defaultValue={agreementtdata.Opickup} />
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="">Origin Pickup Person No</label> <br />
+                                                            <input type="text" id='Ophonono' name='Ophonono' onChange={handleInputChange} defaultValue={agreementtdata.Ophonono} />
+                                                        </div>
                                                     </div>
                                                 </AccordionDetails>
                                             </Accordion>
@@ -409,6 +428,14 @@ console.log(agreementtdata)
                                                         <div>
                                                             <label htmlFor="">Destination Zip Code</label> <br />
                                                             <input type="text" id='destinationzipcode' name='destinationzipcode' onChange={handleInputChange} defaultValue={agreementtdata.destinationzipcode} />
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="">Destination Pickup Person Name</label> <br />
+                                                            <input type="text" id='Dpickup' name='Dpickup' onChange={handleInputChange} defaultValue={agreementtdata.Dpickup} />
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="">Destination Pickup Person No</label> <br />
+                                                            <input type="text" id='Dphonono' name='Dphono' onChange={handleInputChange} defaultValue={agreementtdata.Dphonono} />
                                                         </div>
                                                     </div>
                                                 </AccordionDetails>

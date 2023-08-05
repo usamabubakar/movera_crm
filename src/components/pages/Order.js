@@ -1,31 +1,34 @@
-
 import DataTable from 'react-data-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { useState } from 'react';
-import { faEye, faEyeSlash, faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faPlus, faSearch ,faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import { fetchLead, addLead, deleteLead, assignLead } from '../../state/actions/lead';
+
 import { useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
-import React, { useRef } from 'react';
-
 import 'react-toastify/dist/ReactToastify.css';
 import { useSelector } from 'react-redux';
 import { sendEmail } from '../../state/actions/email';
 import { updateStatus } from '../../state/actions/lead';
 import template from '../SendmailTemplate';
-
-import { updatepayment } from '../../state/actions/lead';
 import { updateLead } from '../../state/actions/lead';
-import { company1,company2 } from '../companydetails';
+import { company1, company2 } from '../companydetails';
 import parse from 'html-react-parser'
+import Car from './unnamed.png'
+import { updatepayment } from '../../state/actions/lead';
+import { io } from 'socket.io-client';
+
 import '../style.css';
 
 
 function Orders(props) {
     const dispatch = useDispatch();
     const Lead_Add = useSelector(state => state.lead.leads);
+    const showtost = useSelector(state => state.lead.showToast);
+
     const Lead_Data = useSelector(state => state.leadsData.leadsData);
     const leaddelete = useSelector(state => state.lead.leadDelete);
     const [rowidValue, setrowIdValue] = useState()
@@ -47,7 +50,6 @@ function Orders(props) {
     };
 
 
-
     useEffect(() => {
         const pagename = 'Orders'
         const userid = userData.id
@@ -60,79 +62,57 @@ function Orders(props) {
 
 
     const [cars, setCars] = useState([]);
-    const [year, setYear] = useState('');
+    const [modelyear, setModelyear] = useState('');
     const [make, setMake] = useState('');
     const [model, setModel] = useState('');
-    const [typee, setTypee] = useState('');
-    const [modelyear, setModelyear] = useState('');
     const [vehicletype, setVehicletype] = useState('');
+    const [Operable, setOperable] = useState('');
 
-    const [idCounter, setIdCounter] = useState(0);
+  const handleAddCar = () => {
+    if (modelyear.trim() !== '' && make.trim() !== '' && model.trim() !== '' && vehicletype.trim() !== '') {
+      const newCar = { id: cars.length, modelyear, make, model, vehicletype, Operable };
+      setCars((prevCars) => [...prevCars, newCar]);
+      setModelyear('');
+      setMake('');
+      setModel('');
+      setVehicletype('');
+      setOperable('');
+      console.log(cars);
+    }
+  };
+
+  const deleteCar = (index) => {
+    setCars((prevCars) => {
+      const updatedCars = [...prevCars];
+      updatedCars.splice(index, 1);
+      return updatedCars;
+    });
+  };
+
+  const updateCar = (index, property, value) => {
+    setCars((prevCars) => {
+      const updatedCars = [...prevCars];
+      updatedCars[index][property] = value;
+      return updatedCars;
+    });
+  };
 
 
-    const handleAddCar = () => {
-        if (modelyear.trim() !== '' && make.trim() !== '' && model.trim() !== '' && vehicletype.trim() !== '') {
-            const newCar = { id: cars.length, modelyear, make, model, vehicletype };
-            setCars((prevCars) => [...prevCars, newCar]);
-            setModelyear('');
-            setMake('');
-            setModel('');
-            setVehicletype('');
-            console.log(cars);
-        }
+
+
+
+  const payment = (editData, event) => {
+    event.preventDefault();
+    const id = event.target.pstatus.value;
+    console.log(editData)
+    const data = {
+        leadId: editData[0],
+        price: id
     };
-    const deleteCar = (e, index) => {
-        e.preventDefault();
-        setCars((prevCars) => {
-            const updatedCars = [...prevCars];
-            updatedCars.splice(index, 1);
-            return updatedCars;
-        });
-    };
+    // console.log(data);
+    dispatch(updatepayment(data))
+};
 
-
-
-    //    const password ='*'.repeat(row.password.length)
-    const [isOn, setIsOn] = useState(false);
-
-
-
-
-    const handleToggle = () => {
-        setIsOn(!isOn);
-    };
-
-
-
-
-
-    const handleEdit = (id) => {
-        const foundlead = leads.find((lead) => lead.id === id);
-        if (Array.isArray(foundlead.vehicle)) {
-            setCars([...foundlead.vehicle]);
-        } else {
-            setCars([]);
-        }
-        seteditData([
-            foundlead.id,
-            foundlead.fullname,
-            foundlead.email,
-            foundlead.phoneno,
-            foundlead.originaddress,
-            foundlead.origincity,
-            foundlead.originstate,
-            foundlead.originzipcode,
-            foundlead.destinationaddress,
-            foundlead.destinationcity,
-            foundlead.destinationstate,
-            foundlead.destinationzipcode,
-            foundlead.shipdate,
-            foundlead.howmany,
-            foundlead.vehicle
-
-        ]);
-
-    };
 
 
     const columns = [
@@ -206,13 +186,37 @@ function Orders(props) {
         },
         {
             name: 'Price',
-            selector: row => `${row.price} $`,
-
-            minWidth: '150px'
+            selector: row => row.price,
+            minWidth: '70px'
+        },
+        {
+            name: 'Initial deposite',
+            selector: row => row.intialdeposit,
+            minWidth: '70px'
+        },
+        {
+            name: 'Pickup person name',
+            selector: row => row.opickup,
+            minWidth: '200px'
+        },
+        {
+            name: 'Pickup person no',
+            selector: row => row.ophonono,
+            minWidth: '200px'
+        },
+        {
+            name: 'Dropoff person name',
+            selector: row => row.dpickup,
+            minWidth: '200px'
+        },
+        {
+            name: 'Dropoff person no',
+            selector: row => row.dphonono,
+            minWidth: '200px'
         },
         {
             name: 'Payment Status',
-            selector: row => row.payment,
+            selector: row => row.paymentstatus,
             minWidth: '200px'
         },
         {
@@ -233,14 +237,25 @@ function Orders(props) {
                 <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
                     <button className='agent-edit-delete-btn d-flex align-items-center '
                         disabled={row.approvalStatus === 'Not Approved' || row.approvalStatus === 'Pending'}
-                        data-toggle="modal" onClick={() => handleEdit(row.leadId)} data-target="#vendoremail">
+                        data-toggle="modal" onClick={() => handleEdit(row.leadId)}
+                        data-target={
+                            row.price == 0
+                                ? "#priceerror" : "#vendoremail"
+                        }
+                    >
                         <div className='mailcount'>{row.mailcount}</div>
                         Send Email</button>
                     <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal" data-target="#updatelead">Update</button>
-                    <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal" data-target="#updatestatus">Update Status</button>
-                    <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal" data-target="#pay">Payment Status</button>
-
-
+                    <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal"
+                        data-target={
+                            row.price == 0
+                                ? "#priceerror"
+                                : row.mailcount == 0
+                                    ? "#oneemail"
+                                    : "#updatestatus"
+                        }
+                    >Update Status</button>
+                     <button className='agent-edit-delete-btn ml-1' onClick={() => handleEdit(row.leadId)} type='button' data-toggle="modal" data-target="#pay">Payment Status</button>
                 </div>
             ),
             minWidth: '510px',
@@ -256,25 +271,70 @@ function Orders(props) {
         const vehicles = data.split(', ');
         setViewvehicle(vehicles);
     }
-    const sendEmailfunction = (data, e) => {
+
+    const handleEdit = (id) => {
+        const foundlead = leads.find((lead) => lead.id === id);
+
+        if (Array.isArray(foundlead.vehicle)) {
+            setCars([...foundlead.vehicle]);
+        } else {
+            setCars([]);
+        }
+        seteditData([
+            foundlead.id,
+            foundlead.fullname,
+            foundlead.email,
+            foundlead.phoneno,
+            foundlead.originaddress,
+            foundlead.origincity,
+            foundlead.originstate,
+            foundlead.originzipcode,
+            foundlead.destinationaddress,
+            foundlead.destinationcity,
+            foundlead.destinationstate,
+            foundlead.destinationzipcode,
+            foundlead.shipdate,
+            foundlead.howmany,
+            foundlead.vehicle,
+            foundlead.price,
+            foundlead.intialdeposite,
+            foundlead.dphonono,
+            foundlead.dpickup,
+            foundlead.ophonono,
+            foundlead.opickup,
+        ]);
+
+    };
+    const [subject, setsubject]=useState('')
+
+    const sendEmailfunction = async (data, e) => {
         e.preventDefault()
-
+        console.log("emial sent agent")
         const text = emailDivRef.current.innerHTML;
-
         const dataa = {
             leadid: data[0],
             customeremail: data[2],
             text: text,
             agentemail: userData.email,
-            id: userData.id
+            agentid: userData.id,
+            subject:subject
         }
-        console.log(dataa)
-        dispatch(sendEmail(dataa))
-            .then((response) => {
-                if (emailsent) {
-                    toast.success(`Email Sent Successfully...!`);
-                }
-            })
+
+        try {
+            console.log("emial sent agent")
+            const isEmailSent = await dispatch(sendEmail(dataa));
+            if (isEmailSent) {
+                console.log("send")
+                toast.success("Email Sent Successfully...!");
+            } else {
+                console.log("not send")
+
+                toast.error("Email Not Sent Successfully...!");
+            }
+        } catch (error) {
+            console.log("Error in sendEmailFunction:", error.message);
+            toast.error("Email Not Sent Successfully...!");
+        }
 
     };
 
@@ -309,7 +369,8 @@ function Orders(props) {
                 const formattedDate = receivedDate.toLocaleDateString();
                 const formattedTime = receivedDate.toLocaleTimeString();
                 const vehicles = lead.vehicle?.map((vehicle) => `${vehicle.make} ${vehicle.model} ${vehicle.
-                    modelyear} ${vehicle.vehicletype}`).join(', ');
+                    modelyear} ${vehicle.vehicletype} ${vehicle.operable}`).join(', ');
+
                 return {
                     id: index + 1,
                     leadId: lead.id,
@@ -327,14 +388,17 @@ function Orders(props) {
                     shipdate: lead.shipdate,
                     vehicle: vehicles,
                     mailcount: lead.mailcount,
+                    price: lead.price,
                     approvalStatus: lead.approvelStatus,
-                    price:lead.price,
-                    payment:lead.paymentstatus,
+                    intialdeposit:lead.intialdeposite,
+                    opickup:lead.opickup,
+                    ophonono:lead.ophonono,
+                    dpickup:lead.dpickup,
+                    dphonono:lead.dphonono,
+                    paymentstatus:lead.paymentstatus,
                     rowClass: lead.isAssigned ? 'assigned-row' : ''
                 };
             });
-
-
             setData(dataa);
             setRecord(dataa);
         }
@@ -360,8 +424,13 @@ function Orders(props) {
 
 
 
-
-
+    const handleInputChange = (index, value) => {
+        seteditData((preveditData) => {
+            const updatedData = [...preveditData];
+            updatedData[index] = value;
+            return updatedData;
+        });
+    };
 
 
 
@@ -398,42 +467,34 @@ function Orders(props) {
             howmany: howmany,
             cars: cars
         }
-        console.log(data + "agnet lead")
-        dispatch(addLead(data));
-        if (!Lead_Add) {
-            toast.success('Lead Add Successfully...!');
-        }
-        else if (Lead_Add) {
-            toast.error('Lead Not Added Successfully...!');
-        }
+
+        dispatch(addLead(data))
+            .then(() => {
+                toast.success('Lead Added Successfully...!');
+            })
+            .catch(() => {
+                toast.error('Lead Not Added Successfully...!');
+            });
     }
 
 
-    const payment = (editData, event) => {
-        event.preventDefault();
-        const id = event.target.pstatus.value;
-        console.log(editData)
-        const data = {
-            leadId: editData[0],
-            price: id
-        };
-        // console.log(data);
-        dispatch(updatepayment(data))
-    };
+
+
+
+
+
     const getRowidValue = (id) => {
         setrowIdValue(id);
     }
+    const [company, setcompany] = useState("");
+    const [companydetails, setcompanydetails] = useState(null);
 
-
-    const [company ,setcompany]= useState("");
-    const [companydetails ,setcompanydetails]= useState(null);
-
-    const companyselection=(data)=>{
+    const companyselection = (data) => {
         console.log(data)
-        if(data==='1'){
-           setcompanydetails(company1)
+        if (data === '1') {
+            setcompanydetails(company1)
         }
-        if(data==='2'){
+        if (data === '2') {
             setcompanydetails(company2)
         }
 
@@ -441,21 +502,23 @@ function Orders(props) {
     }
 
 
-    const defaulttext='Select any template'
+    const defaulttext = 'Select any template'
     const [Templatetext, setTemplatetext] = useState(defaulttext)
+
 
     const templateSeclection = (leadData, e) => {
         e.preventDefault();
-        console.log(leadData[14])
+        console.log(companydetails)
         const templateno = e.target.value;
         console.log(templateno + "temolat ni")
         const matchedTemplate = template.find((tpl) => tpl.id === parseInt(templateno));
-
+        setsubject(matchedTemplate.subject)
+        console.log(subject)
         if (matchedTemplate) {
             const templateData = (matchedTemplate) => {
                 let replacedText = matchedTemplate.text
                     .replace('{name}', leadData[1])
-                    .replace('{price}', '200$')
+                    .replace('{price}', leadData[15])
                     .replace('{origin}', leadData[3])
                     .replace('{origincity}', leadData[5])
                     .replace('{originstate}', leadData[6])
@@ -465,9 +528,11 @@ function Orders(props) {
                     .replace('{destinationzipcode}', leadData[11])
                     .replace('{shipdate}', leadData[12])
                     .replace('{leadid}', leadData[0])
-                    .replace('{companyname}',companydetails?.name )
+                    .replace('{companyname}', companydetails?.name)
                     .replace('{companyemail}', companydetails?.email)
                     .replace('{companyphonono}', companydetails?.phone)
+                    .replace('{img}', Car)
+                    .replace('{deposit}', leadData[16])
 
                 const carRows = leadData[14].map((car, index) => {
                     return `
@@ -478,9 +543,9 @@ function Orders(props) {
                         <td style="border: 1px solid #dddddd;">${car.vehicletype}</td>
                       </tr>
                     `;
-                  });
+                });
 
-                  replacedText = replacedText.replace('{carrows}', carRows.join(''));
+                replacedText = replacedText.replace('{carrows}', carRows.join(''));
                 const Templatetext1 = replacedText.toString();
                 // console.log(typeof(Templatetext1))
                 setTemplatetext(Templatetext1); // Set the updated value of setTemplatetext
@@ -489,21 +554,8 @@ function Orders(props) {
             templateData(matchedTemplate); // Call the templateData function
         }
 
-        const handleTextChange = (e) => {
-            setTemplatetext(e.target.value);
-        };
-    };
-
-    const handleInputChange = (index, value) => {
-        seteditData((preveditData) => {
-            const updatedData = [...preveditData];
-            updatedData[index] = value;
-            return updatedData;
-        });
-    };
-
-    // upodate lead
-    const updatelead = (e) => {
+    }
+    const updatelead = async (e) => {
         e.preventDefault();
         console.log("add lead click");
         const name = e.target.name.value;
@@ -519,6 +571,12 @@ function Orders(props) {
         const destinationzipcode = e.target.deszipcode.value;
         const shipdate = e.target.shipdate.value;
         const howmany = e.target.howmany.value;
+        const price = e.target.price.value
+        const inprice=e.target.inprice.value
+        const pickupname=e.target.pickupname.value;
+        const pickupno=e.target.pickupno.value;
+        const dropoffname=e.target.dropoffname.value;
+        const dropoffno=e.target.dropoffno.value
         const data = {
             leadid: editData[0],
             name: name,
@@ -534,26 +592,30 @@ function Orders(props) {
             destinationzipcode: destinationzipcode,
             shipdate: shipdate,
             howmany: howmany,
-            cars: cars
+            cars: cars,
+            price: price,
+            inprice:inprice,
+            pickupname:pickupname,
+            pickupno:pickupno,
+            dropoffname:dropoffname,
+            dropoffno:dropoffno
         }
-        console.log(data)
-        dispatch(updateLead(data));
-        seteditData('')
-        if (!Lead_Add) {
-            toast.success('Lead update Successfully...!');
-        }
-        else if (Lead_Add) {
+        console.log(data);
+        try {
+            const isupdate = await dispatch(updateLead(data));
+            if (isupdate) {
+
+                toast.success('Lead update Successfully...!');
+            } else {
+                toast.error('Lead Not update Successfully...!');
+
+            }
+        } catch (error) {
             toast.error('Lead Not update Successfully...!');
+
+        seteditData('')
         }
     }
-    const updateCar = (index, property, value) => {
-        setCars((prevCars) => {
-            const updatedCars = [...prevCars];
-            updatedCars[index][property] = value;
-            return updatedCars;
-        });
-    };
-
 
 
     return (
@@ -574,6 +636,76 @@ function Orders(props) {
                     theme="light"
                 />
             </div>
+{/* update payment  */}
+
+<div className="modal fade" id="pay" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <div className="modal-dialog" role="document">
+     <div className="modal-content">
+         <div className="modal-header">
+             <h5 className="modal-title" id="exampleModalLabel">Payment status</h5>
+             <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+             </button>
+         </div>
+         <form action="" onSubmit={event => payment(editData, event)}>
+             <div className="modal-body">
+                 <div className="form-group">
+                     <h4>Update payment Status</h4>
+                     <select name="pstatus" id="pstatus" className="assignlead">
+                         <option value="">Select</option>
+                         <option value="paid">Paid</option>
+                         <option value="pending">Pending</option>
+                     </select>
+                 </div>
+             </div>
+             <div className="modal-footer">
+                 <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                 <button type="submit" className="agent-edit-delete-btn ml-1" style={{ padding: '9px 10px' }}>Assign</button>
+             </div>
+         </form>
+     </div>
+ </div>
+</div>
+            {/*send at eat one emial*/}
+            <div className="modal fade" id="oneemail" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">First email required</h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            Please send the first email
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Price eeroor */}
+            <div className="modal fade" id="priceerror" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="exampleModalLabel">Prie updation required</h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            Please update the price First
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* veiw car  */}
             <div className="modal fade" id="viewcars" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog" role="document">
@@ -592,17 +724,21 @@ function Orders(props) {
                                         <th>Model</th>
                                         <th>Model Year</th>
                                         <th>Vehicle Type</th>
+                                        <th>Is Operable?</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {Viewvehicle.map((vehicle, index) => {
-                                        const [make, model, modelyear, vehicletype] = vehicle.split(' ');
+                                        const [make, model, modelyear, vehicletype, Operable] = vehicle.split(' ');
                                         return (
                                             <tr key={index}>
                                                 <td>{make}</td>
                                                 <td>{model}</td>
                                                 <td>{modelyear}</td>
                                                 <td>{vehicletype}</td>
+                                                <td>{Operable}</td>
+
                                             </tr>
                                         );
                                     })}
@@ -615,37 +751,6 @@ function Orders(props) {
                     </div>
                 </div>
             </div>
-            {/* update payment  */}
-
-            <div className="modal fade" id="pay" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="exampleModalLabel">Payment status</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form action="" onSubmit={event => payment(editData, event)}>
-                            <div className="modal-body">
-                                <div className="form-group">
-                                    <h4>Update payment Status</h4>
-                                    <select name="pstatus" id="pstatus" className="assignlead">
-                                        <option value="">Select</option>
-                                        <option value="paid">Paid</option>
-                                        <option value="pending">Pending</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" className="agent-edit-delete-btn ml-1" style={{ padding: '9px 10px' }}>Assign</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
             {/* send email  */}
             <div class="modal fade bd-example-modal-xl emailmodelsent" id="vendoremail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -662,44 +767,44 @@ function Orders(props) {
                                     <div className="form-group">
                                         <label htmlFor="token"> <b>Select company</b> </label>
                                         <select name="emailtext" id="emailtext" onChange={(e) => companyselection(e.target.value)} className='assignlead'>
-                                        <option value="0">Select any company</option>
+                                            <option value="0">Select any company</option>
                                             <option value="1" >HS logistic</option>
                                             <option value="2">SM transport</option>
                                         </select>
 
                                     </div>
                                     {
-                                        company=== '1' && (
+                                        company === '1' && (
                                             <div className="form-group">
-                                            <label htmlFor="token"> <b>Select Template for HS logistic</b> </label>
-                                            <select name="emailtext" id="emailtext" onChange={(e) => templateSeclection(editData, e)} className='assignlead'>
-                                                <option value="" >Select any template</option>
-                                                <option value="1">Follow up</option>
-                                                <option value="2">New Quotes</option>
-                                                <option value="3">Dispatched</option>
-                                                <option value="4">Order Confirmation</option>
-                                                <option value="5">Payment Recieved</option>
-                                                <option value="6">Agreement</option>
-                                                <option value="7">Second Follow Up</option>
-                                            </select>
-                                        </div>
+                                                <label htmlFor="token"> <b>Select Template for HS logistic</b> </label>
+                                                <select name="emailtext" id="emailtext" onChange={(e) => templateSeclection(editData, e)} className='assignlead'>
+                                                    <option value="" >Select any template</option>
+                                                    <option value="1">Follow up</option>
+                                                    <option value="2">New Quotes</option>
+                                                    <option value="3">Order Confirmation</option>
+                                                    <option value="4">Agreement</option>
+                                                    <option value="5">Dispatched</option>
+                                                    <option value="6">Payment Recieved</option>
+                                                    <option value="7">Second Follow Up</option>
+                                                </select>
+                                            </div>
                                         )
                                     }
                                     {
-                                        company==="2" && (
+                                        company === "2" && (
                                             <div className="form-group">
-                                        <label htmlFor="token"> <b>Select Template fo SM transport</b> </label>
-                                        <select name="emailtext" id="emailtext" onChange={(e) => templateSeclection(editData, e)} className='assignlead'>
-                                            <option value="" disabled >Select any template</option>
-                                            <option value="1">Follow up</option>
-                                                <option value="2">New Quotes</option>
-                                            <option value="3">Dispatched</option>
-                                            <option value="4">Order Confirmation</option>
-                                            <option value="5">Payment Recieved</option>
-                                            <option value="6">Agreement</option>
-                                            <option value="7">Second Follow Up</option>
-                                        </select>
-                                    </div>
+                                                <label htmlFor="token"> <b>Select Template fo SM transport</b> </label>
+                                                <select name="emailtext" id="emailtext" onChange={(e) => templateSeclection(editData, e)} className='assignlead'>
+                                                    <option value="" disabled >Select any template</option>
+                                                    <option value="1">Follow up</option>
+                                                    <option value="2">New Quotes</option>
+                                                    <option value="3">Dispatched</option>
+                                                    <option value="4">Order Confirmation</option>
+                                                    <option value="5">Payment Recieved</option>
+                                                    <option value="6">Agreement</option>
+                                                    <option value="7">Second Follow Up</option>
+                                                </select>
+                                            </div>
                                         )
                                     }
 
@@ -723,8 +828,6 @@ function Orders(props) {
                                         <input type="text" className='toemail' readOnly value={editData[2]} />
                                     </div>
 
-
-
                                 </div>
 
                             </div>
@@ -737,8 +840,48 @@ function Orders(props) {
                     </div>
                 </div>
             </div>
+            {/* update lead status  */}
+            <div class="modal fade" id="updatestatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Assign Lead</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="">
+                            <div class="modal-body">
+                                <div className="form-group">
+                                    <h4>Update Lead Status</h4>
+                                    <select name="status" id="status" className='assignlead' ref={statusRef}>
+                                        <option value="">Select</option>
+                                        <option value="lead">Leads</option>
+                                        <option value="Followup">Follow Up</option>
+                                        <option value="Quotes">Quotes</option>
+                                        <option value="Orders">Orders</option>
+                                        <option value="Dispatched">Dispatched</option>
+                                        <option value="Archived">Archived</option>
+                                        <option value="Potentail">Completed</option>
+                                        <option value="Cancel">Cancel Order</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="agent-edit-delete-btn ml-1" data-dismiss="modal" onClick={() => {
+                                    if (statusRef.current.value !== '') {
+                                        updatestatus(editData);
+                                    }
+                                }}>Update Status</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
-            {/* update lead  */}
+
+
             {/* update lead  */}
             <div class="modal fade" id="updatelead" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
                 <div class="modal-dialog " role="document">
@@ -763,7 +906,6 @@ function Orders(props) {
 
                                 </div>
                                 <div className="form-group">
-
                                     <label htmlFor="email">Email</label>
                                     <div className="loadingimginput">
                                         <input type="email" className="form-control" id="vemail" name="email" value={editData[2]}
@@ -771,7 +913,6 @@ function Orders(props) {
                                             aria-describedby="emailHelp" placeholder="Enter Email"
 
                                         />
-
                                     </div>
 
 
@@ -784,6 +925,18 @@ function Orders(props) {
                                         value={editData[3]} placeholder="Phoneno" />
                                 </div>
                                 <hr />
+                                <div className="form-group">
+                                    <label for="password1">Pay to Carrier</label>
+                                    <input type="number" className="form-control" id="password" name='price'
+                                        required
+                                        placeholder="Price" value={editData[15]}  onChange={(e) => handleInputChange(15, e.target.value)} />
+                                </div>
+                                <div className="form-group">
+                                    <label for="password1">Initial deposite</label>
+                                    <input type="number" className="form-control" id="inprice" name='inprice'
+                                        required
+                                        placeholder="Price" value={editData[16]}  onChange={(e) => handleInputChange(16, e.target.value)} />
+                                </div>
 
                                 <h4>Origin</h4>
                                 <div className='d-flex justify-content-between'>
@@ -802,6 +955,7 @@ function Orders(props) {
 
                                     </div>
                                 </div>
+
                                 <div className='d-flex justify-content-between'>
                                     <div className="form-group mr-1">
                                         <label for="email1">Origin state</label>
@@ -815,6 +969,22 @@ function Orders(props) {
                                         <input type="text" className="form-control" id="zipcode" name='originzipcode' aria-describedby="emailHelp" value={editData[7]}
                                             onChange={(e) => handleInputChange(7, e.target.value)} required
                                             placeholder="Zip code" />
+
+                                    </div>
+                                </div>
+                                <div className='d-flex justify-content-between'>
+                                    <div className="form-group mr-1">
+                                        <label for="email1">Pickup person name</label>
+                                        <input type="text" className="form-control" id="pickupname" value={editData[20]}
+                                            onChange={(e) => handleInputChange(20, e.target.value)} required
+                                            name='pickupname' aria-describedby="emailHelp" placeholder="origin address" />
+                                    </div>
+                                ,
+                                    <div className="form-group ml-1">
+                                        <label for="email1">Pickup phono no</label>
+                                        <input type="text" className="form-control" id="pickupno" name='pickupno' aria-describedby="emailHelp"
+                                            onChange={(e) => handleInputChange(19, e.target.value)} required
+                                            value={editData[19]} placeholder="Origin city" />
 
                                     </div>
                                 </div>
@@ -849,6 +1019,22 @@ function Orders(props) {
                                         <input type="text" className="form-control" id="deszipcode" name='deszipcode' aria-describedby="emailHelp" value={editData[11]}
                                             onChange={(e) => handleInputChange(11, e.target.value)} required
                                             placeholder="Destination zip code" />
+
+                                    </div>
+                                </div>
+                                <div className='d-flex justify-content-between'>
+                                    <div className="form-group mr-1">
+                                        <label for="email1">Drop Off person name</label>
+                                        <input type="text" className="form-control" id="dropoffname" name='dropoffname' value={editData[18]}
+                                            onChange={(e) => handleInputChange(18, e.target.value)} required
+                                            aria-describedby="emailHelp" placeholder="Destination address" />
+                                    </div>
+
+                                    <div className="form-group ml-1">
+                                        <label for="email1">Drop Off person phoneno</label>
+                                        <input type="text" className="form-control" id="dropoffno" name='dropoffno' aria-describedby="emailHelp" value={editData[17]}
+                                            onChange={(e) => handleInputChange(17, e.target.value)} required
+                                            placeholder="Destination city" />
 
                                     </div>
                                 </div>
@@ -975,295 +1161,17 @@ function Orders(props) {
 
 
 
-            {/* update lead status  */}
-            <div class="modal fade" id="updatestatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Assign Lead</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form action="">
-                            <div class="modal-body">
-                                <div className="form-group">
-                                    <h4>Update Lead Status</h4>
-                                    <select name="status" id="status" className='assignlead' ref={statusRef}>
-                                        <option value="">Select</option>
-                                        <option value="lead">Leads</option>
-                                        <option value="Followup">Follow Up</option>
-                                        <option value="Quotes">Quotes</option>
-                                        <option value="Orders">Orders</option>
-                                        <option value="Dispatched">Dispatched</option>
-                                        <option value="Archived">Archived</option>
-                                        <option value="Potentail">Completed</option>
-                                        <option value="Cancel">Cancel Order</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="agent-edit-delete-btn ml-1" data-dismiss="modal" onClick={() => {
-                                    if (statusRef.current.value !== '') {
-                                        updatestatus(editData);
-                                    }
-                                }}>Update Status</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-
-            {/* add lead model */}
-
-            <div class="modal fade" id="addlead" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-                <div class="modal-dialog " role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalScrollableTitle">Modal title</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-
-
-
-                        <form onSubmit={addleadfunction}>
-                            <div className="modal-body">
-                                <div className="form-group mt-n3 ">
-                                    <div className="form-group">
-                                        <label for="email1">Full Name</label>
-                                        <input type="text" className="form-control" id="name" name='name' aria-describedby="emailHelp" placeholder="Enter Full Name" />
-
-                                    </div>
-
-                                </div>
-                                <div className="form-group">
-
-                                    <label htmlFor="email">Email</label>
-                                    <div className="loadingimginput">
-                                        <input type="email" className="form-control" id="vemail" name="email" aria-describedby="emailHelp" placeholder="Enter Email"
-
-                                        />
-
-                                    </div>
-
-
-                                </div>
-
-                                <div className="form-group">
-                                    <label for="password1">Phone No:</label>
-                                    <input type="number" className="form-control" id="password" name='phoneno' placeholder="Password" />
-                                </div>
-                                <hr />
-
-                                <h4>Origin</h4>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Origin Address</label>
-                                        <input type="text" className="form-control" id="originaddress" name='originaddress' aria-describedby="emailHelp" placeholder="Enter origin address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Origin City</label>
-                                        <input type="text" className="form-control" id="origincity" name='origincity' aria-describedby="emailHelp" placeholder="Enter email" />
-
-                                    </div>
-                                </div>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Origin state</label>
-                                        <input type="text" className="form-control" id="originstate" name='originstate' aria-describedby="emailHelp" placeholder="Enter origin address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Zip code</label>
-                                        <input type="number" className="form-control" id="zipcode" name='originzipcode' aria-describedby="emailHelp" placeholder="Enter email" />
-
-                                    </div>
-                                </div>
-                                <hr />
-                                <h4>Destination</h4>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Destination Address</label>
-                                        <input type="text" className="form-control" id="desadress" name='desadress' aria-describedby="emailHelp" placeholder="Enter destination address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Destination City</label>
-                                        <input type="text" className="form-control" id="descity" name='descity' aria-describedby="emailHelp" placeholder="Enter destination city" />
-
-                                    </div>
-                                </div>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Destination state</label>
-                                        <input type="text" className="form-control" id="desstate" name='desstate' aria-describedby="emailHelp" placeholder="Enter origin address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Zip code</label>
-                                        <input type="number" className="form-control" id="deszipcode" name='deszipcode' aria-describedby="emailHelp" placeholder="Enter email" />
-
-                                    </div>
-                                </div>
-                                <hr />
-                                <div className="form-group">
-                                    <h4>Ship Date</h4>
-                                    <div className="form-group">
-                                        <input type="date" className="form-control" id="shipdate" name='shipdate' placeholder="Password" />
-                                    </div>
-                                </div>
-                                <hr />
-                                <div className="form-group">
-                                    <h4>Home many Vehicle?</h4>
-                                    <select name="howmany" id="howmany" className='assignlead'>
-                                        <option value="volvo" >1</option>
-                                        <option value="saab">2</option>
-                                        <option value="mercedes">3</option>
-                                        <option value="audi">4</option>
-                                    </select>
-                                </div>
-                                <div className='form-group'>
-                                    <h4>Vehicle</h4>
-                                </div>
-                                <table >
-                                    <thead>
-                                        <tr>
-                                            <th>Model Year</th>
-                                            <th>Make</th>
-                                            <th>Model</th>
-                                            <th>Vehicle Type</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {cars.length === 0 ? (
-                                            <tr>
-                                                <td colSpan="5">No Vehicle available</td>
-                                            </tr>
-                                        ) : (
-                                            cars.map((car, index) => (
-                                                <tr key={index}>
-                                                    <td>{car.year}</td>
-                                                    <td>{car.make}</td>
-                                                    <td>{car.model}</td>
-                                                    <td>{car.typee}</td>
-                                                    <td>
-                                                        <button className='toglebtn' onClick={() => deleteCar(index)}>Delete</button>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
-
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group">
-                                        <label for="email1">Model Year</label>
-                                        <input
-                                            type="text"
-                                            className="form-control mr-1"
-                                            name="year"
-                                            id="year"
-                                            value={year}
-                                            onChange={(e) => setYear(e.target.value)} placeholder="Enter model year" />
-
-                                    </div>
-                                    <div className="form-group ">
-                                        <label for="email1">Make</label>
-                                        <input type="text"
-                                            name="make"
-                                            className="form-control ml-1"
-                                            id="make"
-                                            value={make}
-                                            onChange={(e) => setMake(e.target.value)} placeholder="Enter make" />
-
-                                    </div>
-                                </div>
-
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group ">
-                                        <label for="email1">Model</label>
-                                        <input
-                                            type="text"
-                                            className="form-control mr-1"
-                                            name="model"
-                                            id="model"
-                                            value={model}
-                                            onChange={(e) => setModel(e.target.value)} placeholder="Enter model " />
-
-                                    </div>
-                                    <div className="form-group ">
-                                        <label for="email1">Type</label>
-                                        <input
-                                            type="text"
-                                            name="model"
-                                            className="form-control ml-1"
-                                            id="type"
-                                            value={typee}
-                                            onChange={(e) => setTypee(e.target.value)} placeholder="Enter type" />
-
-                                    </div>
-                                </div>
-                                <button className='toglebtn ' type='button' onClick={handleAddCar} >Add Car</button>
-                            </div>
-                            <div className="modal-footer mt-n4 border-top-0 d-flex justify-content-center">
-                                <button type="submit" className="btn button-86" style={{ color: 'white' }} >Submit</button>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-            </div>
 
             {/* // end */}
-            {/* // assign lead */}
-
-            <div className="modal fade" id="assignlead" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
-                <div className="modal-dialog modal-dialog-centered" role="document">
-                    <div className="modal-content modelbg">
-                        <div className="modal-header border-bottom-0">
-                            <h5 className="modal-title" id="exampleModalLabel">Assign Lead</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close" >
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form>
-                            <div className="modal-body">
-
-                                <div className="form-group mt-n3">
-                                    <div>
-                                        <label for="assignto">Assign to</label>
-                                    </div>
-
-                                    <select name="leadsassign" id="assignlead" className='assignlead'>
-                                        <option value="volvo">Volvo</option>
-                                        <option value="saab">Saab</option>
-                                        <option value="mercedes">Mercedes</option>
-                                        <option value="audi">Audi</option>
-                                    </select>
-                                </div>
 
 
-                            </div>
-                            <div className="modal-footer mt-n4 border-top-0 d-flex justify-content-center" >
-                                <button type="submit" className="btn button-86" style={{ color: 'white' }}>Assign</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
 
 
 
             <div className='agenttable'>
                 <div className="agent-header ">
                     <div className="agenttab">
-                        Orders
+                       Orders
                     </div>
 
                 </div>
@@ -1272,7 +1180,8 @@ function Orders(props) {
                         <div className='agentsearchicon d-flex align-items-center'>
                             <FontAwesomeIcon icon={faSearch} className='mr-1' />
                         </div>
-                        <input type="text" onChange={handlefilter} placeholder='Search by name ' />
+                        <input type="text" value={searchText} onChange={handlefilter} placeholder='Search by name ' />
+
                     </div>
 
                 </div>
@@ -1286,7 +1195,6 @@ function Orders(props) {
                         responsive
                         highlightOnHover
                         customStyles={customStyles}
-
                     />
                 </div>
             </div>
