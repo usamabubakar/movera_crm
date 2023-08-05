@@ -61,15 +61,16 @@ const authReducer = (state = initialState, action) => {
                 ...state,
                 isAuthenticated: true,
                 isLoading: false,
-                // user: action.payload
-                user : {
-                    id  : action.payload._id,
-                    name: action.payload.name,
-                    email: action.payload.email,
-                    img: action.payload.img
-                },
-                isAdmin: action.payload.isAdmin,
-                isAgent: action.payload.isAgent
+                user: action.payload.user,
+                // user : {
+                //     id  : action.payload.user._id,
+                //     name: action.payload.user.name,
+                //     email: action.payload.user.email,
+                //     img: action.payload.user.img,
+                //     emailpassword:
+                // },
+                isAdmin: action.payload.user.isAdmin,
+                isAgent: action.payload.user.isAgent
 
             };
         case LOGOUT_SUCCESS:

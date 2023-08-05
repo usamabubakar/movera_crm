@@ -49,9 +49,9 @@ export const login_user = (details) => async (dispatch) => {
   const body_data_from_user = JSON.stringify(details);
   try {
   const response = await axios.post(`${localhost}/api/auth/login`, body_data_from_user, config);
-    console.log("syau")
-    const token = response.data.token;
-    const user = response.data.userdata;
+  const token = response.data.token;
+  const user = response.data.userdata;
+  console.log("syau", )
 
     dispatch({
       type: LOGIN_SUCCESS,

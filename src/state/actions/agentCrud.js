@@ -136,3 +136,29 @@ export const updateAgent = (data) => async (dispatch) => {
     return false
   }
 }
+
+//  update agent app pass
+export const updateAgentAppPass = (data) => async (dispatch) => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  try {
+    const response = await axios.post(`${localhost}/api/agentcurd/updateagentapppass`, data, config);
+    console.log("action update")
+    const agentdata = response.data.data
+    console.log(agentdata._id)
+    dispatch({
+      type: AGENT_UPDATE_SUCCESS,
+      payload: agentdata
+    });
+    return true
+  } catch (err) {
+    const error = {
+      message: err.response.data,
+      status: err.response.status
+    };
+    return false
+  }
+}
