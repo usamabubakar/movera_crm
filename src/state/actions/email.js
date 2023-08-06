@@ -11,11 +11,11 @@ export const sendEmail = (data) => async (dispatch) => {
     const response = await axios.post(`${localhost}/api/sendemail/sendEmail`, data, config);
     // Dispatch the success action
     console.log("usasa",response)
-    dispatch({ type: EMAIL_SEND_SUCCESS });
-    // dispatch({
-    //   type: UPDATE_LEAD,
-    //   payload: response.data.data,
-    // });
+    // dispatch({ type: EMAIL_SEND_SUCCESS });
+    dispatch({
+      type: UPDATE_LEAD,
+      payload: response.data.data,
+    });
     return true;
   } catch (error) {
     console.log("error in email:", error);

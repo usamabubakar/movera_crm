@@ -8,6 +8,7 @@ const Becomeadmin = require('../models/Becomeadmin')
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcryptjs');
 const fetchuser = require('../middleware/fetchuser');
+const { ConnectionStates } = require('mongoose');
 
 
 
@@ -42,7 +43,11 @@ router.post('/addlead', fetchuser, async (req, res) => {
         howmany: req.body.howmany,
         vehicle: [],
         addBy:'Agent',
-        isAssignedName:name
+        isAssignedName:name,
+        Opickup:'not updated',
+        Ophonono:"not updated",
+        Dpickup:'not updated',
+        Dphonono:'not updated'
       });
 
       for (const car of cars) {
@@ -54,19 +59,8 @@ router.post('/addlead', fetchuser, async (req, res) => {
           isoperable:car.Operable
         });
       }
-
-      const newNotification = new Notification({
-        agentName: name,
-        leadId: newLead.id,
-        status: 'Pending',
-      });
-
-
       await newLead.save();
-      await newNotification.save();
-
-
-
+     console.log(newLead)
       res.status(200).json({ message: "Lead added successfully", data: newLead });
     } else {
       const newLead = new Lead({
@@ -616,6 +610,27 @@ router.get('/agentactivity', async (req, res) => {
     res.status(200).json({ message: "Lead fetch successful", data: formattedLeads, totalleads: totalleads });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
+
+
+router.post('/updatestatusofleads', async (req, res) => {
+  try {
+    // Get the name from the request body
+    const { name } = req.body;
+
+    // Update the name field in all documents of the collection
+    const data = await Becomeadmin.updateOne({}, { $set: { name: name } }, { upsert: true });
+
+console.log(data)
+    // Send a response indicating success
+    return res.status(200).json({ message: 'Name updated successfully for all documents!' });
+  } catch (error) {
+    // Handle errors and send an error response
+    console.error(error);
+    return res.status(500).json({ message: 'Error updating name.' });
   }
 });
 

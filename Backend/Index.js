@@ -25,7 +25,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Initialize the socket.io instance
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:3001"],
+    origin: ["http://localhost:3000", "http://localhost:3001","http://www.crmsmtransports.site"],
     methods: ["GET", "POST"],
     transports: ['websocket', 'polling'],
     credentials: true

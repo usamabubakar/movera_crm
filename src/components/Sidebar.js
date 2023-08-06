@@ -78,7 +78,6 @@ const Sidebar = (props) => {
   const newSockett = io("http://localhost:4000");
 
   useEffect(() => {
-      console.log("new notifc area");
 
       const handleNewLeadNoti = (res) => {
           playAudio();

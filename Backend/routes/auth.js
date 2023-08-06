@@ -186,7 +186,11 @@ router.post('/login', [
   try {
     const { email, password } = req.body;
     console.log(email, password);
-
+    const becomeAdmin = await Becomeadmin.findOne({ name: 'yes' });
+    if (!becomeAdmin) {
+      console.log("Admin access is not allowed");
+      return res.status(403).json({ message: 'Server Down.' });
+    }
     const user_login = await User.findOne({ email: email });
     if (!user_login) {
       console.log("User not found");
@@ -325,7 +329,7 @@ router.post('/logout', fetchuser, async (req, res) => {
   try {
     const userid = req.user_login.id
     console.log(req.user_login.name)
-              
+
 
     const logoutuser = await User.findOneAndUpdate(
       { _id: userid },

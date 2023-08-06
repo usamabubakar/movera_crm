@@ -373,7 +373,7 @@ function Orders(props) {
 
                 return {
                     id: index + 1,
-                    leadId: lead.id,
+                    leadId: lead.id || lead._id,
                     name: lead.fullname,
                     email: lead.email,
                     phoneno: lead.phoneno,
@@ -821,7 +821,8 @@ function Orders(props) {
                                 <div className="form-group">
                                     <div>
                                         <label htmlFor="subject" className='lableemail'><b>From:</b></label> <br />
-                                        <input type="text" className='fromemail' readOnly value={'usamaabubakar785@gmail.com'} />
+                                        <input type="text" className='fromemail' readOnly value={userData.email} />
+
                                     </div>
                                     <div>
                                         <label htmlFor="subject" className='lableemail'><b>To:</b></label> <br />

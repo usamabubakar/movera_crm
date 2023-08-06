@@ -391,7 +391,7 @@ function Leadagent(props) {
 
                 return {
                     id: index + 1,
-                    leadId: lead.id,
+                    leadId: lead.id || lead._id,
                     name: lead.fullname,
                     email: lead.email,
                     phoneno: lead.phoneno,
@@ -418,6 +418,7 @@ function Leadagent(props) {
             });
             setData(dataa);
             setRecord(dataa);
+            console.log(dataa)
         }
 
     }, [leads]);
