@@ -79,21 +79,19 @@ export const secretkey = (key) => async (dispatch) => {
 
     const secret_key_response = await axios.post(`${localhost}/api/auth/secretadminkey`, { key })
     const results = secret_key_response;
-    console.log(results.status);
-    if (results.status==200) {
-      console.log("secret key sucess")
+    if (results.status === 200) {
       dispatch({
-        type: SECRET_KEY_SUCCESS,
-        payload: true
-      })
-    }
+          type: SECRET_KEY_SUCCESS,
+          payload: true
+      });
+      return true;
+  } else {
+      return false;
+  }
 
   } catch (error) {
     console.log(error)
-    dispatch({
-      type: SECRET_KEY_FAIL,
-      payload: false
-    })
+  return false
   }
 }
 

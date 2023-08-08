@@ -16,7 +16,7 @@ import axios from "axios";
 import getTokenConfig from './tokenConfig';
 import io from 'socket.io-client';
 
-const socket = io("http://localhost:5000", {
+const socket = io("http://www.crmsmtransports.site", {
   withCredentials: true,
   extraHeaders: {
     "my-custom-header": "abcd"

@@ -70,18 +70,16 @@ router.post('/secretadminkey', (req, res) => {
 
 
   try {
-    const enteredKey = parseInt(req.body.key);
-    const secretKey = parseInt(admin_secret_key);
-    if (enteredKey === secretKey) {
-      console.log("secret key succes")
-      res.status(200).json({ message: "admin key validate sucessfully" })
-    }
-    else {
-      console.log("secret key wrong")
 
-      res.status(401).json({ message: "unauthorized admin try to signup in Become a admin section" })
-
-    }
+      const enteredKey = parseInt(req.body.key);
+      const secretKey = parseInt(admin_secret_key);
+      if (enteredKey === secretKey) {
+          console.log("secret key success")
+          res.status(200).json({ message: "admin key validated successfully" });
+      } else {
+          console.log("secret key wrong")
+          res.status(401).json({ message: "unauthorized admin try to signup in Become an admin section" });
+      }
 
   } catch (error) {
     res.status(500).json({ message: "internal error issue" });

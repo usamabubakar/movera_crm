@@ -77,7 +77,7 @@ const Sidebar = (props) => {
 //       socket.off("getonlineuser");
 //     };
 //   }, [socket, userData]);
-const newsocket = io("http://www.crmsmtransports.site/");
+const newsocket = io("http://www.crmsmtransports.site:4000");
   useEffect(() => {
     const handleNewLeadNoti = () => {
       playAudio();

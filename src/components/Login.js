@@ -18,6 +18,7 @@ import { emailchecker } from '../state/actions/signupAdmin';
 import { secretkey } from '../state/actions/authUser'
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+import $ from 'jquery';
 
 
 export default function Login(props) {
@@ -26,9 +27,8 @@ export default function Login(props) {
     const login_status = useSelector(state => state.auth.errorMessage);
     const Email_exist = useSelector(state => state.signupadmin.email_exist);
     const signUP_success = useSelector(state => state.signupadmin.success);
-    console.log(login_status?.message)
-    const errormesssage=login_status?.message
-    console.log(Secretkeyresponse+"chking secrek key repnse")
+
+    const errormesssage = login_status?.message
     const dispatch = useDispatch();
 
     const [key, setKey] = useState(['', '', '', '']);
@@ -43,7 +43,6 @@ export default function Login(props) {
         const newkey = [...key];
         newkey[index] = value;
         setKey(newkey);
-        console.log(key)
     };
     // useEffect(() => {
     //     if (Secretkeyresponse === true) {
@@ -59,59 +58,65 @@ export default function Login(props) {
         e.preventDefault();
         const keyno = key.join('');
         console.log(keyno);
-        dispatch(secretkey(keyno));
+        try {
+            const isKeyValid = await dispatch(secretkey(keyno)); // Wait for the secret key action to complete
+            if (isKeyValid) {
+                setIsKeyValidated(true);
+                toast.success('Secret Key validation success');
 
-        if (Secretkeyresponse===false) {
-          console.log(isKeyValidated + "wrong key");
-          setIsKeyValidated(false); // Set isKeyValidated to false if the secret key is wrong
-          toast.error('Secret Key is wrong...!!!');
+            } else {
+                setIsKeyValidated(false);
+                console.log("not working");
+                toast.error('Secret Key is wrong...!!!');
+            }
+        } catch (error) {
+            console.log(error);
         }
-        if (Secretkeyresponse===true) {
-          console.log(isKeyValidated + "correct key");
-          setIsKeyValidated(true); // Set isKeyValidated to true if the secret key is correct
-          toast.success('Secret Key is success..!!!');
-        }
-      };
+
+
+    };
 
 
 
-      const [emailexist, setemailexist] = useState(null)
-      const handleEmailchecker = (e) => {
-          const email = e.target.value;
-          setEmail(email);
 
-          dispatch(emailchecker(email))
-              .then(() => {
-                  setemailexist(true)
-              }).catch(
-                  setemailexist(false)
-              )
-      }
+    const [emailexist, setemailexist] = useState(null)
+    const handleEmailchecker = (e) => {
+        const email = e.target.value;
+        setEmail(email);
 
-    const signup = (e) => {
+        dispatch(emailchecker(email))
+            .then(() => {
+                setemailexist(true)
+            }).catch(
+                setemailexist(false)
+            )
+    }
+
+    const signup =async (e) => {
         e.preventDefault();
         console.log("signup click")
         const name = e.target.name.value;
         const password = e.target.password.value;
         const email = e.target.email.value;
-        const img=e.target.img.files[0]
+        const img = e.target.img.files[0]
         const signupData = {
             name: name,
             password: password,
             email: email,
-            img:img
+            img: img
         }
-        console.log(signupData)
-        dispatch(signup_Admin(signupData))
+        try {
+          const signupp=await dispatch(signup_Admin(signupData))
+        if (signupp ) {
 
-        if (signUP_success===true) {
-            console.log(isKeyValidated + "correct key");
-            setIsKeyValidated(true);
-            console.log(signUP_success + "admin created")
+            setIsKeyValidated(false);
             toast.success('Sign-Up Successfully...!');
         }
-        else if (signUP_success===false) {
+        else  {
             toast.error('Email already exist...!');
+        }
+        } catch (error) {
+            toast.error('internal error');
         }
     }
 
@@ -146,41 +151,22 @@ export default function Login(props) {
 
         <>
 
-                <div >
-                    <ToastContainer
-                        position="top-center"
-                        autoClose={1500}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
-                        rtl={false}
-                        pauseOnFocusLoss
-                        draggable
-                        pauseOnHover
-                        theme="light"
-                    />
-                </div>
+            <div >
+                <ToastContainer
+                    position="top-center"
+                    autoClose={1500}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                    theme="light"
+                />
+            </div>
 
-
-            {signUP_success &&
-                <div >
-                    <ToastContainer
-                        position="top-center"
-                        autoClose={1500}
-                        hideProgressBar={false}
-                        newestOnTop={false}
-                        closeOnClick
-                        rtl={false}
-                        pauseOnFocusLoss
-                        draggable
-                        pauseOnHover
-                        theme="light"
-                    />
-                </div>
-            }
-
-            {isKeyValidated && (
-                <div className="modal fade" id="adminsignup" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" onHide={handleFirstModalClose}>
+                <div className="modal fade" id={isKeyValidated ? 'adminsignup' :'none' } tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" onHide={handleFirstModalClose}>
                     <div className="modal-dialog modal-dialog-centered" role="document">
                         <div className="modal-content modelbg">
                             <div className="modal-header border-bottom-0">
@@ -208,21 +194,21 @@ export default function Login(props) {
                                         </div>
 
 
-                                    {emailexist === null ? null : (
-                                        emailexist ? (
-                                            <div>
-                                                <small id="emailHelp" style={{ color: "#00cc00", fontSize: "12px" }} className="form-text">
-                                                    Email is correct! &#9989;
-                                                </small>
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <small id="emailHelp" style={{ color: "tomato", fontSize: "12px" }} className="form-text">
-                                                    Email already exists
-                                                </small>
-                                            </div>
-                                        )
-                                    )}
+                                        {emailexist === null ? null : (
+                                            emailexist ? (
+                                                <div>
+                                                    <small id="emailHelp" style={{ color: "#00cc00", fontSize: "12px" }} className="form-text">
+                                                        Email is correct! &#9989;
+                                                    </small>
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    <small id="emailHelp" style={{ color: "tomato", fontSize: "12px" }} className="form-text">
+                                                        Email already exists
+                                                    </small>
+                                                </div>
+                                            )
+                                        )}
 
                                     </div>
                                     <div className="form-group">
@@ -242,7 +228,7 @@ export default function Login(props) {
                         </div>
                     </div>
                 </div>
-            )}
+
 
             {/* Secret key model  */}
             <div className="modal fade" id="seceretkey" aria-hidden="true" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -285,8 +271,8 @@ export default function Login(props) {
                                 </ul>
 
                                 <button type="submit" onClick={secretkeyfun} className="btn Secretbtn"
-                                    data-toggle='modal'
-                                    data-target='#adminsignup'
+
+                                        data-toggle="modal" data-target="#adminsignup"
                                     data-dismiss='modal'
                                 >
                                     Continue
@@ -317,70 +303,70 @@ export default function Login(props) {
                     <div className="col-lg-7 no-gutters col-11 login-div">
                         {/* <div className="container-fluid ">
                             <div className="row no-gutters d-flex justify-content-center align-items-center"> */}
-                                <div className="col-md-6 col-12 login_div1  ">
-                                    <div className="formdata ml-md-2 d-flex justify-content-center align-items-center flex-column">
-                                        <div className='loginheading'>
-                                            <img src={logoimg} width={110} height={110} />
-                                            <h3>Welcome</h3>
+                        <div className="col-md-6 col-12 login_div1  ">
+                            <div className="formdata ml-md-2 d-flex justify-content-center align-items-center flex-column">
+                                <div className='loginheading'>
+                                    <img src={logoimg} width={110} height={110} />
+                                    <h3>Welcome</h3>
+                                </div>
+
+                                <form onSubmit={loginvalidation}>
+                                    <div className='login_inputs'>
+
+                                        <div className='logininput_fields'>
+                                            <div className='inputname'>
+                                                <b>Email</b>
+                                            </div>
+                                            <div className='logininput'>
+                                                <div className='loginicon' >
+                                                    <FontAwesomeIcon icon={faUser} />
+                                                </div>
+                                                <input type="text" name='email' required
+                                                    id="email" placeholder="Enter Email"
+                                                ></input>
+                                            </div>
                                         </div>
-
-                                        <form onSubmit={loginvalidation}>
-                                            <div className='login_inputs'>
-
-                                                <div className='logininput_fields'>
-                                                    <div className='inputname'>
-                                                        <b>Email</b>
-                                                    </div>
-                                                    <div className='logininput'>
-                                                        <div className='loginicon' >
-                                                            <FontAwesomeIcon icon={faUser} />
-                                                        </div>
-                                                        <input type="text" name='email' required
-                                                            id="email" placeholder="Enter Email"
-                                                        ></input>
-                                                    </div>
-                                                </div>
-                                                <div className='logininput_fields'>
-                                                    <div className='inputname'>
-                                                        <b>Password</b>
-                                                    </div>
-                                                    <div className='loginicon' >
-                                                        <FontAwesomeIcon icon={faLock} />
-                                                    </div>
-                                                    <div className='logininput'>
-                                                        <input type="password" required
-                                                            name='password'
-                                                            id="password"
-                                                            placeholder="Enter Password"  ></input>
-                                                    </div>
-                                                </div>
-                                                {login_status && (
-                                                    <div className='login_message'>
-                                                        <div className="loginerror">
-                                                        {errormesssage}
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                <div className='logininput_fields_btn buttonn'>
-                                                    <button className='button-86' type='submit' > Login</button>
+                                        <div className='logininput_fields'>
+                                            <div className='inputname'>
+                                                <b>Password</b>
+                                            </div>
+                                            <div className='loginicon' >
+                                                <FontAwesomeIcon icon={faLock} />
+                                            </div>
+                                            <div className='logininput'>
+                                                <input type="password" required
+                                                    name='password'
+                                                    id="password"
+                                                    placeholder="Enter Password"  ></input>
+                                            </div>
+                                        </div>
+                                        {login_status && (
+                                            <div className='login_message'>
+                                                <div className="loginerror">
+                                                    {errormesssage}
                                                 </div>
                                             </div>
-                                        </form>
-                                    </div>
+                                        )}
 
-                                </div>
-                                <div className="col-md-5 col-12 ml-2">
-                                    <div className='login_image'>
-                                        <h5 >Movera</h5>
-                                        <span>Your all-in-one platform for vehicle transport management.</span>
-                                        <button type="button" className="btn button-28" onClick={handleShow} data-toggle="modal" data-target="#seceretkey">
-                                            Become Admin
-                                        </button>
-
+                                        <div className='logininput_fields_btn buttonn'>
+                                            <button className='button-86' type='submit' > Login</button>
+                                        </div>
                                     </div>
-                                </div>
-                            {/* </div>
+                                </form>
+                            </div>
+
+                        </div>
+                        <div className="col-md-5 col-12 ml-2">
+                            <div className='login_image'>
+                                <h5 >Movera</h5>
+                                <span>Your all-in-one platform for vehicle transport management.</span>
+                                <button type="button" className="btn button-28" onClick={handleShow} data-toggle="modal" data-target="#seceretkey">
+                                    Become Admin
+                                </button>
+
+                            </div>
+                        </div>
+                        {/* </div>
                         </div> */}
                     </div>
                 </div>

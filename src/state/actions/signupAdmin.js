@@ -23,23 +23,20 @@ export const signup_Admin = (signupdata) => async (dispatch) => {
     const response = await axios.post(`${localhost}/api/auth/adminsignup`, formData);
 
     const resData = response.data;
-    console.log(resData);
     if (resData) {
       dispatch({
         type: ADMIN_SIGUP_SUCCESS,
         payload: true,
       });
     }
+    return true
   } catch (error) {
     if (error.response) {
-      console.log("email already exist");
       const errorStatus = error.response.status;
       console.log("Error status:", errorStatus);
-      dispatch({
-        type: ADMIN_SIGUP_ERROR,
-        payload: false,
-      });
+
     }
+    return false
   }
 };
 
