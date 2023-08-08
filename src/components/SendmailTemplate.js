@@ -98,7 +98,7 @@ const template = [
 					<h3>Door to Door service</h3>
 				</div>
 				<div style="padding:5px">
-					<h3>$10000</h3>
+					<h3>{price}$</h3>
 				</div>
 			</div>
 
@@ -107,7 +107,7 @@ const template = [
 					<h3>Total</h3>
 				</div>
 				<div style="padding:5px">
-					<h3>$10000</h3>
+					<h3>{price}$</h3>
 				</div>
 
 			</div>
@@ -138,7 +138,7 @@ const template = [
                {carrows}
             </tbody>
         </table>
-            
+
             </div>
             <br> <br>
 				If you have any questions or would like us to match a competitor's rate please call me at 5166561474.
@@ -183,7 +183,7 @@ Regards, <br>
         subject: 'Order Confirmation',
         text: `
         <div style="width: 100%; display: flex; justify-content: center;  align-items: center;">
-        <img src="{img}" width="20%" height="100%" alt="">
+
     </div>
     <div>
         <h2 style="width: 100%; text-align: center; display:block;">
@@ -193,16 +193,16 @@ Regards, <br>
     Hi, {name}
     <p>Thank you for placing your order with {companyname} </p>
 </div> <br>
-    <div style="width: 80%;">
+    <div style="width: 100%;">
         <hr>
 
 
-			<div style=" border:1px solid black; display: flex; justify-content: space-between; margin-bottom: 10px; ">
+			<div style=" border:1px solid black; display: flex; justify-content:space-between; margin-bottom: 10px; ">
 				<div style="padding:5px ">
 					<h4>Door to Door service</h4>
 				</div>
-				<div style="padding:5px">
-					<h4>$10000</h4>
+				<div style="padding:5px" class="position:relative; right:1px;">
+					<h4>{price}$</h4>
 				</div>
 			</div>
 
@@ -211,7 +211,7 @@ Regards, <br>
 					<h4>Total</h4>
 				</div>
 				<div style="padding:5px">
-					<h4>$10000</h4>
+					<h4>{price}$</h4>
 				</div>
 
 			</div>
@@ -258,16 +258,10 @@ Sincerely, <br>
     },
     {
         id: 5,
-        subject: 'this is a dispatched template',
+        subject: 'Your Order Has Been Dispatched',
         text: `
 
 
-        <div style="width:100%; display: flex; justify-content: center;  align-items: center;">
-            <img src="{img}" width="50%"  alt="">
-        </div>
-        <div style="display: flex; justify-content: center;">
-            <h3>Your order hase been dispatched</h3>
-        </div>
         <div style="text-align: start; ">
             <h4>Hi, {name}</h4>
             <p>
@@ -288,9 +282,7 @@ Sincerely, <br>
     {
         id: 6,
         subject:"We have recieved your payment",
-        text:`<div style="width: 100%; display: flex; justify-content: center;  align-items: center;">
-        <img src="../components/pages/unnamed.png" width="20%" height="100%" alt="">
-    </div>
+        text:`
     <div>
         <h2 style="width: 100%; text-align: center; display:block;">
             Thank You</h2>
@@ -307,6 +299,31 @@ Sincerely, <br>
     {companyemail} <br>
     {companyphonono}
                 </div>`
+    },
+    {
+        id: 4,
+        subject:"Agreement for your order",
+        text:`<div style="width: 100%; display: flex; justify-content: center;  align-items: center;">
+    </div>
+
+
+    <div>
+        Hi, {name}
+        <p>kindly click on this link and fill the agreement form Thank you. <br>
+        Link: <a href="http://www.crmsmtransports.site/customeragreement?hash_id={leadid}">http://www.crmsmtransports.site/customeragreement?hash_id={leadid}</a> <br><br>
+            Please contact us at {companyphonono} with any questions! </p>
+    </div> <br>
+    Sincerely, <br>
+    <br>
+    {companyname} <br>
+    {companyemail} <br>
+    {companyphonono}
+                </div>`
+    },
+    {
+        id:0,
+        subject:'selct template',
+        text:`no template selected`
     }
 ]
 

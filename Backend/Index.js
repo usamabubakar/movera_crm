@@ -41,7 +41,7 @@ const port = 5000;
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:4000","http://localhost:3001"],
+    origin: ["http://localhost:3000", "http://localhost:4000","http://localhost:3001","http://www.crmsmtransports.site"],
     credentials: true,
   })
 );
@@ -136,13 +136,8 @@ var clients = [];
 
 
 io.listen(4000)
-Promise.all([initSocket(io), notiSocket(io)]);
-async function setupSockets() {
-  await initSocket(io);
-  await notiSocket(io);
-}
-
-setupSockets();
+// initSocket(io);
+notiSocket(io);
 
 startSSEServer();
 

@@ -21,7 +21,6 @@ import { websiteLink, localhost } from "../config/websitepath";
 // Loading user
 export const loadUser = () => (dispatch, getState) => {
 
-  console.log("loadUser Called");
   const config = getTokenConfig();
   console.log(config)
   axios.get(`${localhost}/api/auth/getuser`, config )
@@ -113,3 +112,13 @@ export const logout_user =  () => (dispatch, getState) => {
 
 }
 
+export const singleuserData=()=>async (dispatch)=>{
+
+  const config=getTokenConfig();
+  const response = await axios.get(`${localhost}/api/auth/singleuser`, config);
+  dispatch({
+    type: 'FETCH_SINGLE_USER_SUCCESS',
+    payload: response.data.data, // Assuming the API returns the user data in the response data
+  });
+
+}

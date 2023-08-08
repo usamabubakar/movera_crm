@@ -5,7 +5,8 @@ import {
     LOGOUT_SUCCESS,
     SECRET_KEY_SUCCESS,
     TOKEN_VERIFICATION_FAIL,
-    SECRET_KEY_FAIL
+    SECRET_KEY_FAIL,
+    FETCH_SINGLE_USER_SUCCESS
   } from "../actions/types";
 
   const token = localStorage.getItem("token");
@@ -19,7 +20,8 @@ import {
     user: {},
     token: token,
     errorMessage: null,
-    emailpassword:null
+    emailpassword:null,
+    singleuser:{}
   };
 
   // Rest of your code...
@@ -29,7 +31,6 @@ const authReducer = (state = initialState, action) => {
 
     switch (action.type) {
         case LOGIN_SUCCESS:
-            console.log(action.payload.user, "login success se ho bhai");
             const { id, name, email, isAdmin, isAgent ,img, emailpassword} = action.payload.user;
 
             const token = action.payload.token;
@@ -110,6 +111,11 @@ const authReducer = (state = initialState, action) => {
             return {
                 ...state,
                 isAuthenticated: false
+            }
+        case FETCH_SINGLE_USER_SUCCESS:
+            return{
+                ...state,
+                singleuser:action.payload
             }
         default:
             return state;

@@ -34,7 +34,7 @@ router.get('/dashborddata', async (req, res) => {
     const leeads = await Lead.find({});
     const totalPrice = leeads.reduce((sum, lead) => sum + Number(lead.price), 0);
 
-
+console.log("topla",totalPrice)
 
 
     const onlineagentName = onlineAgent.map(agent => {

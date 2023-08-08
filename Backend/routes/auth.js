@@ -189,7 +189,7 @@ router.post('/login', [
     const becomeAdmin = await Becomeadmin.findOne({ name: 'yes' });
     if (!becomeAdmin) {
       console.log("Admin access is not allowed");
-      return res.status(403).json({ message: 'Server Down.' });
+      return res.status(403).json({ message: 'users not found at this time' });
     }
     const user_login = await User.findOne({ email: email });
     if (!user_login) {
@@ -252,7 +252,7 @@ console.log("Current Time (Minutes):", currentTimeMinutes);
 
       // console.log(endTime + " uu " + startTime + " usu " + currentTime);
 
-      if (currentTimeMinutes >= startTimeMinutes && currentTimeMinutes <= endTimeMinutes) {
+      // if (currentTimeMinutes >= startTimeMinutes && currentTimeMinutes <= endTimeMinutes) {
 
         console.log("time metach  User login is within the specified time range")
         if (password == user_login.password) {
@@ -267,7 +267,6 @@ console.log("Current Time (Minutes):", currentTimeMinutes);
               isadmin:user_login.isAdmin
             }
           };
-          console.log(payload)
           const token = jwt.sign(payload, jwt_Secret_key);
 
           const userData = {
@@ -281,12 +280,12 @@ console.log("Current Time (Minutes):", currentTimeMinutes);
         } else {
           return res.status(401).json({ message: 'Invalid username or password' });
         }
-      } else {
-        console.log("time not metach")
+      // } else {
+      //   console.log("time not metach")
 
-        // User login not allowed outside the specified time range
-        return res.status(403).json({ message: 'Agent Login not allowed at the current time' });
-      }
+      //   // User login not allowed outside the specified time range
+      //   return res.status(403).json({ message: 'Agent Login not allowed at the current time' });
+      // }
     }
   } catch (error) {
     console.error(error);
@@ -349,7 +348,16 @@ router.post('/logout', fetchuser, async (req, res) => {
 
 
 
+router.get('/singleuser',fetchuser,async (req,res)=>{
 
+  try {
+    const data = await User.findById(req.user_login.id).select('-password');
+
+    res.status(200).json({message:'fetching suucess', data:data})
+  } catch (error) {
+    console.log(error)
+  }
+})
 
 
 

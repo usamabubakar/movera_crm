@@ -10,7 +10,6 @@ export const sendEmail = (data) => async (dispatch) => {
   try {
     const response = await axios.post(`${localhost}/api/sendemail/sendEmail`, data, config);
     // Dispatch the success action
-    console.log("usasa",response)
     // dispatch({ type: EMAIL_SEND_SUCCESS });
     dispatch({
       type: UPDATE_LEAD,

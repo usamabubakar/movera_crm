@@ -14,7 +14,6 @@ import getTokenConfig from './tokenConfig';
 
 
 
-
 export const fetchAgentData = () => async (dispatch) => {
   const token = localStorage.getItem('token');
   try {

@@ -19,8 +19,11 @@ import { ToastContainer, toast } from 'react-toastify';
 
 import { useSelector } from 'react-redux';
 
+import { fetchLead } from '../state/actions/lead';
+
 const Sidebar = (props) => {
     const userData = useSelector(state => state.auth.user);
+    const [onlineUsers, setOnlineUsers] = useState([]);
     // const admin = useSelector(state => state.auth.isAdmin);
     // const agentt= useSelector(state => state.auth.isAgent);
     const image = `C:/Users/samiMehar/Desktop/mernstack/react app/CRMdesign/crmdesign/Backend/uploads/${userData?.img}`;
@@ -38,62 +41,72 @@ const Sidebar = (props) => {
     };
 
 
-    const [socket, setsocket] = useState(null);
-    useEffect(() => {
-        const newSocket = io("http://localhost:4000"); // Connect to the server
-        console.log(newSocket);
-
-        // Set up a listener for the connection status change
-        newSocket.on("connect", () => {
-          console.log("Socket connected.");
-        });
-
-        newSocket.on("disconnect", () => {
-          console.log("Socket disconnected.");
-        });
-
-        setsocket(newSocket);
-        // Clean up: Disconnect from the server when the component unmounts
-        return () => {
-          newSocket.disconnect();
-        };
-      }, []);
-
-    const [onlineuser, setonlineuser] = useState([])
-    console.log("onlineuser", onlineuser)
-    useEffect(() => {
-        if (socket === null) return
-        socket.emit("addnewuser", userData.id)
-        socket.on("getonlineuser", (res) => {
-            setonlineuser(res)
-        })
-
-
-    }, []);
+    const [socket, setSocket] = useState(null);
     const audioPlayer = useRef(null);
+
+//   useEffect(() => {
+//     // Connect to the WebSocket server
+//     const newSocket = io("http://localhost:4000");
+
+//     newSocket.on("connect", () => {
+//       console.log("Socket connected.");
+//     });
+
+//     newSocket.on("disconnect", () => {
+//       console.log("Socket disconnected.");
+//     });
+
+//     setSocket(newSocket);
+
+//     // Clean up: Disconnect from the server when the component unmounts
+//     return () => {
+//       newSocket.disconnect();
+//     };
+//   }, []);
+
+//   useEffect(() => {
+//     if (!socket) return;
+
+//     socket.emit("addnewuser", userData.id);
+
+//     socket.on("getonlineuser", (res) => {
+//       setOnlineUsers(res);
+//     });
+
+//     return () => {
+//       socket.off("getonlineuser");
+//     };
+//   }, [socket, userData]);
+const newsocket = io("http://www.crmsmtransports.site/");
+  useEffect(() => {
+    const handleNewLeadNoti = () => {
+      playAudio();
+      toast.success("New lead added by agent!", { key: new Date().getTime() });
+
+      const pagename = 'admilead';
+      const userid = userData?.id;
+      const data = {
+        pagename: pagename,
+        id: userid
+      };
+
+      dispatch(fetchLead(data));
+    };
+
+    if (newsocket) {
+      newsocket.on("newlead_noti", handleNewLeadNoti);
+    }
+
+    return () => {
+      if (newsocket) {
+        newsocket.off("newlead_noti", handleNewLeadNoti);
+      }
+    };
+  }, []);
 
   function playAudio() {
     audioPlayer.current.play();
   }
-  const newSockett = io("http://localhost:4000");
-
-  useEffect(() => {
-
-      const handleNewLeadNoti = (res) => {
-          playAudio();
-          toast.success("New lead added by agent!", { key: new Date().getTime() });
-      };
-
-      // Add the event listener only once when the component mounts
-      newSockett.on("newlead_noti", handleNewLeadNoti);
-
-      return () => {
-          // Clean up the event listener when the component unmounts
-          newSockett.off("newlead_noti", handleNewLeadNoti);
-      };
-  }, []); // The empty dependency array ensures this effect runs only once on mount and cleans up on unmount
-
-
     useEffect(() => {
         dispatch(fetchAgentData());
     }, [dispatch]);

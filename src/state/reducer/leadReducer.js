@@ -44,7 +44,7 @@ const leadReducer = (state = initialState, action) => {
     case DELETE_LEAD:
 
       const updatedLeadsData = state.leadsData.filter(leadData => !action.payload.includes(leadData.id || leadData._id));
-      console.log(updatedLeadsData)
+
       return {
         ...state,
         leadsData: updatedLeadsData
@@ -52,6 +52,7 @@ const leadReducer = (state = initialState, action) => {
 
       case UPDATE_LEAD:
         const updateleadtid = action.payload._id;
+
         const updatedata = state.leadsData.map((lead) => {
           if (lead.id === updateleadtid) {
             return {
@@ -81,10 +82,10 @@ const leadReducer = (state = initialState, action) => {
               vehicle: action.payload.vehicle,
               price:action.payload.price,
               intialdeposite:action.payload.intialdeposite,
-              opickup:action.payload.Opickup,
-              ophonono:action.payload.Ophonono,
-              dpickup:action.payload.Dpickup,
-              dphonono:action.payload.Dphonono,
+              Opickup:action.payload.Opickup,
+              Ophonono:action.payload.Ophonono,
+              Dpickup:action.payload.Dpickup,
+              Dphonono:action.payload.Dphonono,
 
             };
           }

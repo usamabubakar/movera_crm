@@ -13,6 +13,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { logout_user } from '../../state/actions/authUser';
 import { useDispatch } from 'react-redux';
+import { fetchLead } from '../../state/actions/lead';
 import { useSelector } from 'react-redux';
 
 const SidebarAgent = (props) => {
@@ -23,31 +24,56 @@ const SidebarAgent = (props) => {
         e.preventDefault();
         console.log("click logout")
         dispatch(logout_user())
-        socket.emit('logout', userData.id);
+        // socket.emit('logout', userData.id);
 
     }
 
     const [socket, setsocket] = useState(null);
-    useEffect(() => {
-        const newsocket = io("http://localhost:5000"); // Connect to the server
-        console.log(newsocket);
-        setsocket(newsocket)
-        return () => {
-            newsocket.disconnect(); // Disconnect from the server when the component unmounts
-        };
+    // useEffect(() => {
+    //     const newsocket = io("http://localhost:4000"); // Connect to the server
+    //     console.log(newsocket);
+    //     setsocket(newsocket)
+    //     return () => {
+    //         newsocket.disconnect(); // Disconnect from the server when the component unmounts
+    //     };
 
-    }, []);
+    // }, []);
 
-    const [onlineuser, setonlineuser] = useState([])
-    console.log("onlineuser agent ", onlineuser)
-    useEffect(() => {
-        if (socket === null) return
-        socket.emit("addnewuser", userData.id)
-        socket.on("getonlineuser", (res) => {
-            setonlineuser(res)
-        })
+    // const [onlineuser, setonlineuser] = useState([])
+    // console.log("onlineuser agent ", onlineuser)
+    // useEffect(() => {
+    //     if (socket === null) return
+    //     socket.emit("addnewuser", userData.id)
+    //     socket.on("getonlineuser", (res) => {
+    //         setonlineuser(res)
+    //     })
 
-    }, [socket]);
+    // }, []);
+
+
+    const newSockett = io("http://www.crmsmtransports.site");
+
+  useEffect(() => {
+      const handleNewLeadNoti = (res) => {
+
+          const pagename = 'lead'
+        const userid = userData?.id
+        const data = {
+            pagename: pagename,
+            id: userid
+        }
+        console.log("assigne lead eurnng ")
+          dispatch(fetchLead(data));
+      };
+
+      // Add the event listener only once when the component mounts
+      newSockett.on("leadassigned", handleNewLeadNoti);
+
+      return () => {
+          // Clean up the event listener when the component unmounts
+          newSockett.off("leadassigned", handleNewLeadNoti);
+      };
+  }, []);
 
     return (
         <div className='sidebar' style={{ width: `${props.widthh}rem` }}>

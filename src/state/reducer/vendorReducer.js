@@ -23,8 +23,7 @@ const vendorReducer = (state = initialState, action) => {
             };
 
         case VENDOR_ADD_SUCCESS:
-            console.log("vendor reducer workring");
-            console.log(action.payload);
+
             return {
                 ...state,
                 vendor: [...state.vendor, action.payload],
@@ -33,7 +32,6 @@ const vendorReducer = (state = initialState, action) => {
             };
         case VENDOR_DELETE_SUCCESS:
             const vendorid = action.payload
-            console.log(vendorid + "chck the vrndor del")
             return {
                 ...state,
                 vendor: state.vendor.filter(vendors => (vendors.id || vendors._id) !== vendorid),

@@ -176,7 +176,11 @@ const checkDataMatch = (data, lead) => {
       data.destinationaddress === lead.destinationaddress &&
       data.destinationcity === lead.destinationcity &&
       data.destinationstate === lead.destinationstate &&
-      data.destinationzipcode === lead.destinationzipcode
+      data.destinationzipcode === lead.destinationzipcode &&
+      data.Opickup===lead.Opickup &&
+      data.Ophonono===lead.Ophonono &&
+      data.Dpickup===lead.Dpickup &&
+      data.Dphonono===lead.Dphonono
     );
   };
 

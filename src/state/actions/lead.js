@@ -25,19 +25,17 @@ const socket = io("http://localhost:5000", {
 
 export const fetchLead =(dataa)=>async(dispatch) => {
     try {
-    console.log(dataa)
     // const id=data.id
     // console.log(id)
     const response = await axios.get(`${localhost}/api/lead/fetchlead?page=${dataa.pagename}&id=${dataa.id}`);
 
     const data = response.data
-console.log(data.onlineadmin);
     dispatch({
         type:GET_LEADS,
         payload: data
     });
   } catch (error) {
-console.log("error")
+console.log("error in fetching ")
   }
 };
 
@@ -93,10 +91,11 @@ return true
 export const addLead = (data) =>async (dispatch) => {
 
   const config = getTokenConfig();
-
+console.log("venrder adde leads")
     try {
         const response = await axios.post(`${localhost}/api/lead/addlead`, data, config);
       const newlead=response.data.data
+
       if (response.status === 200) {
         sendNotificationToSSEServer(response.data);
         socket.emit('newlead',(newlead));
@@ -182,24 +181,24 @@ const config = getTokenConfig();
     };
 
     export const deletependingLead = (data) => async (dispatch) => {
-      console.log("froma ction oending lead",data);
+
       const config = getTokenConfig();
       try {
         const response = await axios.delete(`${localhost}/api/lead/deletependingLead/${data}`);
 
         const leadid = response.data.leadid;
-        console.log(leadid);
+
 
         dispatch({
           type: DELETE_LEAD,
           payload: leadid,
         });
-        return Promise.resolve()
+        return true
 
         // Handle success or show a notification/message
       } catch (error) {
         console.error(error); // Log the actual error for debugging purposes
-        return Promise.reject()
+        return false
 
         // Handle error or show a notification/message
       }
@@ -209,9 +208,15 @@ const config = getTokenConfig();
     export const assignLead=(data)=> async(dispatch)=>{
       try {
        const response= await axios.post(`${localhost}/api/lead/assignlead/`,data);
-       dispatch({
-        type:UPDATE_LEAD,
-       })
+       if (response.status === 200) {
+        console.log("assign lead")
+        socket.emit('leadassign',(response));
+      }
+      const updatedLead = response.data.data;
+      dispatch({
+        type: UPDATE_LEAD,
+        payload: updatedLead,
+      });
        return true
 
       } catch (error) {

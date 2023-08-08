@@ -15,6 +15,7 @@ const notification = new Schema({
         default:'Pending'
     }
 
+
 });
 
 const Notification = mongoose.model('Notification', notification);

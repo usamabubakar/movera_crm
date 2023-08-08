@@ -43,6 +43,7 @@ router.post('/addlead', fetchuser, async (req, res) => {
         howmany: req.body.howmany,
         vehicle: [],
         addBy:'Agent',
+        isAssigned:true,
         isAssignedName:name,
         Opickup:'not updated',
         Ophonono:"not updated",
@@ -60,7 +61,7 @@ router.post('/addlead', fetchuser, async (req, res) => {
         });
       }
       await newLead.save();
-     console.log(newLead)
+
       res.status(200).json({ message: "Lead added successfully", data: newLead });
     } else {
       const newLead = new Lead({
@@ -95,7 +96,6 @@ router.post('/addlead', fetchuser, async (req, res) => {
       }
 
       await newLead.save();
-
       res.status(200).json({ message: "Lead added successfully", data: newLead });
     }
 
@@ -142,7 +142,8 @@ router.get('/fetchlead', async (req, res) => {
         recieveddate: lead.recieveddate,
         isAssignedName: lead.isAssignedName,
         addBy: lead.addBy,
-        paymentstatus:lead.paymentstatus
+        paymentstatus:lead.paymentstatus,
+        isAssigned:lead.isAssigned
       }));
     } else if (pagename === 'agreement' && user.isAgent) {
       console.log("agreement");
@@ -163,7 +164,6 @@ router.get('/fetchlead', async (req, res) => {
         })),
 
       }));
-      console.log(formattedLeads);
     } else if (user.isAgent) {
       const leads = await Lead.find({ owner: userid, status: pagename });
       formattedLeads = leads.map(lead => ({
@@ -186,7 +186,7 @@ router.get('/fetchlead', async (req, res) => {
           make: vehicle.make,
           vehicletype: vehicle.vehicletype,
           modelyear: vehicle.modelyear,
-          operable:vehicle.isoperable
+          isoperable:vehicle.isoperable
         })),
         recieveddate: lead.recieveddate,
         isAssignedName: lead.isAssignedName,
@@ -196,10 +196,10 @@ router.get('/fetchlead', async (req, res) => {
         paymentstatus:lead.paymentstatus,
         price:lead.price,
         intialdeposite:lead.intialdeposite,
-        dphonono:lead.Dphonono,
-        dpickup:lead.Dpickup,
-        ophonono:lead.Ophonono,
-        opickup:lead.Opickup
+        Dphonono:lead.Dphonono,
+        Dpickup:lead.Dpickup,
+        Ophonono:lead.Ophonono,
+        Opickup:lead.Opickup
       }));
     }
     const onlineAdmin= await User.find({isAdmin:true, loggedIn:true});
@@ -274,7 +274,7 @@ router.get('/pendinglead', fetchuser, async (req, res) => {
       const leadId = req.params.leadId;
       const data = req.body;
       const { cars } = req.body;
-
+      console.log(cars)
       const user = await User.findById(req.user_login.id);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -328,7 +328,7 @@ router.get('/pendinglead', fetchuser, async (req, res) => {
           make: car.make,
           vehicletype: car.vehicletype,
           modelyear: car.modelyear,
-          isoperable:car.operable
+          isoperable:car.isoperable
         }));
       }
 
@@ -401,13 +401,15 @@ router.delete('/deletependingLead/:id', async (req, res) => {
 router.post('/assignlead', async (req, res) => {
   try {
     const data = req.body;
+    console.log(data)
     const leadIds = Array.isArray(data.selectedleadId) ? data.selectedleadId : [data.leadId];
 
     const agentId = data.agentid;
     const user = await User.findOne({_id: agentId});
     const agentName = user.name;
 
-    const assignedLeads = await Lead.updateMany(
+
+   const assignedLeads = await Lead.updateMany(
       {_id: {$in: leadIds}},
       {
         owner: agentId,
@@ -420,8 +422,9 @@ router.post('/assignlead', async (req, res) => {
     if (!assignedLeads) {
       return res.status(404).json({message: 'Leads not found'});
     }
+    const leadfind=await Lead.findById({_id:data.leadId})
 
-    res.status(200).json({message: 'Leads assigned successfully' ,data:assignedLeads});
+    res.status(200).json({message: 'Leads assigned successfully' ,data:leadfind});
     console.log("Leads assigned successfully");
   } catch (error) {
     console.error(error);
@@ -594,7 +597,8 @@ router.get('/agentactivity', async (req, res) => {
           model: vehicle.model,
           make: vehicle.make,
           vehicletype: vehicle.vehicletype,
-          modelyear: vehicle.modelyear
+          modelyear: vehicle.modelyear,
+          isoperable:vehicle.isoperable
         })),
         recieveddate: lead.recieveddate,
         isAssignedName: lead.isAssignedName,
@@ -603,7 +607,12 @@ router.get('/agentactivity', async (req, res) => {
         approvelStatus: lead.approvelStatus,
         status: lead.status,
         signature:lead.signature,
-        price:lead.price
+        price:lead.price,
+        intialdeposite:lead.intialdeposite,
+        Dphonono:lead.Dphonono,
+        Dpickup:lead.Dpickup,
+        Ophonono:lead.Ophonono,
+        Opickup:lead.Opickup
       };
     });
 

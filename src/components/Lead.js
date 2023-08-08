@@ -4,7 +4,7 @@ import { faTrashAlt, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { useState } from 'react';
 import { faEye, faEyeSlash, faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { fetchLead, addLead, deleteLead, assignLead } from '../state/actions/lead';
-import { useEffect } from 'react';
+import { useEffect,useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { updateLead } from '../state/actions/lead';
 import { ToastContainer, toast } from 'react-toastify';
@@ -227,6 +227,17 @@ function Lead(props) {
 
         },
     ];
+
+    const conditionalRowStyles = [
+        {
+            when: (row) => row.isAssigned,
+            style: {
+                backgroundColor: 'rgb(141, 232, 173)', // Change this to the desired background color
+                color: 'black', // Change this to the desired text color
+            },
+        },
+    ];
+
     const [Viewvehicle, setViewvehicle] = useState([])
 
     const viewcar = (data) => {
@@ -276,10 +287,9 @@ function Lead(props) {
                     time: formattedTime,
                     vehicle: vehicles,
                     addby: lead.addBy,
-                    rowClass: lead.isAssigned ? 'assigned-row' : ''
+                    isAssigned: lead.isAssigned
                 };
             });
-
 
             setData(dataa);
             setRecord(dataa);
@@ -423,10 +433,11 @@ function Lead(props) {
 
 
     };
+    const selectRef = useRef(null);
 
     const assignLeadd = (e) => {
         e.preventDefault()
-        const id = e.target.agentid.value
+        const id = selectRef.current.value
         const data = {
             leadId: rowidValue,
             agentid: id
@@ -1207,7 +1218,6 @@ function Lead(props) {
 
             {/* assign lead  */}
 
-
             <div class="modal fade" id="assignlead" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -1217,11 +1227,11 @@ function Lead(props) {
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <form action="" onSubmit={assignLeadd}>
+                        <form action="" >
                             <div class="modal-body">
                                 <div className="form-group">
                                     <h4>Name of agents</h4>
-                                    <select name="agentid" id="agentid" className='assignlead'>
+                                    <select name="agentid" id="agentid" className='assignlead' ref={selectRef}>
                                         <option value="" >Select</option>
 
                                         {
@@ -1235,7 +1245,7 @@ function Lead(props) {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="agent-edit-delete-btn ml-1" style={{ padding: '9px 10px' }}  >Assign</button>
+                                <button type="submit" class="agent-edit-delete-btn ml-1" style={{ padding: '9px 10px' }} onClick={assignLeadd} data-dismiss="modal">Assign</button>
 
                             </div>
                         </form>
@@ -1278,216 +1288,7 @@ function Lead(props) {
                 </div>
             </div>
 
-            {/* add lead model */}
 
-            {/* <div class="modal fade" id="addlead" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
-                <div class="modal-dialog " role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalScrollableTitle">Modal title</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-
-
-
-                        <form onSubmit={addleadfunction}>
-                            <div className="modal-body">
-                                <div className="form-group mt-n3 ">
-                                    <div className="form-group">
-                                        <label for="email1">Full Name</label>
-                                        <input type="text" className="form-control" id="name" name='name' aria-describedby="emailHelp" placeholder="Enter Full Name" />
-
-                                    </div>
-
-                                </div>
-                                <div className="form-group">
-
-                                    <label htmlFor="email">Email</label>
-                                    <div className="loadingimginput">
-                                        <input type="email" className="form-control" id="vemail" name="email" aria-describedby="emailHelp" placeholder="Enter Email"
-
-                                        />
-
-                                    </div>
-
-
-                                </div>
-
-                                <div className="form-group">
-                                    <label for="password1">Phone No:</label>
-                                    <input type="number" className="form-control" id="password" name='phoneno' placeholder="Password" />
-                                </div>
-                                <hr />
-
-                                <h4>Origin</h4>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Origin Address</label>
-                                        <input type="text" className="form-control" id="originaddress" name='originaddress' aria-describedby="emailHelp" placeholder="Enter origin address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Origin City</label>
-                                        <input type="text" className="form-control" id="origincity" name='origincity' aria-describedby="emailHelp" placeholder="Enter email" />
-
-                                    </div>
-                                </div>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Origin state</label>
-                                        <input type="text" className="form-control" id="originstate" name='originstate' aria-describedby="emailHelp" placeholder="Enter origin address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Zip code</label>
-                                        <input type="number" className="form-control" id="zipcode" name='originzipcode' aria-describedby="emailHelp" placeholder="Enter email" />
-
-                                    </div>
-                                </div>
-                                <hr />
-                                <h4>Destination</h4>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Destination Address</label>
-                                        <input type="text" className="form-control" id="desadress" name='desadress' aria-describedby="emailHelp" placeholder="Enter destination address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Destination City</label>
-                                        <input type="text" className="form-control" id="descity" name='descity' aria-describedby="emailHelp" placeholder="Enter destination city" />
-
-                                    </div>
-                                </div>
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group mr-1">
-                                        <label for="email1">Destination state</label>
-                                        <input type="text" className="form-control" id="desstate" name='desstate' aria-describedby="emailHelp" placeholder="Enter origin address" />
-
-                                    </div>
-                                    <div className="form-group ml-1">
-                                        <label for="email1">Zip code</label>
-                                        <input type="number" className="form-control" id="deszipcode" name='deszipcode' aria-describedby="emailHelp" placeholder="Enter email" />
-
-                                    </div>
-                                </div>
-                                <hr />
-                                <div className="form-group">
-                                    <h4>Ship Date</h4>
-                                    <div className="form-group">
-                                        <input type="date" className="form-control" id="shipdate" name='shipdate' placeholder="Password" />
-                                    </div>
-                                </div>
-                                <hr />
-                                <div className="form-group">
-                                    <h4>Home many Vehicle?</h4>
-                                    <select name="howmany" id="howmany" className='assignlead'>
-                                        <option value="volvo" >1</option>
-                                        <option value="saab">2</option>
-                                        <option value="mercedes">3</option>
-                                        <option value="audi">4</option>
-                                    </select>
-                                </div>
-                                <div className='form-group'>
-                                    <h4>Vehicle</h4>
-                                </div>
-                                <table >
-                                    <thead>
-                                        <tr>
-                                            <th>Model Year</th>
-                                            <th>Make</th>
-                                            <th>Model</th>
-                                            <th>Vehicle Type</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {cars.length === 0 ? (
-                                            <tr>
-                                                <td colSpan="5">No Vehicle available</td>
-                                            </tr>
-                                        ) : (
-                                            cars.map((car, index) => (
-                                                <tr key={index}>
-                                                    <td>{car.year}</td>
-                                                    <td>{car.make}</td>
-                                                    <td>{car.model}</td>
-                                                    <td>{car.typee}</td>
-                                                    <td>
-                                                        <button className='toglebtn' onClick={() => deleteCar(index)}>Delete</button>
-                                                    </td>
-                                                </tr>
-                                            ))
-                                        )}
-                                    </tbody>
-                                </table>
-
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group">
-                                        <label for="email1">Model Year</label>
-                                        <input
-                                            type="text"
-                                            className="form-control mr-1"
-                                            name="year"
-                                            id="year"
-                                            value={year}
-                                            onChange={(e) => setYear(e.target.value)} placeholder="Enter model year" />
-
-                                    </div>
-                                    <div className="form-group ">
-                                        <label for="email1">Make</label>
-                                        <input type="text"
-                                            name="make"
-                                            className="form-control ml-1"
-                                            id="make"
-                                            value={make}
-                                            onChange={(e) => setMake(e.target.value)} placeholder="Enter make" />
-
-                                    </div>
-                                </div>
-
-                                <div className='d-flex justify-content-between'>
-                                    <div className="form-group ">
-                                        <label for="email1">Model</label>
-                                        <input
-                                            type="text"
-                                            className="form-control mr-1"
-                                            name="model"
-                                            id="model"
-                                            value={model}
-                                            onChange={(e) => setModel(e.target.value)} placeholder="Enter model " />
-
-                                    </div>
-                                    <div className="form-group ">
-                                        <label for="email1">Type</label>
-                                        <input
-                                            type="text"
-                                            name="model"
-                                            className="form-control ml-1"
-                                            id="type"
-                                            value={typee}
-                                            onChange={(e) => setTypee(e.target.value)} placeholder="Enter type" />
-
-                                    </div>
-                                </div>
-                                <button className='toglebtn ' type='button' onClick={handleAddCar} >Add Car</button>
-                            </div>
-                            <div className="modal-footer mt-n4 border-top-0 d-flex justify-content-center">
-                                <button type="submit" className="btn button-86" style={{ color: 'white' }} >Submit</button>
-                            </div>
-                        </form>
-
-                    </div>
-                </div>
-            </div> */}
-
-            {/* // end */}
-            {/* // assign lead */}
-
-
-
-            {/* delete model  */}
 
 
 
@@ -1538,7 +1339,7 @@ function Lead(props) {
                         fixedHeader
                         responsive
                         highlightOnHover
-
+                        conditionalRowStyles={conditionalRowStyles}
                     />
                 </div>
             </div>

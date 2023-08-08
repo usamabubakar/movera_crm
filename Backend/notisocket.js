@@ -8,8 +8,11 @@ const notiSocket =(io) => {
     io.on("connection", (socket) => {
         // console.log("socke listen ne lead added" ,io)
         socket.on("newlead", (newLeadData) => {
-            console.log("new lead added in socket", newLeadData)
             io.emit("newlead_noti", newLeadData);
+          });
+          socket.on("leadassign", (newLeadData) => {
+            console.log("lead assign on asmjne ")
+            io.emit("leadassigned", newLeadData);
           });
     })
 

@@ -50,100 +50,153 @@ const [pagerow, setpagerow]=useState('')
 
 
 
-    const columns = [
 
+const columns = [
+    {
+        name: 'Id',
+        selector: 'id',
+        maxWidth: '30px',
+    },
 
+    {
+        name: 'Full Name',
+        selector: row => row.name,
+        minWidth: '150px'
+    },
+    {
+        name: 'Email',
+        selector: row => row.email,
+        minWidth: '250px',
 
-        {
-            name: 'Id',
-            selector: 'id',
-            maxWidth: '30px',
-        },
+    },
+    {
+        name: 'Phone No',
+        selector: row => row.phoneno,
+        minWidth: '200px'
+    },
+    {
+        name: 'Origin City',
+        selector: row => row.origincity,
+        minWidth: "150px"
+    },
+    {
+        name: 'Origin address',
+        selector: row => row.originaddress,
+        minWidth: '250px'
+    },
 
-        {
-            name: 'Full Name',
-            selector: row => row.name,
-            minWidth: '150px'
-        },
-        {
-            name: 'Email',
-            selector: row => row.email,
-            minWidth: '250px',
+    {
+        name: 'Origin State',
+        selector: row => row.originstate,
+        minWidth: '150px'
+    },
+    {
+        name: 'Origin ZipCode',
+        selector: row => row.originzipcode,
+        minWidth: "150px"
+    },
+    {
+        name: 'Destination City',
+        selector: row => row.destinationcity,
+        minWidth: "150px"
+    },
+    {
+        name: 'Destination Address',
+        selector: row => row.destinationaddress,
+        minWidth: "250px"
+    },
+    {
+        name: 'Destination State',
+        selector: row => row.destinationstate,
+        minWidth: "150px"
+    },
+    {
+        name: 'Destination ZipCode',
+        selector: row => row.destinationzipcode,
+        minWidth: "150px"
+    },
+    {
+        name: 'Ship Date',
+        selector: row => row.shipdate,
+        minWidth: '150px'
+    },
+    {
+        name: 'Price',
+        selector: row => row.price,
+        minWidth: '70px'
+    },
+    {
+        name: 'Initial deposite',
+        selector: row => row.intialdeposit,
+        minWidth: '70px'
+    },
+    {
+        name: 'Pickup person name',
+        selector: row => row.opickup,
+        minWidth: '200px'
+    },
+    {
+        name: 'Pickup person no',
+        selector: row => row.ophonono,
+        minWidth: '200px'
+    },
+    {
+        name: 'Dropoff person name',
+        selector: row => row.dpickup,
+        minWidth: '200px'
+    },
+    {
+        name: 'Dropoff person no',
+        selector: row => row.dphonono,
+        minWidth: '200px'
+    },
+    {
+        name: 'Total Vehicles',
+        cell: (row) => (
+            <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
+                <button className='agent-edit-delete-btn ml-1' onClick={() => viewcar(row.vehicle)} type='button' data-toggle="modal" data-target="#viewcars">View Vehicles</button>
+            </div>
+        ),
+        center: true,
+        minWidth: '200px'
+    },
 
-        },
-        {
-            name: 'Phone No',
-            selector: row => row.phoneno,
-            minWidth: '200px'
-        },
-        {
-            name: 'Assigned To',
-            selector: row => row.assignto,
-            minWidth: '150px'
-        },
-        {
-            name: 'Lead By',
-            selector: row => row.addby,
-            minWidth: "150px"
-        },
-        {
-            name: 'Ship Date',
-            selector: row => row.shipdate,
-            minWidth: '150px'
-        },
-        {
-            name: 'Total Vehicles',
-            cell: (row) => (
-                <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
-                    <button className='agent-edit-delete-btn ml-1' onClick={() => viewcar(row.vehicle)} type='button' data-toggle="modal" data-target="#viewcars">View Vehicles</button>
-                </div>
-            ),
+    {
+        name: 'Action',
 
-            //     <table className='text-center data-table'>
-            //         <thead>
-            //             <tr>
-            //                 <th>Make</th>
-            //                 <th>Model</th>
-            //                 <th>Model Year</th>
-            //                 <th>Vehicle Type</th>
-            //             </tr>
-            //         </thead>
-            //         <tbody>
-            //             {row.vehicle.split(', ').map((vehicle, index) => {
-            //                 const [make, model, modelYear, vehicleType] = vehicle.split(' ');
-            //                 return (
-            //                     <tr key={index}>
-            //                         <td>{make}</td>
-            //                         <td>{model}</td>
-            //                         <td>{modelYear}</td>
-            //                         <td>{vehicleType}</td>
-            //                     </tr>
-            //                 );
-            //             })}
-            //         </tbody>
+        cell: (row) => (
+            <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
+                <button className='agent-edit-delete-btn d-flex align-items-center '
+                    disabled={row.approvalStatus === 'Not Approved' || row.approvalStatus === 'Pending'}
+                    data-toggle="modal"
+                    data-target={
+                        row.price == 0
+                            ? "#priceerror" : "#vendoremail"
+                    }
+                >
+                    <div className='mailcount'>{row.mailcount}</div>
+                    Send Email</button>
+                <button className='agent-edit-delete-btn ml-1' type='button' data-toggle="modal" data-target="#updatelead">Update</button>
+                <button className='agent-edit-delete-btn ml-1'  type='button' data-toggle="modal"
+                    data-target={
+                        row.price == 0
+                            ? "#priceerror"
+                            : row.mailcount == 0
+                                ? "#oneemail"
+                                : "#updatestatus"
+                    }
+                >Update Status</button>
+            </div>
+        ),
+        minWidth: '400px',
+        center: true
 
-            //     </table>
-            //     // <div className=' d-flex cell-button' style={{ whiteSpace: 'nowrap' }}>
-            //     //     <button className='agent-edit-delete-btn ml-1' type='button' data-toggle="modal" data-target="#assignlead" onClick={() => getRowidValue(row.leadId)} >Assign Lead</button>
-
-            //     // </div>
-
-            // ),
-            center: true,
-            minWidth: '200px'
-        },
-        {
-            name: 'Received Date',
-            selector: row => row.recieveddate,
-            minWidth: '200px'
-
-        },
-
-
-    ];
+    },
+];
 
 
     const [record, setRecord] = useState([]);
+
     const formatLeadData = (leadData) => {
         if (leadData && Array.isArray(leadData)) {
             return leadData.map((lead, index) => {
@@ -154,7 +207,7 @@ const [pagerow, setpagerow]=useState('')
                     ? lead.vehicle
                         .map(
                             (vehicle) =>
-                                `${vehicle.make} ${vehicle.model} ${vehicle.modelyear} ${vehicle.vehicletype}`
+                                `${vehicle.make} ${vehicle.model} ${vehicle.modelyear} ${vehicle.vehicletype} ${vehicle.isoperable}`
                         )
                         .join(', ')
                     : '';
@@ -165,20 +218,31 @@ const [pagerow, setpagerow]=useState('')
                     name: lead.fullname,
                     email: lead.email,
                     phoneno: lead.phoneno,
-                    assignto: lead.isAssignedName,
+                    origincity: lead.origincity,
+                    originaddress: lead.originaddress,
+                    originstate: lead.originstate,
+                    originzipcode: lead.originzipcode,
+                    destinationcity: lead.destinationcity,
+                    destinationaddress: lead.destinationaddress,
+                    destinationstate: lead.destinationstate,
+                    destinationzipcode: lead.destinationzipcode,
                     shipdate: lead.shipdate,
-                    recieveddate: formattedDate,
-                    time: formattedTime,
                     vehicle: vehicles,
-                    addby: lead.addBy,
-                    signature:lead.signature,
-                    price:lead.price,
-                    rowClass: lead.isAssigned ? 'assigned-row' : '',
+                    mailcount: lead.mailcount,
+                    price: lead.price,
+                    approvalStatus: lead.approvelStatus,
+                    intialdeposit: lead.intialdeposite,
+                    opickup: lead.Opickup,
+                    ophonono: lead.Ophonono,
+                    dpickup: lead.Dpickup,
+                    dphonono: lead.Dphonono,
+                    rowClass: lead.isAssigned ? 'assigned-row' : ''
                 };
             });
         }
         return [];
     };
+
     useEffect(() => {
         return () => {
           setActiveTab('leads');
@@ -194,15 +258,6 @@ const [pagerow, setpagerow]=useState('')
             setRecord(formattedLeads);
         }
     }, [agentactivitydata]);
-
-
-
-
-
-
-
-
-
 
 
 
@@ -263,7 +318,7 @@ const [pagerow, setpagerow]=useState('')
         if (tab === 'cancle') {
             const data = {
                 id: agentId,
-                page: 'Cancle'
+                page: 'Cancel'
             };
             dispatch(agentactivity(data));
         }
@@ -310,17 +365,19 @@ const [pagerow, setpagerow]=useState('')
                                         <th>Model</th>
                                         <th>Model Year</th>
                                         <th>Vehicle Type</th>
+                                        <th>Isoperable?</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {Viewvehicle.map((vehicle, index) => {
-                                        const [make, model, modelyear, vehicletype] = vehicle.split(' ');
+                                        const [make, model, modelyear, vehicletype,operable] = vehicle.split(' ');
                                         return (
                                             <tr key={index}>
                                                 <td>{make}</td>
                                                 <td>{model}</td>
                                                 <td>{modelyear}</td>
                                                 <td>{vehicletype}</td>
+                                                <td>{operable}</td>
                                             </tr>
                                         );
                                     })}
@@ -452,7 +509,7 @@ const [pagerow, setpagerow]=useState('')
                                 <FontAwesomeIcon icon={faListAlt} />
 
                             </button>
-                            {activeTab === 'potential' && <span>Potential</span>}
+                            {activeTab === 'potential' && <span>Completed</span>}
                         </div>
 
                         <div className='trackbutton d-flex justify-content-center align-items-center flex-column'>
