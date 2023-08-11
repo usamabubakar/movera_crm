@@ -1,50 +1,61 @@
-// import { RECEIVE_MESSAGE } from './types';
-// import io from 'socket.io-client';
+import axios from 'axios';
+import {MSG_SEND,FETCH_MSG} from './types';
+import getTokenConfig from './tokenConfig';
+import { websiteLink, localhost } from "../config/websitepath";
 
-// const socket = io("http://localhost:5000", {
-//   withCredentials: true,
-//   extraHeaders: {
-//     "my-custom-header": "abcd"
-//   }
-// });
 
-// export const connectToChatServer = (userId) => {
-//   return (dispatch) => {
-//     console.log("agent connsted " + userId)
-//     socket.emit('userConnected', userId);
-//     socket.on('receive_message', (data) => {
-//         console.log("messag recive");
-//       const { senderId, message } = data;
-//       console.log("message from soket io " + data)
-//       dispatch(receiveMessage({ senderId, message }));
-//     });
-//   };
-// };
+export const sendmsg = (data) => async (dispatch) => {
+console.log("msg from admin", data)
+  const config = getTokenConfig();
+  try {
+    const response = await axios.post(`${localhost}/api/chat/msg`, data, config);
+    // Dispatch the success action
+    // dispatch({ type: EMAIL_SEND_SUCCESS });
+    console.log("sendmsg", response.data)
+    dispatch({
+      type: MSG_SEND,
+      payload: response.data.messages,
+    });
+    return true;
+  } catch (error) {
+    console.log("error in email:", error);
+    // dispatch({ type: EMAIL_SEND_FAILURE, payload: error.message });
+    return false;
+  }
+};
 
-// export const sendMessage = (data) => {
-//   return (dispatch) => {
-//     const { senderId, recipientId, message } = data;
-//     console.log(data)
-//     socket.emit('send_message', { senderId, recipientId, message });
-//     dispatch(sendMessageSuccess(message));
-//   };
-// };
+export const fetchmsg = (data) => async (dispatch) => {
+    console.log("fecthin", data)
+    const firstid=data.senderId
+    const secondid=data.recipientId
+    console.log(firstid, secondid, data)
+      const config = getTokenConfig();
+      try {
+        const response = await axios.get(`${localhost}/api/chat/findchat/${firstid}/${secondid}`, config);
+    console.log("fetching msgs", response.data);
+        // Dispatch the success action
+        if (response.data && response.data.messages !== null && response.data.messages !== undefined) {
+          // Dispatch the fetched messages
+          dispatch({
+            type: FETCH_MSG,
+            payload: response.data.messages,
+          });
+        } else {
+          // If 'messages' property is not present or is null/undefined, dispatch an empty array
+          dispatch({
+            type: FETCH_MSG,
+            payload: [],
+          });
+        }
 
-// export const receiveMessage = (data) => {
-//   const { senderId, message } = data;
-//   console.log("sokect io send mess" + message);
-//   console.log(senderId)
-//   console.log("messag reciee")
-//   return {
-//     type: RECEIVE_MESSAGE,
-//     payload: { senderId, message },
-//   };
-// };
+        return true; // Indicate success
+      } catch (error) {
+        console.log("error in email:", error);
+        dispatch({
+          type: FETCH_MSG,
+          payload: [],
+        });
+        return false;
+      }
+    };
 
-// export const sendMessageSuccess = (message) => {
-//     // console.log(message)
-//   return {
-//     type: 'SEND_MESSAGE_SUCCESS',
-//     payload: message,
-//   };
-// };

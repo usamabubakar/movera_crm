@@ -29,29 +29,48 @@ const SidebarAgent = (props) => {
     }
 
     const [socket, setsocket] = useState(null);
+
     // useEffect(() => {
-    //     const newsocket = io("http://localhost:4000"); // Connect to the server
-    //     console.log(newsocket);
-    //     setsocket(newsocket)
+    //     // Connect to the WebSocket server
+    //     const newSocket = io("http://localhost:4000");
+
+    //     newSocket.on("connect", () => {
+    //       console.log("Socket connected.");
+    //     });
+
+    //     newSocket.on("disconnect", () => {
+    //       console.log("Socket disconnected.");
+    //     });
+
+    //     setsocket(newSocket);
+
+    //     // Clean up: Disconnect from the server when the component unmounts
     //     return () => {
-    //         newsocket.disconnect(); // Disconnect from the server when the component unmounts
+    //       newSocket.disconnect();
     //     };
+    //   }, []);
 
-    // }, []);
 
-    // const [onlineuser, setonlineuser] = useState([])
-    // console.log("onlineuser agent ", onlineuser)
+    const [onlineuser, setonlineuser] = useState([])
+    console.log("onlineuser agent ", onlineuser)
+
     // useEffect(() => {
-    //     if (socket === null) return
-    //     socket.emit("addnewuser", userData.id)
+    //     if (!socket || !userData.id) return; // Check if userData.id is available
+
+    //     console.log("emitting addnewuser for agent");
+    //     socket.emit("addnewuser", userData.id);
+
     //     socket.on("getonlineuser", (res) => {
-    //         setonlineuser(res)
-    //     })
+    //       setonlineuser(res);
+    //     });
 
-    // }, []);
+    //     return () => {
+    //       socket.off("getonlineuser");
+    //     };
+    // },[]); // Include socket and userData.id in the dependency array
 
 
-    const newSockett = io("http://www.crmsmtransports.site:4000");
+    const newSockett = io("http://www.crmsmtransports.site");
 
   useEffect(() => {
       const handleNewLeadNoti = (res) => {
@@ -157,7 +176,7 @@ const SidebarAgent = (props) => {
                         </span>
                     </NavLink>
                 </div>
-                <div className="menuitems">
+                 <div className="menuitems">
                     <NavLink to="/cancelleads" className='anchortag' style={{ textDecoration: 'none' }}>
                         <div className="menuicon">
                             <FontAwesomeIcon icon={faTrashAlt} />

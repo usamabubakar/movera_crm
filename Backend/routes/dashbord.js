@@ -21,7 +21,6 @@ router.get('/dashborddata', async (req, res) => {
     const admin= await User.find({isAdmin:true});
     const onlineAgent= await User.find({isAgent:true, loggedIn:true});
     const onlineAdmin= await User.find({isAdmin:true, loggedIn:true});
-
     const onlineAgentCount=onlineAgent.length;
     const agentCount = agent.length;
     const leadCount = leads.length;
@@ -33,9 +32,6 @@ router.get('/dashborddata', async (req, res) => {
     });
     const leeads = await Lead.find({});
     const totalPrice = leeads.reduce((sum, lead) => sum + Number(lead.price), 0);
-
-console.log("topla",totalPrice)
-
 
     const onlineagentName = onlineAgent.map(agent => {
       return {
@@ -63,7 +59,8 @@ const allData={
     vendorcount:vendorCount,
     admincount:adminCount,
     onlineadmin:onlineadmin,
-    totalprice:totalPrice
+    totalprice:totalPrice,
+
 
 }
 

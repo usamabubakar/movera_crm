@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { emailchecker } from '../state/actions/signupAdmin';
 import { useEffect } from 'react';
 import { updateAgent } from '../state/actions/agentCrud';
-import { sendEmail } from '../state/actions/email';
+import { sendEmail ,sendEmailtoagentorvendor} from '../state/actions/email';
 
 
 
@@ -37,6 +37,7 @@ function Agentt(props) {
     const emailsent = useSelector(state => state.emailsent.emailsend);
     const admindata=useSelector(state=>state.auth.user)
 // satest
+const userData = useSelector(state => state.auth.user);
 
 
 
@@ -309,8 +310,8 @@ function Agentt(props) {
             return newData;
         });
     };
-    const sendEmailfuntion = async (data) => {
-        console.log("email function");
+    const sendEmail = async (data) => {
+        console.log("email function agent");
         const { email, password, starttime, endtime } = data;
         const dataa = {
             id: data[0],
@@ -320,7 +321,7 @@ function Agentt(props) {
             endtime: data[5],
         };
         try {
-            const isEmailSent = await dispatch(sendEmail(dataa));
+            const isEmailSent = await dispatch(sendEmailtoagentorvendor(dataa));
             if (isEmailSent) {
                 toast.success("Email Sent Successfully...!");
             } else {
@@ -337,7 +338,7 @@ function Agentt(props) {
 const [empass, setEmpass] = useState();
 const setEmailpassword=async ()=>{
 
-    const empas =  {empas : empass, id : admindata._id}
+    const empas =  {empas : empass, id : userData.id}
 
     console.log(empas, "set email called")
 
@@ -481,7 +482,7 @@ const setEmailpassword=async ()=>{
                         type="button"
                         class="agent-edit-delete-btn ml-1"
                         style={{ padding: '9px 10px' }}
-                        onClick={() => sendEmailfuntion(editData)}
+                        onClick={() => sendEmail(editData)}
                         data-dismiss="modal"
                     >
                         Send

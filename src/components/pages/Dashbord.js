@@ -49,14 +49,11 @@ export default function Dashborad() {
     const notificationn = useSelector((state) => state.notification.notification);
     const leads = useSelector(state => state.leads.leadsData);
 
-
     const onlineadmin = useSelector(state => state.dashborddata.onlineAdmin);
     const price = useSelector(state => state.dashborddata.price);
-
-
     const userData = useSelector(state => state.auth.user);
-
     const [notificationnn, setNotificationnn] = useState([]);
+
 
     useEffect(() => {
         console.log("get notif")
@@ -134,7 +131,7 @@ export default function Dashborad() {
 
     useEffect(() => {
         dispatch(Dashboard());
-console.log("dashbord")
+
     }, [dispatch]);
 
 

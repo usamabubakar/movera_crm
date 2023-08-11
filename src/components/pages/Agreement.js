@@ -72,6 +72,10 @@ function Agreement() {
         setIsExpanded(!isExpanded);
     };
     const handleCheckboxChange = (event) => {
+        if (!signature) {
+            alert('Please save the signature first.');
+            return;
+          }
         setIsChecked(event.target.checked);
     };
 
@@ -85,7 +89,6 @@ function Agreement() {
         e.preventDefault()
         const signatureImage = signatureRef.current.toDataURL();
         setsignature(signatureImage)
-
     };
 
 
@@ -350,7 +353,7 @@ function Agreement() {
                         <form onSubmit={handleFormSubmit}>
                             <div className="container agreement d-flex justify-content-center align-items-center">
                                 <div className="row d-flex justify-content-center align-items-center">
-                                    <div className="col-6">
+                                    <div className="col-md-8 col-12">
                                         <div>
                                             <Accordion>
                                                 <AccordionSummary style={{ background: '#0c2556', color: 'white' }} onClick={handleToggle} className=' d-flex justify-content-between align-items-center'>
@@ -529,6 +532,7 @@ function Agreement() {
                                                         </div>
                                                     </div>
                                                     <div>
+
                                                         <input type="checkbox" required checked={isChecked} onChange={handleCheckboxChange} /> I Agreed to the all Terms And Condition mention below
                                                     </div>
                                                 </AccordionDetails>

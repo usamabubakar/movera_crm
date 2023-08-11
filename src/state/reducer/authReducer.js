@@ -101,7 +101,6 @@ const authReducer = (state = initialState, action) => {
                     secretKey: action.payload
                 }
         case LOGIN_FAIL:
-            console.log(action.payload);
             return {
                 ...state,
                 errorMessage: action.payload.message

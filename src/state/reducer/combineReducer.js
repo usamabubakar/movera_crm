@@ -30,7 +30,8 @@ const rootReducer = combineReducers({
   dashborddata:dashbordReducer,
   notification:leadReducer,
   activitydata:agentActivityReducer,
-  customerdata:agreementReducer
+  customerdata:agreementReducer,
+  msg:messageReducer
 
 
 });

@@ -66,7 +66,7 @@ router.post('/signup', [
 
 router.post('/secretadminkey', (req, res) => {
   const key = req.body.key;
-  console.log(key)
+
 
 
   try {
@@ -99,7 +99,7 @@ router.post('/adminsignup', [
 
 
 ],upload.single('img'), async (req, res) => {
-  console.log(req.body.email, req.body.name, req.body.password, req.file.filename);
+
   // const validation_result = validationResult(req);
   // console.log(validation_result)
   // if (!validation_result.isEmpty()) {
@@ -108,11 +108,9 @@ router.post('/adminsignup', [
   // console.log(validation_result)
   // if everything ok then we create admin
   try {
-    // check the email already exist
-    console.log("chekin try fun")
+
     const email_uniqueness_validation = await User.findOne({ email: req.body.email })
     if (email_uniqueness_validation) {
-      console.log("emial already exist")
       return res.status(400).json({ message: "Email already exist" })
     }
 

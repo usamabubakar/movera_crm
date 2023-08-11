@@ -57,7 +57,7 @@ export default function Login(props) {
     const secretkeyfun = async (e) => {
         e.preventDefault();
         const keyno = key.join('');
-        console.log(keyno);
+       
         try {
             const isKeyValid = await dispatch(secretkey(keyno)); // Wait for the secret key action to complete
             if (isKeyValid) {

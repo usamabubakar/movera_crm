@@ -9,14 +9,14 @@ const initialState = {
   totalleads: null,
   payment:null,
   price:null,
+  alladmin:[]
 };
 
 const dashbordReducer = (state = initialState, action) => {
   switch (action.type) {
     case DASHBORD_DATA:
       const onlineadmin =action.payload.onlineadmin
-      console.log("chking online ", onlineadmin)
-      const { onlineAgentNames , data , payment, price} = action.payload;
+      const { onlineAgentNames , data , payment, price,admins} = action.payload;
       return {
         ...state,
         onlineagent: onlineAgentNames,
@@ -27,6 +27,7 @@ const dashbordReducer = (state = initialState, action) => {
         payment:payment,
         onlineAdmin:onlineadmin,
         price:action.payload.totalprice,
+        alladmin:admins
       };
 
     default:

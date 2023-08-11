@@ -13,19 +13,57 @@ const User = require('../models/User');
 router.post('/sendEmail', fetchuser,async(req, res) => {
   try{
   const {agentid, id, leadid, customeremail, email, password ,text ,starttime,endtime, subject  } = req.body;
-console.log(req.body)
   const user= await User.findById(req.user_login.id);
   const lead = await Lead.findOne({_id:leadid});
-  console.log(user)
+  // console.log(req.body)
+//   const transporter = nodemailer.createTransport({
+//     // host: 'smtp.titan.email',
+//     name:'mail.hslogistics.org',
+//     host:'mail.hslogistics.org',
+//     port: 465,
+//     secure: true,
+//     auth: {
+//         user: user.email,
+//         pass: user.emailpassword
+//     }
+// });
+let smtpSettings;
+if (user.email.endsWith("hslogistics.org")) {
+    smtpSettings = {
+        name:'mail.hslogistics.org',
+        host: "mail.hslogistics.org",
+        port: 465,
+        secure: true,
+        auth: {
+            user: user.email,
+            pass: user.emailpassword
+        }
+    };
+} else if (user.email.endsWith("smtransports.us")) {
+    smtpSettings = {
+        host: "smtp.titan.email",
+        port: 465, // Replace with Titan's port
+        secure: true,
+        auth: {
+            user: user.email,
+            pass: user.emailpassword
+        }
+    };
+} else {
+    // If neither domain matches, use Gmail's SMTP settings
+    smtpSettings = {
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: user.email,
+            pass: user.emailpassword
+        }
+    };
+}
 
-  const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    auth: {
-        user: user.email,
-        pass: user.emailpassword
-    }
-});
+// Create the transporter using the selected SMTP settings
+const transporter = nodemailer.createTransport(smtpSettings);
   if(user.isAdmin){
     console.log('Reached sendEmail endpoint admin ' );
   const chekagentorvendor= await User.findById(id);
@@ -87,15 +125,16 @@ console.log("vendore meeil")
     `
     ,
   };
-  chekagentorvendor.emailsent=true
-  await chekagentorvendor.save();
-  transporter.sendMail(mailOptions, (error, info) => {
+  transporter.sendMail(mailOptions, async(error, info) => {
     if (error) {
       console.error(error);
       res.status(500).json({ success: false, error: 'Failed to send email' });
     } else {
       console.log('Email sent: ' + info.response);
-      res.status(200).json({ success: true, message: 'Email sent successfully'});
+      chekagentorvendor.emailsent=true
+      await chekagentorvendor.save();
+      const vendordata=await User.findById(id);
+      res.status(200).json({ success: true, message: 'Email sent successfully', data:vendordata});
     }
   });
 
@@ -115,15 +154,17 @@ console.log("vendore meeil")
       Job End time :  ${endtime}
       `
     };
-    chekagentorvendor.emailsent=true
-    await chekagentorvendor.save();
     transporter.sendMail(mailOptions,async (error, info) => {
       if (error) {
         console.error(error);
         res.status(500).json({ success: false, error: 'Failed to send email' });
       } else {
         console.log('Email sent: ' + info.response);
-        res.status(200).json({ success: true, message: 'Email sent successfully'});
+        chekagentorvendor.emailsent=true
+        await chekagentorvendor.save();
+      const agentdata=await User.findById(id);
+
+        res.status(200).json({ success: true, message: 'Email sent successfully', data:agentdata});
       }
     });
 

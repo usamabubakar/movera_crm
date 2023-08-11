@@ -11,9 +11,10 @@ const User = require('../models/User');
 
 // Define your route for sending the email
 router.get('/fetchagreementleaddata', async (req, res) => {
+  console.log("fetching agrrement")
   try {
     const { hash_id } = req.query; // Access the hash_id parameter from the query
-    console.log(hash_id);
+    console.log("this led id",hash_id);
 
     if (hash_id.length !== 24) {
       return res.status(400).json({ error: 'Invalid hash_id' });

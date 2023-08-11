@@ -48,6 +48,7 @@ const agentReducer = (state = initialState, action) => {
                     starttime: action.payload.starttime,
                     endtime: action.payload.endtime,
                     phoneno:action.payload.phoneno,
+                    emailsent:action.payload.emailsent,
                     emailpassword:action.payload.emailpassword
                   };
                 }

@@ -22,7 +22,7 @@ import { websiteLink, localhost } from "../config/websitepath";
 export const loadUser = () => (dispatch, getState) => {
 
   const config = getTokenConfig();
-  console.log(config)
+
   axios.get(`${localhost}/api/auth/getuser`, config )
       .then(res => dispatch({
           type: USER_LOADED,
@@ -38,7 +38,7 @@ export const loadUser = () => (dispatch, getState) => {
 
 
 export const login_user = (details) => async (dispatch) => {
-  console.log("login action working")
+
   const config = {
     headers: {
       'Content-Type': 'application/json'
@@ -50,7 +50,7 @@ export const login_user = (details) => async (dispatch) => {
   const response = await axios.post(`${localhost}/api/auth/login`, body_data_from_user, config);
   const token = response.data.token;
   const user = response.data.userdata;
-  console.log("syau", )
+
 
     dispatch({
       type: LOGIN_SUCCESS,
@@ -61,7 +61,6 @@ export const login_user = (details) => async (dispatch) => {
       message: err.response.data,
       status: err.response.status
     };
-    console.log(error)
     dispatch({
       type: LOGIN_FAIL,
       payload: error
@@ -75,7 +74,6 @@ export const login_user = (details) => async (dispatch) => {
 export const secretkey = (key) => async (dispatch) => {
 
   try {
-    console.log(key)
 
     const secret_key_response = await axios.post(`${localhost}/api/auth/secretadminkey`, { key })
     const results = secret_key_response;

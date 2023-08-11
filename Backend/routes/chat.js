@@ -51,24 +51,28 @@ router.get('/finduserchat/:userid',async(req, res)=>{
    }
 
 })
-router.get('/findchat/:firstid/:secondid',async(req, res)=>{
-    const {firstid,secondid}=req.params;
-    console.log(firstid, secondid)
-   try {
-    const chat = await Chat.findOne({
-        members: { $all: [firstid, secondid] },
-      });
-      console.log(chat);
-    res.status(200).json(chat)
-   } catch (error) {
-    console.log(error)
-   }
 
-})
+router.get('/findchat/:firstid/:secondid', async (req, res) => {
+  const { firstid, secondid } = req.params;
+  console.log("idss", req.params)
+  try {
+    const chat = await Chat.findOne({
+      members: { $all: [firstid, secondid] },
+    });
+
+    res.status(200).json(chat);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 router.post('/msg', async (req, res) => {
-    const { chatid, senderid, senderType, text, receiverid } = req.body;
-    console.log(req.body);
+    const senderid=req.body.senderId
+    const receiverid=req.body.recipientId
+    const text=req.body.message
+    console.log("reques body data", senderid, receiverid,text);
 
     try {
       let chat = await Chat.findOne({

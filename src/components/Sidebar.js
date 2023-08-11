@@ -63,21 +63,25 @@ const Sidebar = (props) => {
 //       newSocket.disconnect();
 //     };
 //   }, []);
+  const [onlineuser, setonlineuser] = useState([])
 
 //   useEffect(() => {
-//     if (!socket) return;
+//     if (!socket || !userData.id) return; // Check if userData.id is available
 
+//     console.log("emitting addnewuser for agent");
 //     socket.emit("addnewuser", userData.id);
 
 //     socket.on("getonlineuser", (res) => {
-//       setOnlineUsers(res);
+//       setonlineuser(res);
 //     });
 
 //     return () => {
 //       socket.off("getonlineuser");
 //     };
-//   }, [socket, userData]);
-const newsocket = io("http://www.crmsmtransports.site:4000");
+// },[]);
+
+
+const newsocket = io("http://www.crmsmtransports.site/");
   useEffect(() => {
     const handleNewLeadNoti = () => {
       playAudio();
