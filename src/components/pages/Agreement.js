@@ -37,34 +37,43 @@ function Agreement() {
     }
 
 
+//  Usama  ka pdf download
+    // const downloadPDF = () => {
+    //     const input = document.getElementById('invoicee');
+    //     const pdfOptions = {
+    //       margin: 10,
+    //       filename: 'summary.pdf',
+    //       image: { type: 'jpeg', quality: 0.98 },
+    //       html2canvas: { scale: 2 },
+    //       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    //     };
 
-    const downloadPDF = () => {
-        const input = document.getElementById('invoicee');
-        const pdfOptions = {
-          margin: 10,
-          filename: 'summary.pdf',
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2 },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        };
+    //     // Store the current height and overflow properties
+    //     const originalHeight = input.style.height;
+    //     const originalOverflow = input.style.overflow;
 
-        // Store the current height and overflow properties
-        const originalHeight = input.style.height;
-        const originalOverflow = input.style.overflow;
+    //     // Set the height to the full scroll height and remove overflow to display the entire content
+    //     input.style.height = input.scrollHeight + 'px';
+    //     input.style.overflow = 'visible';
 
-        // Set the height to the full scroll height and remove overflow to display the entire content
-        input.style.height = input.scrollHeight + 'px';
-        input.style.overflow = 'visible';
+    //     // Generate the PDF
+    //     html2pdf().from(input).set(pdfOptions).save();
 
-        // Generate the PDF
-        html2pdf().from(input).set(pdfOptions).save();
+    //     // Restore the original height and overflow properties after generating the PDF
+    //     input.style.height = originalHeight;
+    //     input.style.overflow = originalOverflow;
+    //   };
 
-        // Restore the original height and overflow properties after generating the PDF
-        input.style.height = originalHeight;
-        input.style.overflow = originalOverflow;
-      };
+//  Sajeel  ka pdf download
 
-
+const downloadPDF = () => {
+    var doc = new jsPDF("p", "pt", "a4");
+    doc.html(document.getElementById("invoicee"),{
+        callback: function(pdf){
+            pdf.save("Agreement.pdf")
+        }
+    });
+}
 
 
 
